@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'RoutesPage.dart';
 import 'ProfilePage.dart';
 import 'StopsPage.dart';
+import 'RouteSearchPage.dart';
+import 'RouteMapPage.dart';
+import 'package:lottie/lottie.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  final String username;
+  final VoidCallback onLogout;
+  const Homepage({super.key, required this.username, required this.onLogout});
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -12,12 +19,20 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 0;
-  final List<Widget> _pages = [
-    const HomeContent(),
-    const RoutesPage(),
-    const StopsPage(),
-    const ProfilePage(),
-  ];
+  final TextEditingController _searchController = TextEditingController();
+  
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const HomeContent(),
+      const RoutesPage(),
+      const StopsPage(),
+      ProfilePage(username: widget.username, onLogout: widget.onLogout),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,21 +75,91 @@ class _HomepageState extends State<Homepage> {
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, String>> routes = [
-      {'name': 'La Paz', 'subtitle': 'Jose María Obando'},
-      {'name': 'La Esmeralda.', 'subtitle': 'Campan'},
-    ];
+  State<HomeContent> createState() => _HomeContentState();
+}
 
+class _HomeContentState extends State<HomeContent> {
+  final TextEditingController _searchController = TextEditingController();
+
+  final List<Map<String, String>> routes = [
+    {'name': 'La Paz', 'subtitle': 'Jose María Obando'},
+    {'name': 'La Esmeralda', 'subtitle': 'Campan'},
+  ];
+
+  void _navigateToSearch() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RouteSearchPage()),
+    );
+  }
+
+  void _showTourismInfo() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Turismo en Popayán'),
+          content: const SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Lugares turísticos destacados:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                Text('• Centro Histórico (Patrimonio de la Humanidad)'),
+                Text('• Puente del Humilladero'),
+                Text('• Iglesia de San Francisco'),
+                Text('• Museo de Arte Religioso'),
+                Text('• Cerro de las Tres Cruces'),
+                Text('• Parque Caldas'),
+                Text('• Morro de Tulcán'),
+                SizedBox(height: 10),
+                Text(
+                  '¿Te gustaría ver las rutas que te llevan a estos lugares?',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cerrar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RoutesPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6A00),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Ver Rutas'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // City header
+          // Header de la ciudad
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -115,15 +200,26 @@ class HomeContent extends StatelessWidget {
               ],
             ),
           ),
-
-          const SizedBox(height: 30),
-
-          // Route history
+          // Animación Lottie centrada
+          Center(
+            child: Lottie.asset(
+              'assets/animaciones/bus.json',
+              height: 140,
+              repeat: true,
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Rutas recientes
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Text(
+                  'Rutas recientes',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 15),
                 for (int i = 0; i < routes.length; i++)
                   RouteCard(
                     name: routes[i]['name']!,
@@ -133,10 +229,8 @@ class HomeContent extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 30),
-
-          // Tourism section
+          // Turismo
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -170,7 +264,7 @@ class HomeContent extends StatelessWidget {
                       ),
                       const SizedBox(height: 15),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _showTourismInfo,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF6A00),
                           foregroundColor: Colors.white,
@@ -196,9 +290,7 @@ class HomeContent extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 30),
-
           // Search bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -224,19 +316,27 @@ class HomeContent extends StatelessWidget {
                   Icon(Icons.search, color: Colors.grey[600]),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Buscar',
-                        hintStyle: TextStyle(color: Colors.grey[600]),
-                        border: InputBorder.none,
+                    child: GestureDetector(
+                      onTap: _navigateToSearch,
+                      child: TextField(
+                        controller: _searchController,
+                        enabled: false,
+                        decoration: InputDecoration(
+                          hintText: 'Buscar ruta o destino...',
+                          hintStyle: TextStyle(color: Colors.grey[600]),
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.search, color: const Color(0xFFFF6A00)),
+                    onPressed: _navigateToSearch,
                   ),
                 ],
               ),
             ),
           ),
-
           const SizedBox(height: 20),
         ],
       ),
@@ -323,6 +423,121 @@ class RouteCard extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Rutas Popayán'),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.lightBlue.shade200, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: ListView(
+          padding: EdgeInsets.all(24),
+          children: [
+            SizedBox(height: 20),
+            Text(
+              '¡Bienvenido!',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Explora rutas, consulta paradas y encuentra la mejor forma de moverte por Popayán.',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 30),
+            // Animación Lottie
+            Lottie.asset(
+              'assets/animaciones/bus.json',
+              height: 180,
+              repeat: true,
+            ),
+            SizedBox(height: 30),
+            ElevatedButton.icon(
+              icon: Icon(MaterialCommunityIcons.map_search_outline),
+              label: Text('¿Cómo llegar?'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                textStyle: TextStyle(fontSize: 18),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RouteSearchPage()),
+                );
+              },
+            ),
+            SizedBox(height: 16),
+            ElevatedButton.icon(
+              icon: Icon(MaterialCommunityIcons.map_marker_radius),
+              label: Text('Ver mapa interactivo'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                textStyle: TextStyle(fontSize: 18),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RouteMapPage(
+                      routeName: 'Ruta de ejemplo',
+                      stops: ['Centro', 'La Paz', 'Jose María Obando'],
+                    ),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 16),
+            ElevatedButton.icon(
+              icon: Icon(MaterialCommunityIcons.bus_stop),
+              label: Text('Paradas cercanas'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                textStyle: TextStyle(fontSize: 18),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => StopsPage()),
+                );
+              },
+            ),
+            SizedBox(height: 30),
+            Card(
+              color: Colors.yellow.shade100,
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Icon(MaterialCommunityIcons.leaf, color: Colors.green),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Recuerda: ¡Usar el transporte público ayuda al medio ambiente!',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

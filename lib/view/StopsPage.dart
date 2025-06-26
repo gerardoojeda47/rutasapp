@@ -30,7 +30,7 @@ class _StopsPageState extends State<StopsPage> {
       'Plateado',
       'Poblado Altos Sauces'
     ],
-    'Comuna 2': [
+    'Comuna 2 - Norte': [
       'González',
       'El Tablazo',
       'Morinda',
@@ -61,7 +61,7 @@ class _StopsPageState extends State<StopsPage> {
       'La Primavera',
       'Rinconcito Primaveral'
     ],
-    'Comunas 3, 4, 5, 6 y 8': [
+    'Comunas 3, 4, 5, 6 y 8 - Sur y Este': [
       'Alfonso López',
       'Calicanto',
       'Comuneros',
@@ -70,26 +70,66 @@ class _StopsPageState extends State<StopsPage> {
       'El Limonar',
       'El Pajonal',
       'Gabriel G. Marqués',
-      'Jorge E.'
+      'Jorge E. Gaitán',
+      'La Paz',
+      'Jose María Obando',
+      'San Camilo',
+      'La Esmeralda',
+      'Campan',
+      'El Recuerdo',
+      'Terminal',
+      'San Eduardo',
+      'El Uvo',
+      'San Eduardo',
+      'La Paz'
     ],
-    'Zona Rural': [
+    'Zona Rural - Veredas': [
       'Los Cerillos',
       'La Yunga',
       'Julumito',
-      'San Bernardino'
+      'San Bernardino',
+      'La Estrella',
+      'El Tablón',
+      'La Laguna',
+      'El Cofre',
+      'La Bolsa',
+      'El Diviso',
+      'La Vega',
+      'El Palmar',
+      'La Sierpe',
+      'El Rosal',
+      'La María',
+      'El Vergel',
+      'La Esperanza',
+      'El Progreso',
+      'La Libertad',
+      'El Paraíso'
     ],
-    'Otros Barrios': [
+    'Otros Barrios y Zonas': [
       'Deportistas',
       'Los Hoyos',
       'Samuel Silverio',
       'Camino Real',
       'Junín',
       'Santa Elena',
-      'Popular'
+      'Popular',
+      'La Estación',
+      'El Bosque',
+      'La Soledad',
+      'El Mirador',
+      'La Victoria',
+      'El Triunfo',
+      'La Gloria',
+      'El Edén',
+      'La Unión',
+      'El Porvenir',
+      'La Aurora',
+      'El Amparo',
+      'La Providencia'
     ]
   };
 
-  // Información de rutas por barrio
+  // Información de rutas por barrio mejorada
   final Map<String, List<Map<String, dynamic>>> _rutasPorBarrio = {
     'Los Sauces': [
       {
@@ -97,14 +137,14 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 10 minutos',
         'destino': 'Centro - Los Sauces',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '15 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'La Campiña', 'Los Sauces'],
         'empresa': 'Transportes Popayán',
         'tipoBus': 'Buseta',
         'capacidad': '25 pasajeros',
-        'servicios': ['Aire acondicionado'],
+        'servicios': ['Aire acondicionado', 'WiFi'],
       },
     ],
     'Santa Mónica': [
@@ -113,7 +153,7 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 12 minutos',
         'destino': 'Centro - Santa Mónica',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '12 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'Santa Mónica'],
@@ -129,7 +169,7 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 15 minutos',
         'destino': 'Centro - La Floresta',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '10 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'La Floresta'],
@@ -145,7 +185,7 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 15 minutos',
         'destino': 'Centro - Los Andes',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '8 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'Los Andes'],
@@ -161,7 +201,7 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 10 minutos',
         'destino': 'Centro - La Campiña',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '10 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'La Campiña'],
@@ -177,7 +217,7 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 15 minutos',
         'destino': 'Centro - María Oriente',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '15 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'María Oriente'],
@@ -193,7 +233,7 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 12 minutos',
         'destino': 'Centro - El Lago',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '12 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'El Lago'],
@@ -209,7 +249,7 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 15 minutos',
         'destino': 'Centro - Berlín',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '15 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'Berlín'],
@@ -225,7 +265,7 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 12 minutos',
         'destino': 'Centro - Suizo',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '10 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'Suizo'],
@@ -241,10 +281,74 @@ class _StopsPageState extends State<StopsPage> {
         'horario': '5:30 AM - 9:00 PM',
         'frecuencia': 'Cada 15 minutos',
         'destino': 'Centro - Las Ferias',
-        'costo': '\$2.500',
+        'costo': '2.500',
         'tiempoEstimado': '12 minutos',
         'estadoTrafico': 'Fluido',
         'paradas': ['Centro', 'Las Ferias'],
+        'empresa': 'Coopetrans',
+        'tipoBus': 'Buseta',
+        'capacidad': '25 pasajeros',
+        'servicios': ['Aire acondicionado'],
+      },
+    ],
+    'Bello Horizonte': [
+      {
+        'nombre': 'Ruta 11 - Bello Horizonte',
+        'horario': '5:30 AM - 9:00 PM',
+        'frecuencia': 'Cada 10 minutos',
+        'destino': 'Centro - Bello Horizonte',
+        'costo': '2.500',
+        'tiempoEstimado': '18 minutos',
+        'estadoTrafico': 'Moderado',
+        'paradas': ['Centro', 'Bello Horizonte', 'El Placer'],
+        'empresa': 'Transportes Popayán',
+        'tipoBus': 'Buseta',
+        'capacidad': '25 pasajeros',
+        'servicios': ['Aire acondicionado'],
+      },
+    ],
+    'Alfonso López': [
+      {
+        'nombre': 'Ruta 12 - Alfonso López',
+        'horario': '5:30 AM - 9:00 PM',
+        'frecuencia': 'Cada 12 minutos',
+        'destino': 'Centro - Alfonso López',
+        'costo': '2.500',
+        'tiempoEstimado': '20 minutos',
+        'estadoTrafico': 'Moderado',
+        'paradas': ['Centro', 'Alfonso López', 'El Limonar'],
+        'empresa': 'Coopetrans',
+        'tipoBus': 'Buseta',
+        'capacidad': '25 pasajeros',
+        'servicios': ['Aire acondicionado'],
+      },
+    ],
+    'La Paz': [
+      {
+        'nombre': 'Ruta 13 - La Paz',
+        'horario': '5:30 AM - 9:00 PM',
+        'frecuencia': 'Cada 8 minutos',
+        'destino': 'Centro - La Paz',
+        'costo': '2.500',
+        'tiempoEstimado': '25 minutos',
+        'estadoTrafico': 'Congestionado',
+        'paradas': ['Centro', 'La Paz', 'Jose María Obando'],
+        'empresa': 'Transportes Popayán',
+        'tipoBus': 'Buseta',
+        'capacidad': '25 pasajeros',
+        'servicios': ['Aire acondicionado', 'WiFi'],
+      },
+    ],
+    'La Esmeralda': [
+      {
+        'nombre': 'Ruta 14 - La Esmeralda',
+        'horario': '5:30 AM - 9:00 PM',
+        'frecuencia': 'Cada 10 minutos',
+        'destino': 'Centro - La Esmeralda',
+        'costo': '2.500',
+        'tiempoEstimado': '22 minutos',
+        'estadoTrafico': 'Moderado',
+        'paradas': ['Centro', 'Campan', 'La Esmeralda'],
         'empresa': 'Coopetrans',
         'tipoBus': 'Buseta',
         'capacidad': '25 pasajeros',
@@ -332,12 +436,14 @@ class _StopsPageState extends State<StopsPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  ruta['nombre'],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Color(0xFFFF6A00),
+                                Expanded(
+                                  child: Text(
+                                    ruta['nombre'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Color(0xFFFF6A00),
+                                    ),
                                   ),
                                 ),
                                 Container(
@@ -346,14 +452,15 @@ class _StopsPageState extends State<StopsPage> {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: _getTrafficColor(ruta['estadoTrafico']),
+                                    color: _getTrafficColor(ruta['estadoTrafico']).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     ruta['estadoTrafico'],
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color: _getTrafficColor(ruta['estadoTrafico']),
                                       fontSize: 12,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -363,7 +470,7 @@ class _StopsPageState extends State<StopsPage> {
                             Text('Destino: ${ruta['destino']}'),
                             Text('Horario: ${ruta['horario']}'),
                             Text('Frecuencia: ${ruta['frecuencia']}'),
-                            Text('Costo: ${ruta['costo']}'),
+                            Text('Costo: \$${ruta['costo']}'),
                             Text('Tiempo estimado: ${ruta['tiempoEstimado']}'),
                             const SizedBox(height: 8),
                             const Text(
@@ -397,7 +504,7 @@ class _StopsPageState extends State<StopsPage> {
                               spacing: 8,
                               children: (ruta['servicios'] as List<String>).map((servicio) => Chip(
                                 label: Text(servicio),
-                                backgroundColor: const Color(0xFFFF6A00).withOpacity(0.1),
+                                backgroundColor: const Color(0xFFFF6A00).withValues(alpha: 0.1),
                                 labelStyle: const TextStyle(color: Color(0xFFFF6A00)),
                               )).toList(),
                             ),
@@ -423,6 +530,15 @@ class _StopsPageState extends State<StopsPage> {
     final filteredBarrios = _getFilteredBarrios();
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Paradas de Popayán',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFFF6A00),
+        elevation: 0,
+      ),
       body: Column(
         children: [
           // Barra de búsqueda
@@ -431,8 +547,19 @@ class _StopsPageState extends State<StopsPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Buscar barrio...',
+                hintText: 'Buscar barrio o comuna...',
                 prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                    : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -457,9 +584,31 @@ class _StopsPageState extends State<StopsPage> {
                       final barrio = filteredBarrios[index];
                       return Card(
                         margin: const EdgeInsets.only(bottom: 8),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         child: ListTile(
-                          leading: const Icon(Icons.location_on, color: Color(0xFFFF6A00)),
-                          title: Text(barrio),
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.location_on,
+                              color: Color(0xFFFF6A00),
+                            ),
+                          ),
+                          title: Text(
+                            barrio,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            _getComunaForBarrio(barrio),
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () => _showRutasDialog(barrio),
                         ),
                       );
@@ -479,6 +628,17 @@ class _StopsPageState extends State<StopsPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: ExpansionTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.location_city,
+                              color: Color(0xFFFF6A00),
+                            ),
+                          ),
                           title: Text(
                             comuna,
                             style: const TextStyle(
@@ -487,9 +647,27 @@ class _StopsPageState extends State<StopsPage> {
                               color: Color(0xFFFF6A00),
                             ),
                           ),
+                          subtitle: Text(
+                            '${barrios.length} barrios',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
                           children: barrios.map((barrio) => ListTile(
                             leading: const Icon(Icons.location_on, color: Color(0xFFFF6A00)),
                             title: Text(barrio),
+                            subtitle: Text(
+                              _rutasPorBarrio.containsKey(barrio) 
+                                  ? '${_rutasPorBarrio[barrio]!.length} rutas disponibles'
+                                  : 'Sin rutas registradas',
+                              style: TextStyle(
+                                color: _rutasPorBarrio.containsKey(barrio) 
+                                    ? Colors.green 
+                                    : Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                            trailing: _rutasPorBarrio.containsKey(barrio)
+                                ? const Icon(Icons.check_circle, color: Colors.green, size: 16)
+                                : const Icon(Icons.info_outline, color: Colors.grey, size: 16),
                             onTap: () => _showRutasDialog(barrio),
                           )).toList(),
                         ),
@@ -500,6 +678,15 @@ class _StopsPageState extends State<StopsPage> {
         ],
       ),
     );
+  }
+
+  String _getComunaForBarrio(String barrio) {
+    for (var entry in _comunas.entries) {
+      if (entry.value.contains(barrio)) {
+        return entry.key;
+      }
+    }
+    return 'Comuna no especificada';
   }
 
   @override

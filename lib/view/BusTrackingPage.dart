@@ -36,6 +36,151 @@ class _BusTrackingPageState extends State<BusTrackingPage> {
     },
   ];
 
+  Widget _buildInfoColumn(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStopCard(Map<String, dynamic> stop) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(
+                Icons.location_on,
+                color: Color(0xFFFF6A00),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    stop['name'],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${stop['time']} • ${stop['distance']}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '${stop['passengers']} pasajeros',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    stop['time'],
+                    style: const TextStyle(
+                      color: Color(0xFFFF6A00),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _refreshTracking() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Actualizando ubicación del bus...'),
+        backgroundColor: Color(0xFFFF6A00),
+        duration: Duration(seconds: 1),
+      ),
+    );
+  }
+
+  void _showBusDetails() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Detalles del Bus'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('ID del Bus: ${widget.busId}'),
+              const SizedBox(height: 10),
+              Text('Ruta: ${widget.routeName}'),
+              const SizedBox(height: 10),
+              const Text('Estado: En servicio'),
+              const SizedBox(height: 10),
+              const Text('Conductor: Juan Pérez'),
+              const SizedBox(height: 10),
+              const Text('Capacidad: 25 pasajeros'),
+              const SizedBox(height: 10),
+              const Text('Última actualización: Hace 30 segundos'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +192,12 @@ class _BusTrackingPageState extends State<BusTrackingPage> {
         centerTitle: true,
         backgroundColor: const Color(0xFFFF6A00),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: _showBusDetails,
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -60,22 +211,60 @@ class _BusTrackingPageState extends State<BusTrackingPage> {
                 bottomRight: Radius.circular(30),
               ),
             ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.map, size: 50, color: Colors.grey[600]),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Mapa en tiempo real',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.bold,
+            child: Stack(
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.map, size: 50, color: Colors.grey[600]),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Mapa en tiempo real',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Ubicación del bus ${widget.busId}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4CAF50).withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.location_on, color: Colors.white, size: 16),
+                        SizedBox(width: 4),
+                        Text(
+                          'En vivo',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
 
@@ -96,7 +285,7 @@ class _BusTrackingPageState extends State<BusTrackingPage> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF6A00).withOpacity(0.1),
+                            color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
@@ -131,7 +320,7 @@ class _BusTrackingPageState extends State<BusTrackingPage> {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF4CAF50).withOpacity(0.1),
+                            color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Text(
@@ -160,100 +349,36 @@ class _BusTrackingPageState extends State<BusTrackingPage> {
           ),
 
           // Upcoming stops
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Próximas paradas',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Próximas paradas',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 15),
-                ..._upcomingStops.map((stop) => _buildStopCard(stop)),
-              ],
+                  const SizedBox(height: 15),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _upcomingStops.length,
+                      itemBuilder: (context, index) => _buildStopCard(_upcomingStops[index]),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: _refreshTracking,
         backgroundColor: const Color(0xFFFF6A00),
         child: const Icon(Icons.refresh),
-      ),
-    );
-  }
-
-  Widget _buildInfoColumn(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStopCard(Map<String, dynamic> stop) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFF6A00).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.location_on,
-            color: Color(0xFFFF6A00),
-          ),
-        ),
-        title: Text(
-          stop['name'],
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Text(
-          'Llegada en ${stop['time']} • ${stop['distance']}',
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.people,
-              size: 16,
-              color: Colors.grey,
-            ),
-            Text(
-              '${stop['passengers']}',
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String username;
+  final VoidCallback onLogout;
+  const ProfilePage({super.key, required this.username, required this.onLogout});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -9,7 +11,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final Map<String, dynamic> userProfile = {
-    'name': 'Juan Pérez',
+    'name': '',
     'email': 'juan.perez@email.com',
     'phone': '+57 300 123 4567',
     'membershipDate': '15/03/2023',
@@ -66,6 +68,145 @@ class _ProfilePageState extends State<ProfilePage> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    userProfile['name'] = widget.username;
+  }
+
+  void _editProfile() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final nameController = TextEditingController(text: userProfile['name']);
+        final emailController = TextEditingController(text: userProfile['email']);
+        final phoneController = TextEditingController(text: userProfile['phone']);
+
+        return AlertDialog(
+          title: const Text('Editar Perfil'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre completo',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Correo electrónico',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: phoneController,
+                  decoration: const InputDecoration(
+                    labelText: 'Teléfono',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  userProfile['name'] = nameController.text;
+                  userProfile['email'] = emailController.text;
+                  userProfile['phone'] = phoneController.text;
+                });
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Perfil actualizado correctamente'),
+                    backgroundColor: Color(0xFFFF6A00),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6A00),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Guardar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _addBalance() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final amountController = TextEditingController();
+
+        return AlertDialog(
+          title: const Text('Recargar Tarjeta'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Monto a recargar',
+                  prefixText: '\$',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Saldo actual: \$${userProfile['transportCard']['balance']}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final amount = int.tryParse(amountController.text);
+                if (amount != null && amount > 0) {
+                  setState(() {
+                    final currentBalance = int.parse(userProfile['transportCard']['balance'].replaceAll('.', ''));
+                    userProfile['transportCard']['balance'] = (currentBalance + amount).toString();
+                  });
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Recarga exitosa: \$${amount.toString()}'),
+                      backgroundColor: const Color(0xFFFF6A00),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6A00),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Recargar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -76,6 +217,12 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         backgroundColor: const Color(0xFFFF6A00),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: _editProfile,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -144,10 +291,10 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Tarjeta de Transporte',
                         style: TextStyle(
                           color: Colors.white,
@@ -155,10 +302,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Icon(
-                        Icons.credit_card,
-                        color: Colors.white,
-                        size: 30,
+                      IconButton(
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        onPressed: _addBalance,
                       ),
                     ],
                   ),
@@ -186,7 +332,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           Text(
-                            userProfile['transportCard']['balance'],
+                            '\$${userProfile['transportCard']['balance']}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -268,7 +414,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   'Notificaciones',
                   'Configurar alertas y notificaciones',
                   onTap: () {
-                    // Mostrar diálogo de configuración de notificaciones
                     _showNotificationSettings();
                   },
                 ),
@@ -277,7 +422,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   'Idioma',
                   userProfile['preferences']['language'],
                   onTap: () {
-                    // Mostrar selector de idioma
+                    _showLanguageSelector();
                   },
                 ),
                 _buildSettingTile(
@@ -285,7 +430,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   'Tema',
                   userProfile['preferences']['theme'],
                   onTap: () {
-                    // Mostrar selector de tema
+                    _showThemeSelector();
                   },
                 ),
               ],
@@ -296,7 +441,7 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(20),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Implementar cierre de sesión
+                  _showLogoutDialog();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -400,7 +545,12 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: () {
-        // Navegar a detalles de la ruta
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ver detalles de ruta: ${route['name']}'),
+            backgroundColor: const Color(0xFFFF6A00),
+          ),
+        );
       },
     );
   }
@@ -443,7 +593,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           Text(
-            trip['price'],
+            '\$${trip['price']}',
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 12,
@@ -529,6 +679,113 @@ class _ProfilePageState extends State<ProfilePage> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLanguageSelector() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Seleccionar Idioma'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('Español'),
+              leading: Radio<String>(
+                value: 'Español',
+                groupValue: userProfile['preferences']['language'],
+                onChanged: (value) {
+                  setState(() {
+                    userProfile['preferences']['language'] = value!;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            ListTile(
+              title: const Text('English'),
+              leading: Radio<String>(
+                value: 'English',
+                groupValue: userProfile['preferences']['language'],
+                onChanged: (value) {
+                  setState(() {
+                    userProfile['preferences']['language'] = value!;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showThemeSelector() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Seleccionar Tema'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('Claro'),
+              leading: Radio<String>(
+                value: 'Claro',
+                groupValue: userProfile['preferences']['theme'],
+                onChanged: (value) {
+                  setState(() {
+                    userProfile['preferences']['theme'] = value!;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            ListTile(
+              title: const Text('Oscuro'),
+              leading: Radio<String>(
+                value: 'Oscuro',
+                groupValue: userProfile['preferences']['theme'],
+                onChanged: (value) {
+                  setState(() {
+                    userProfile['preferences']['theme'] = value!;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cerrar Sesión'),
+        content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              widget.onLogout();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Cerrar Sesión'),
           ),
         ],
       ),
