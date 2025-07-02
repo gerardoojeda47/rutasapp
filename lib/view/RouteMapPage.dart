@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
-class RouteMapPage extends StatefulWidget {
+class RouteMapPage extends StatelessWidget {
   final String routeName;
   final List<String> stops; // Lista de nombres de barrios/paradas
 
@@ -11,17 +12,8 @@ class RouteMapPage extends StatefulWidget {
     required this.stops,
   });
 
-  @override
-  State<RouteMapPage> createState() => _RouteMapPageState();
-}
-
-class _RouteMapPageState extends State<RouteMapPage> {
-  GoogleMapController? _mapController;
-  final Set<Marker> _markers = {};
-  final Set<Polyline> _polylines = {};
-
   // Coordenadas de ejemplo para algunos barrios de Popayán
-  final Map<String, LatLng> _barriosCoords = {
+  static final Map<String, LatLng> _barriosCoords = {
     'Centro': LatLng(2.444814, -76.614739),
     'La Paz': LatLng(2.449000, -76.601000),
     'Jose María Obando': LatLng(2.453000, -76.599000),
@@ -54,69 +46,67 @@ class _RouteMapPageState extends State<RouteMapPage> {
   };
 
   @override
-  void initState() {
-    super.initState();
-    _setMarkersAndPolyline();
-  }
-
-  void _setMarkersAndPolyline() {
-    final List<LatLng> points = [];
-    _markers.clear();
-    for (int i = 0; i < widget.stops.length; i++) {
-      final name = widget.stops[i];
-      final coord = _barriosCoords[name];
-      if (coord != null) {
-        points.add(coord);
-        _markers.add(
-          Marker(
-            markerId: MarkerId(name),
-            position: coord,
-            infoWindow: InfoWindow(title: name),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-              i == 0
-                  ? BitmapDescriptor.hueGreen
-                  : (i == widget.stops.length - 1
-                      ? BitmapDescriptor.hueRed
-                      : BitmapDescriptor.hueOrange),
-            ),
-          ),
-        );
-      }
-    }
-    if (points.length > 1) {
-      _polylines.clear();
-      _polylines.add(
-        Polyline(
-          polylineId: const PolylineId('route'),
-          color: Colors.orange,
-          width: 5,
-          points: points,
-        ),
-      );
-    }
-    setState(() {});
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final LatLng initialPosition = _barriosCoords[widget.stops.first] ?? LatLng(2.444814, -76.614739);
+    // Obtener las coordenadas de las paradas
+    final List<LatLng> points = stops
+        .map((name) => _barriosCoords[name])
+        .where((coord) => coord != null)
+        .cast<LatLng>()
+        .toList();
+
+    final LatLng initialPosition = points.isNotEmpty
+        ? points.first
+        : LatLng(2.444814, -76.614739); // Centro de Popayán por defecto
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mapa de ${widget.routeName}'),
+        title: Text('Mapa de $routeName'),
         backgroundColor: const Color(0xFFFF6A00),
       ),
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: initialPosition,
+      body: FlutterMap(
+        options: MapOptions(
+          center: initialPosition,
           zoom: 13.5,
         ),
-        markers: _markers,
-        polylines: _polylines,
-        onMapCreated: (controller) {
-          _mapController = controller;
-        },
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
+        children: [
+          TileLayer(
+            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            subdomains: ['a', 'b', 'c'],
+            userAgentPackageName: 'com.example.rouwhite',
+          ),
+          PolylineLayer(
+            polylines: [
+              Polyline(
+                points: points,
+                color: Colors.orange,
+                strokeWidth: 5.0,
+              ),
+            ],
+          ),
+          MarkerLayer(
+            markers: [
+              for (int i = 0; i < points.length; i++)
+                Marker(
+                  width: 60.0,
+                  height: 60.0,
+                  point: points[i],
+                  child: Icon(
+                    i == 0
+                        ? Icons.location_on
+                        : (i == points.length - 1
+                            ? Icons.flag
+                            : Icons.circle),
+                    color: i == 0
+                        ? Colors.green
+                        : (i == points.length - 1
+                            ? Colors.red
+                            : Colors.orange),
+                    size: 36,
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

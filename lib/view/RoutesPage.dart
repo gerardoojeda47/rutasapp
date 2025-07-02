@@ -143,12 +143,6 @@ class _RoutesPageState extends State<RoutesPage> {
     });
   }
 
-  void _seleccionarRuta(int index) {
-    setState(() {
-      _rutaSeleccionada = _rutaSeleccionada == index ? null : index;
-    });
-  }
-
   void _rastrearBus(int index) {
     final ruta = _rutas[index];
     Navigator.push(

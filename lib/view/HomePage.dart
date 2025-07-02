@@ -6,7 +6,6 @@ import 'RouteSearchPage.dart';
 import 'RouteMapPage.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class Homepage extends StatefulWidget {
   final String username;
@@ -19,7 +18,6 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 0;
-  final TextEditingController _searchController = TextEditingController();
   
   late final List<Widget> _pages;
 
@@ -423,121 +421,6 @@ class RouteCard extends StatelessWidget {
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Rutas Popayán'),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.lightBlue.shade200, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: ListView(
-          padding: EdgeInsets.all(24),
-          children: [
-            SizedBox(height: 20),
-            Text(
-              '¡Bienvenido!',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Explora rutas, consulta paradas y encuentra la mejor forma de moverte por Popayán.',
-              style: TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 30),
-            // Animación Lottie
-            Lottie.asset(
-              'assets/animaciones/bus.json',
-              height: 180,
-              repeat: true,
-            ),
-            SizedBox(height: 30),
-            ElevatedButton.icon(
-              icon: Icon(MaterialCommunityIcons.map_search_outline),
-              label: Text('¿Cómo llegar?'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RouteSearchPage()),
-                );
-              },
-            ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
-              icon: Icon(MaterialCommunityIcons.map_marker_radius),
-              label: Text('Ver mapa interactivo'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RouteMapPage(
-                      routeName: 'Ruta de ejemplo',
-                      stops: ['Centro', 'La Paz', 'Jose María Obando'],
-                    ),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
-              icon: Icon(MaterialCommunityIcons.bus_stop),
-              label: Text('Paradas cercanas'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => StopsPage()),
-                );
-              },
-            ),
-            SizedBox(height: 30),
-            Card(
-              color: Colors.yellow.shade100,
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Icon(MaterialCommunityIcons.leaf, color: Colors.green),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Recuerda: ¡Usar el transporte público ayuda al medio ambiente!',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
