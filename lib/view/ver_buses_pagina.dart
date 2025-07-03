@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class BusTrackingPage extends StatefulWidget {
+class VerBusesPagina extends StatefulWidget {
   final String routeName;
   final String busId;
 
-  const BusTrackingPage({
+  const VerBusesPagina({
     super.key,
     required this.routeName,
     required this.busId,
   });
 
   @override
-  State<BusTrackingPage> createState() => _BusTrackingPageState();
+  State<VerBusesPagina> createState() => _VerBusesPaginaState();
 }
 
-class _BusTrackingPageState extends State<BusTrackingPage> {
+class _VerBusesPaginaState extends State<VerBusesPagina> {
   final List<Map<String, dynamic>> _upcomingStops = [
     {
       'name': 'Parada Centro',

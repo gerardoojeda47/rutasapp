@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'BusTrackingPage.dart';
-import 'RouteMapPage.dart';
+import 'ver_buses_pagina.dart';
+import 'mapa_ruta_pagina.dart';
 
-class RoutesPage extends StatefulWidget {
-  const RoutesPage({super.key});
+class RutasPagina extends StatefulWidget {
+  const RutasPagina({super.key});
 
   @override
-  State<RoutesPage> createState() => _RoutesPageState();
+  State<RutasPagina> createState() => _RutasPaginaState();
 }
 
-class _RoutesPageState extends State<RoutesPage> {
+class _RutasPaginaState extends State<RutasPagina> {
   final List<Map<String, dynamic>> _rutas = [
     {
       'nombre': 'Ruta 1',
@@ -148,7 +148,7 @@ class _RoutesPageState extends State<RoutesPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BusTrackingPage(
+        builder: (context) => VerBusesPagina(
           routeName: ruta['nombre'],
           busId: ruta['busId'],
         ),
@@ -280,13 +280,18 @@ class _RoutesPageState extends State<RoutesPage> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   const SizedBox(height: 2),
-                  ...ruta['paradas'].map<Widget>((p) => Row(
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: ruta['paradas'].map<Widget>((p) => Row(
                         children: [
                           const Icon(Icons.location_on, color: Color(0xFFFF6A00), size: 18),
                           const SizedBox(width: 4),
                           Text(p, style: const TextStyle(fontSize: 15)),
                         ],
                       )),
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -331,7 +336,7 @@ class _RoutesPageState extends State<RoutesPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => RouteMapPage(
+                                builder: (context) => MapaRutaPagina(
                                   routeName: ruta['nombre'],
                                   stops: List<String>.from(ruta['paradas']),
                                 ),

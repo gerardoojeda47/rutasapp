@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class StopsPage extends StatefulWidget {
-  const StopsPage({super.key});
+class ParadasPagina extends StatefulWidget {
+  const ParadasPagina({super.key});
 
   @override
-  State<StopsPage> createState() => _StopsPageState();
+  State<ParadasPagina> createState() => _ParadasPaginaState();
 }
 
-class _StopsPageState extends State<StopsPage> {
+class _ParadasPaginaState extends State<ParadasPagina> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 

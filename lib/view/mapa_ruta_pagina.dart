@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class RouteMapPage extends StatelessWidget {
+class MapaRutaPagina extends StatelessWidget {
   final String routeName;
   final List<String> stops; // Lista de nombres de barrios/paradas
 
-  const RouteMapPage({
+  const MapaRutaPagina({
     super.key,
     required this.routeName,
     required this.stops,

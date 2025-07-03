@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rouwhite/view/HomePage.dart';
-import 'registro.dart';
+import 'view/principal_pagina.dart';
+import 'registro_pagina.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
   void _goToRegister() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RegistroPage()),
+      MaterialPageRoute(builder: (context) => const RegistroPagina()),
     );
   }
 

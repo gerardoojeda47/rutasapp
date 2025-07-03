@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class RegistroPage extends StatefulWidget {
-  const RegistroPage({super.key});
+class RegistroPagina extends StatefulWidget {
+  const RegistroPagina({super.key});
 
   @override
-  State<RegistroPage> createState() => _RegistroPageState();
+  State<RegistroPagina> createState() => _RegistroPaginaState();
 }
 
-class _RegistroPageState extends State<RegistroPage> {
+class _RegistroPaginaState extends State<RegistroPagina> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();

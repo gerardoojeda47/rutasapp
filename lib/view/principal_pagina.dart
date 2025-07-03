@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'RoutesPage.dart';
-import 'ProfilePage.dart';
-import 'StopsPage.dart';
-import 'RouteSearchPage.dart';
-import 'RouteMapPage.dart';
+import 'rutas_pagina.dart';
+import 'perfil_usuario_pagina.dart';
+import 'paradas_pagina.dart';
 import 'package:lottie/lottie.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:flutter_map/flutter_map.dart' as fm;
+import 'package:latlong2/latlong.dart';
+import 'buscar_ruta_pagina.dart';
 
 class Homepage extends StatefulWidget {
   final String username;
@@ -26,9 +26,9 @@ class _HomepageState extends State<Homepage> {
     super.initState();
     _pages = [
       const HomeContent(),
-      const RoutesPage(),
-      const StopsPage(),
-      ProfilePage(username: widget.username, onLogout: widget.onLogout),
+      const RutasPagina(),
+      const ParadasPagina(),
+      PerfilUsuarioPagina(username: widget.username, onLogout: widget.onLogout),
     ];
   }
 
@@ -91,10 +91,9 @@ class _HomeContentState extends State<HomeContent> {
   void _navigateToSearch() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RouteSearchPage()),
+      MaterialPageRoute(builder: (context) => const BuscarRutaPagina()),
     );
   }
-
   void _showTourismInfo() {
     showDialog(
       context: context,
@@ -136,7 +135,7 @@ class _HomeContentState extends State<HomeContent> {
                 Navigator.of(context).pop();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const RoutesPage()),
+                  MaterialPageRoute(builder: (context) => const RutasPagina()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -169,6 +168,7 @@ class _HomeContentState extends State<HomeContent> {
               ),
               boxShadow: [
                 BoxShadow(
+                  // ignore: deprecated_member_use
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 5,
@@ -192,6 +192,7 @@ class _HomeContentState extends State<HomeContent> {
                   'Historial de rutas',
                   style: TextStyle(
                     fontSize: 18,
+                    // ignore: deprecated_member_use
                     color: Colors.white.withOpacity(0.9),
                   ),
                 ),
@@ -240,12 +241,13 @@ class _HomeContentState extends State<HomeContent> {
                 ),
                 const SizedBox(height: 15),
                 Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(0),
+                  height: 200,
                   decoration: BoxDecoration(
-                    color: Colors.white,
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
+                        // ignore: deprecated_member_use
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 2,
                         blurRadius: 8,
@@ -253,32 +255,68 @@ class _HomeContentState extends State<HomeContent> {
                       ),
                     ],
                   ),
-                  child: Column(
+                  child: Stack(
                     children: [
-                      const Text(
-                        'Descubre los mejores lugares turísticos de Popayán y sus alrededores',
-                        style: TextStyle(fontSize: 16),
-                        textAlign: TextAlign.center,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(
+                          'https://images.unsplash.com/photo-1581269875754-aea2a9b3970a?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
                       ),
-                      const SizedBox(height: 15),
-                      ElevatedButton(
-                        onPressed: _showTourismInfo,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF6A00),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 30,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              // ignore: deprecated_member_use
+                              Colors.black.withOpacity(0.7),
+                            ],
                           ),
                         ),
-                        child: const Text(
-                          '¡Click aquí!',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Descubre los mejores lugares turísticos de Popayán y sus alrededores',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 15),
+                              ElevatedButton(
+                                onPressed: _showTourismInfo,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFFFF6A00),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 30,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                ),
+                                child: const Text(
+                                  '¡Click aquí!',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFFFF6A00),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -302,6 +340,7 @@ class _HomeContentState extends State<HomeContent> {
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
+                    // ignore: deprecated_member_use
                     color: Colors.grey.withOpacity(0.3),
                     spreadRadius: 1,
                     blurRadius: 5,
@@ -328,7 +367,7 @@ class _HomeContentState extends State<HomeContent> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.search, color: const Color(0xFFFF6A00)),
+                    icon: const Icon(Icons.search, color: Color(0xFFFF6A00)),
                     onPressed: _navigateToSearch,
                   ),
                 ],
@@ -347,6 +386,38 @@ class RouteCard extends StatelessWidget {
   final String subtitle;
   final bool isFirst;
 
+  static final Map<String, LatLng> _barriosCoords = {
+    'Centro': const LatLng(2.444814, -76.614739),
+    'La Paz': const LatLng(2.449000, -76.601000),
+    'Jose María Obando': const LatLng(2.453000, -76.599000),
+    'San Camilo': const LatLng(2.447500, -76.610000),
+    'La Esmeralda': const LatLng(2.440000, -76.600000),
+    'Campan': const LatLng(2.441500, -76.602500),
+    'El Recuerdo': const LatLng(2.442500, -76.605000),
+    'Terminal': const LatLng(2.445000, -76.617000),
+    'El Uvo': const LatLng(2.455000, -76.620000),
+    'San Eduardo': const LatLng(2.457000, -76.618000),
+    'Bello Horizonte': const LatLng(2.438000, -76.610000),
+    'El Placer': const LatLng(2.437000, -76.612000),
+    'Alfonso López': const LatLng(2.435000, -76.615000),
+    'El Limonar': const LatLng(2.433000, -76.617000),
+    'El Boquerón': const LatLng(2.431000, -76.619000),
+    'La Floresta': const LatLng(2.450000, -76.608000),
+    'Los Sauces': const LatLng(2.452000, -76.606000),
+    'La Campiña': const LatLng(2.454000, -76.604000),
+    'María Oriente': const LatLng(2.456000, -76.602000),
+    'Santa Mónica': const LatLng(2.448000, -76.611000),
+    'El Lago': const LatLng(2.447000, -76.613000),
+    'Berlín': const LatLng(2.446000, -76.615000),
+    'Suizo': const LatLng(2.445000, -76.617000),
+    'Las Ferias': const LatLng(2.444000, -76.619000),
+    'Los Andes': const LatLng(2.443000, -76.621000),
+    'Alameda': const LatLng(2.442000, -76.623000),
+    'Colgate Palmolive': const LatLng(2.441000, -76.625000),
+    'Plateado': const LatLng(2.440000, -76.627000),
+    'Poblado Altos Sauces': const LatLng(2.439000, -76.629000),
+  };
+
   const RouteCard({
     super.key,
     required this.name,
@@ -356,6 +427,11 @@ class RouteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LatLng? start = _barriosCoords[name];
+    final LatLng? end = _barriosCoords[subtitle];
+    final List<LatLng> points = [if (start != null) start, if (end != null) end];
+    final LatLng center = points.isNotEmpty ? points.first : const LatLng(2.444814, -76.614739);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(15),
@@ -364,6 +440,7 @@ class RouteCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
@@ -373,18 +450,77 @@ class RouteCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF6A00).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.directions_bus,
-              color: Color(0xFFFF6A00),
-              size: 30,
-            ),
+          Stack(
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.grey[100],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: fm.FlutterMap(
+                    options: fm.MapOptions(
+                      // ignore: deprecated_member_use
+                      center: center,
+                      // ignore: deprecated_member_use
+                      zoom: 14.0,
+                      // ignore: deprecated_member_use
+                      interactiveFlags: fm.InteractiveFlag.none,
+                    ),
+                    children: [
+                      fm.TileLayer(
+                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: const ['a', 'b', 'c'],
+                        userAgentPackageName: 'com.example.rouwhite',
+                      ),
+                      if (points.length == 2)
+                        fm.PolylineLayer(
+                          polylines: [
+                            fm.Polyline(
+                              points: points,
+                              color: Colors.orange,
+                              strokeWidth: 4.0,
+                            ),
+                          ],
+                        ),
+                      fm.MarkerLayer(
+                        markers: [
+                          if (start != null)
+                            fm.Marker(
+                              width: 30,
+                              height: 30,
+                              point: start,
+                              child: const Icon(Icons.location_on, color: Colors.green, size: 24),
+                            ),
+                          if (end != null)
+                            fm.Marker(
+                              width: 30,
+                              height: 30,
+                              point: end,
+                              child: const Icon(Icons.flag, color: Colors.red, size: 24),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 2,
+                right: 2,
+                child: SizedBox(
+                  width: 32,
+                  height: 32,
+                  child: Lottie.asset(
+                    'assets/animaciones/bus.json',
+                    repeat: true,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(width: 15),
           Expanded(
@@ -409,6 +545,7 @@ class RouteCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
+                // ignore: deprecated_member_use
                 color: const Color(0xFF4CAF50).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatefulWidget {
+class PerfilUsuarioPagina extends StatefulWidget {
   final String username;
   final VoidCallback onLogout;
-  const ProfilePage({super.key, required this.username, required this.onLogout});
+  const PerfilUsuarioPagina({super.key, required this.username, required this.onLogout});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<PerfilUsuarioPagina> createState() => _PerfilUsuarioPaginaState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
   final Map<String, dynamic> userProfile = {
     'name': '',
     'email': 'juan.perez@email.com',

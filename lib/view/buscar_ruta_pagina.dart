@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
-class RouteSearchPage extends StatefulWidget {
-  const RouteSearchPage({super.key});
+class BuscarRutaPagina extends StatefulWidget {
+  const BuscarRutaPagina({super.key});
 
   @override
-  State<RouteSearchPage> createState() => _RouteSearchPageState();
+  State<BuscarRutaPagina> createState() => _BuscarRutaPaginaState();
 }
 
-class _RouteSearchPageState extends State<RouteSearchPage> {
+class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
   final TextEditingController _originController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
   String _selectedTime = 'Ahora';
@@ -108,6 +109,94 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
     {'name': 'Morro de Tulcán', 'type': 'Monumento', 'comuna': 'Centro'},
     {'name': 'Cerro de las Tres Cruces', 'type': 'Monumento', 'comuna': 'Centro'},
     {'name': 'Aeropuerto Guillermo León Valencia', 'type': 'Aeropuerto', 'comuna': 'Rural'},
+    // Más barrios y puntos de interés
+    {'name': 'San José', 'type': 'Barrio', 'comuna': 'Comuna 4'},
+    {'name': 'La Paz', 'type': 'Barrio', 'comuna': 'Comuna 5'},
+    {'name': 'El Recuerdo', 'type': 'Barrio', 'comuna': 'Comuna 6'},
+    {'name': 'Hospital Universitario', 'type': 'Hospital', 'comuna': 'Comuna 3'},
+    {'name': 'Parque Infantil', 'type': 'Parque', 'comuna': 'Comuna 2'},
+    {'name': 'San Camilo', 'type': 'Barrio', 'comuna': 'Comuna 7'},
+    {'name': 'El Uvo', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'San Eduardo', 'type': 'Barrio', 'comuna': 'Comuna 8'},
+    {'name': 'Bello Horizonte', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'El Placer', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Alfonso López', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'El Limonar', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'El Boquerón', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'Terminal de Transportes', 'type': 'Terminal', 'comuna': 'Centro'},
+    {'name': 'Universidad del Cauca', 'type': 'Universidad', 'comuna': 'Centro'},
+    {'name': 'Hospital San José', 'type': 'Hospital', 'comuna': 'Centro'},
+    {'name': 'Centro Comercial Campanario', 'type': 'Centro Comercial', 'comuna': 'Centro'},
+    {'name': 'Plaza de Mercado', 'type': 'Mercado', 'comuna': 'Centro'},
+    {'name': 'Parque Caldas', 'type': 'Parque', 'comuna': 'Centro'},
+    {'name': 'Museo de Arte Religioso', 'type': 'Museo', 'comuna': 'Centro'},
+    {'name': 'Iglesia de San Francisco', 'type': 'Iglesia', 'comuna': 'Centro'},
+    {'name': 'Puente del Humilladero', 'type': 'Monumento', 'comuna': 'Centro'},
+    {'name': 'Morro de Tulcán', 'type': 'Monumento', 'comuna': 'Centro'},
+    {'name': 'Cerro de las Tres Cruces', 'type': 'Monumento', 'comuna': 'Centro'},
+    {'name': 'Aeropuerto Guillermo León Valencia', 'type': 'Aeropuerto', 'comuna': 'Rural'},
+    // Nuevos barrios y lugares
+    {'name': 'Villa del Norte', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'La Primavera', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Rinconcito Primaveral', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Calicanto', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'Comuneros', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'El Deán', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'El Pajonal', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'Gabriel G. Marqués', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'Jorge E.', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'González', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'El Tablazo', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Morinda', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Destechados', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Santiago de Cali', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Zuldemaida', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'María Paz', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Balcón Norte', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Pino Pardo', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Matamoros', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Chamizal', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Tóez', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Villa Claudia', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Guayacanes del Río', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Pinar', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Villa Melisa', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Esperanza', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Canterbury', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'La Arboleda', 'type': 'Barrio', 'comuna': 'Comuna 2'},
+    {'name': 'Los Cerillos', 'type': 'Vereda', 'comuna': 'Rural'},
+    {'name': 'La Yunga', 'type': 'Vereda', 'comuna': 'Rural'},
+    {'name': 'Julumito', 'type': 'Vereda', 'comuna': 'Rural'},
+    {'name': 'San Bernardino', 'type': 'Vereda', 'comuna': 'Rural'},
+    {'name': 'Deportistas', 'type': 'Barrio', 'comuna': 'Otros'},
+    {'name': 'Los Hoyos', 'type': 'Barrio', 'comuna': 'Otros'},
+    {'name': 'Samuel Silverio', 'type': 'Barrio', 'comuna': 'Otros'},
+    {'name': 'Camino Real', 'type': 'Barrio', 'comuna': 'Otros'},
+    {'name': 'Junín', 'type': 'Barrio', 'comuna': 'Otros'},
+    {'name': 'Santa Elena', 'type': 'Barrio', 'comuna': 'Otros'},
+    {'name': 'Popular', 'type': 'Barrio', 'comuna': 'Otros'},
+    // Barrios adicionales
+    {'name': 'San Rafael', 'type': 'Barrio', 'comuna': 'Comuna 5'},
+    {'name': 'Villa Colombia', 'type': 'Barrio', 'comuna': 'Comuna 6'},
+    {'name': 'El Mirador', 'type': 'Barrio', 'comuna': 'Comuna 7'},
+    {'name': 'La Esmeralda', 'type': 'Barrio', 'comuna': 'Comuna 8'},
+    {'name': 'El Rosal', 'type': 'Barrio', 'comuna': 'Comuna 4'},
+    {'name': 'San Antonio', 'type': 'Barrio', 'comuna': 'Comuna 5'},
+    {'name': 'Villa del Sol', 'type': 'Barrio', 'comuna': 'Comuna 6'},
+    {'name': 'El Progreso', 'type': 'Barrio', 'comuna': 'Comuna 7'},
+    {'name': 'La Paz II', 'type': 'Barrio', 'comuna': 'Comuna 5'},
+    {'name': 'Santa Clara', 'type': 'Barrio', 'comuna': 'Comuna 8'},
+    // Más barrios adicionales
+    {'name': 'San Fernando', 'type': 'Barrio', 'comuna': 'Comuna 3'},
+    {'name': 'Villa del Carmen', 'type': 'Barrio', 'comuna': 'Comuna 4'},
+    {'name': 'El Libertador', 'type': 'Barrio', 'comuna': 'Comuna 5'},
+    {'name': 'La Paz III', 'type': 'Barrio', 'comuna': 'Comuna 5'},
+    {'name': 'San Ignacio', 'type': 'Barrio', 'comuna': 'Comuna 6'},
+    {'name': 'Villa del Rey', 'type': 'Barrio', 'comuna': 'Comuna 7'},
+    {'name': 'El Paraíso', 'type': 'Barrio', 'comuna': 'Comuna 8'},
+    {'name': 'San Martín', 'type': 'Barrio', 'comuna': 'Comuna 4'},
+    {'name': 'Villa Mercedes', 'type': 'Barrio', 'comuna': 'Comuna 6'},
+    {'name': 'El Jardín', 'type': 'Barrio', 'comuna': 'Comuna 7'},
   ];
 
   // Historial de búsquedas
@@ -118,12 +207,8 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
     'Centro Comercial Campanario',
   ];
 
-  // Favoritos
-  final List<String> _favorites = [
-    'Casa',
-    'Trabajo',
-    'Universidad',
-  ];
+  // Favoritos visuales mejorados
+  final Set<String> _favoritesSet = {};
 
   final List<Map<String, dynamic>> _suggestedRoutes = [
     {
@@ -158,6 +243,194 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
       'nextBus': '12 min',
       'busyLevel': 'Alto',
       'routeDetails': ['Ruta 3', 'Transpubenza'],
+    },
+    // Rutas adicionales
+    {
+      'route': 'San José + El Recuerdo',
+      'duration': '38 min',
+      'transfers': 0,
+      'walking': '6 min',
+      'stops': 20,
+      'price': '2.200',
+      'nextBus': '7 min',
+      'busyLevel': 'Medio',
+      'routeDetails': ['Ruta 4', 'Coopetrans'],
+    },
+    {
+      'route': 'Villa del Norte + El Placer',
+      'duration': '50 min',
+      'transfers': 1,
+      'walking': '10 min',
+      'stops': 28,
+      'price': '4.500',
+      'nextBus': '10 min',
+      'busyLevel': 'Bajo',
+      'routeDetails': ['Ruta 5', 'Transpubenza'],
+    },
+    {
+      'route': 'San Camilo + El Uvo',
+      'duration': '42 min',
+      'transfers': 0,
+      'walking': '7 min',
+      'stops': 19,
+      'price': '2.300',
+      'nextBus': '6 min',
+      'busyLevel': 'Medio',
+      'routeDetails': ['Ruta 6', 'Coopetrans'],
+    },
+    {
+      'route': 'Bello Horizonte + El Boquerón',
+      'duration': '48 min',
+      'transfers': 1,
+      'walking': '9 min',
+      'stops': 26,
+      'price': '4.200',
+      'nextBus': '9 min',
+      'busyLevel': 'Alto',
+      'routeDetails': ['Ruta 7', 'Transpubenza'],
+    },
+    {
+      'route': 'Alfonso López + El Limonar',
+      'duration': '36 min',
+      'transfers': 0,
+      'walking': '5 min',
+      'stops': 17,
+      'price': '2.100',
+      'nextBus': '4 min',
+      'busyLevel': 'Bajo',
+      'routeDetails': ['Ruta 8', 'Coopetrans'],
+    },
+    {
+      'route': 'San Antonio + El Paraíso',
+      'duration': '55 min',
+      'transfers': 1,
+      'walking': '12 min',
+      'stops': 30,
+      'price': '5.000',
+      'nextBus': '15 min',
+      'busyLevel': 'Medio',
+      'routeDetails': ['Ruta 9', 'Transpubenza'],
+    },
+    {
+      'route': 'Villa Mercedes + El Jardín',
+      'duration': '44 min',
+      'transfers': 0,
+      'walking': '8 min',
+      'stops': 21,
+      'price': '2.400',
+      'nextBus': '11 min',
+      'busyLevel': 'Bajo',
+      'routeDetails': ['Ruta 10', 'Coopetrans'],
+    },
+    {
+      'route': 'San Rafael + Villa Colombia',
+      'duration': '41 min',
+      'transfers': 1,
+      'walking': '9 min',
+      'stops': 23,
+      'price': '3.800',
+      'nextBus': '13 min',
+      'busyLevel': 'Medio',
+      'routeDetails': ['Ruta 11', 'Transpubenza'],
+    },
+    {
+      'route': 'El Mirador + La Esmeralda',
+      'duration': '47 min',
+      'transfers': 0,
+      'walking': '11 min',
+      'stops': 27,
+      'price': '4.100',
+      'nextBus': '8 min',
+      'busyLevel': 'Bajo',
+      'routeDetails': ['Ruta 12', 'Coopetrans'],
+    },
+    {
+      'route': 'El Rosal + San Antonio',
+      'duration': '39 min',
+      'transfers': 1,
+      'walking': '7 min',
+      'stops': 18,
+      'price': '3.200',
+      'nextBus': '10 min',
+      'busyLevel': 'Alto',
+      'routeDetails': ['Ruta 13', 'Transpubenza'],
+    },
+    {
+      'route': 'Villa del Sol + El Progreso',
+      'duration': '52 min',
+      'transfers': 0,
+      'walking': '13 min',
+      'stops': 29,
+      'price': '4.800',
+      'nextBus': '12 min',
+      'busyLevel': 'Medio',
+      'routeDetails': ['Ruta 14', 'Coopetrans'],
+    },
+    {
+      'route': 'La Paz II + Santa Clara',
+      'duration': '46 min',
+      'transfers': 1,
+      'walking': '10 min',
+      'stops': 24,
+      'price': '4.000',
+      'nextBus': '9 min',
+      'busyLevel': 'Bajo',
+      'routeDetails': ['Ruta 15', 'Transpubenza'],
+    },
+    {
+      'route': 'San Fernando + Villa del Carmen',
+      'duration': '43 min',
+      'transfers': 0,
+      'walking': '8 min',
+      'stops': 22,
+      'price': '3.600',
+      'nextBus': '7 min',
+      'busyLevel': 'Medio',
+      'routeDetails': ['Ruta 16', 'Coopetrans'],
+    },
+    {
+      'route': 'El Libertador + La Paz III',
+      'duration': '49 min',
+      'transfers': 1,
+      'walking': '12 min',
+      'stops': 28,
+      'price': '4.700',
+      'nextBus': '14 min',
+      'busyLevel': 'Alto',
+      'routeDetails': ['Ruta 17', 'Transpubenza'],
+    },
+    {
+      'route': 'San Ignacio + Villa del Rey',
+      'duration': '37 min',
+      'transfers': 0,
+      'walking': '6 min',
+      'stops': 16,
+      'price': '2.600',
+      'nextBus': '5 min',
+      'busyLevel': 'Bajo',
+      'routeDetails': ['Ruta 18', 'Coopetrans'],
+    },
+    {
+      'route': 'El Paraíso + San Martín',
+      'duration': '54 min',
+      'transfers': 1,
+      'walking': '14 min',
+      'stops': 31,
+      'price': '5.200',
+      'nextBus': '16 min',
+      'busyLevel': 'Medio',
+      'routeDetails': ['Ruta 19', 'Transpubenza'],
+    },
+    {
+      'route': 'Villa Mercedes + El Jardín + El Lago',
+      'duration': '58 min',
+      'transfers': 2,
+      'walking': '15 min',
+      'stops': 33,
+      'price': '5.800',
+      'nextBus': '18 min',
+      'busyLevel': 'Alto',
+      'routeDetails': ['Ruta 20', 'Coopetrans'],
     },
   ];
 
@@ -263,14 +536,32 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
   }
 
   Widget _buildLocationSuggestion(Map<String, dynamic> location, bool isOrigin) {
+    final isFavorite = _favoritesSet.contains(location['name']);
     return ListTile(
       leading: Icon(
         _getLocationIcon(location['type']),
         color: const Color(0xFFFF6A00),
       ),
-      title: Text(
-        location['name'],
-        style: const TextStyle(fontWeight: FontWeight.bold),
+      title: Row(
+        children: [
+          Expanded(child: Text(location['name'], style: const TextStyle(fontWeight: FontWeight.bold))),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                if (isFavorite) {
+                  _favoritesSet.remove(location['name']);
+                } else {
+                  _favoritesSet.add(location['name']);
+                }
+              });
+            },
+            child: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : Colors.grey,
+              size: 20,
+            ),
+          ),
+        ],
       ),
       subtitle: Text('${location['type']} • ${location['comuna']}'),
       onTap: () {
@@ -335,18 +626,22 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
       return;
     }
 
-    // Simular búsqueda
+    // Animación Lottie de búsqueda
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Buscando rutas...'),
-          content: const Column(
+          content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Calculando la mejor ruta para ti'),
+              SizedBox(
+                height: 120,
+                child: Lottie.asset('assets/animaciones/bus.json', repeat: true),
+              ),
+              const SizedBox(height: 16),
+              const Text('Calculando la mejor ruta para ti'),
             ],
           ),
         );
@@ -392,21 +687,43 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
               onPressed: () => Navigator.pop(context),
               child: const Text('Cerrar'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Ruta seleccionada: ${route['route']}'),
-                    backgroundColor: const Color(0xFFFF6A00),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _showRouteDetails(route),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[200],
+                      foregroundColor: Colors.black87,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text('Detalles'),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF6A00),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Seleccionar'),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Ruta seleccionada: ${route['route']}'),
+                          backgroundColor: const Color(0xFFFF6A00),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF6A00),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text('Seleccionar'),
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -426,61 +743,58 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
         backgroundColor: const Color(0xFFFF6A00),
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          // Search section
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF6A00),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-            ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Origin field
+                // Search section
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  margin: const EdgeInsets.symmetric(horizontal: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  child: TextField(
-                    controller: _originController,
-                    decoration: InputDecoration(
-                      hintText: '¿Desde dónde?',
-                      border: InputBorder.none,
-                      icon: Icon(Icons.location_on, color: Colors.grey[600]),
-                      suffixIcon: _originController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
-                                _originController.clear();
-                                _selectedOrigin = '';
-                                setState(() {
-                                  _showOriginSuggestions = false;
-                                });
-                              },
-                            )
-                          : null,
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _showOriginSuggestions = value.isNotEmpty;
-                        _selectedOrigin = value;
-                      });
-                    },
-                    onTap: () {
-                      setState(() {
-                        _showOriginSuggestions = true;
-                        _showDestinationSuggestions = false;
-                      });
-                    },
+                  child: Row(
+                    children: [
+                      Icon(Icons.search, color: Color(0xFFFF6A00), size: 28),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: _originController,
+                          decoration: InputDecoration(
+                            hintText: '¿Desde dónde?',
+                            border: InputBorder.none,
+                            hintStyle: TextStyle(color: Colors.grey[500], fontSize: 18),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _showOriginSuggestions = value.isNotEmpty;
+                              _selectedOrigin = value;
+                            });
+                          },
+                          onTap: () {
+                            setState(() {
+                              _showOriginSuggestions = true;
+                              _showDestinationSuggestions = false;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                
+
                 // Origin suggestions
                 if (_showOriginSuggestions)
                   Container(
@@ -492,7 +806,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (_favorites.isNotEmpty) ...[
+                        if (_favoritesSet.isNotEmpty) ...[
                           const Padding(
                             padding: EdgeInsets.all(15),
                             child: Text(
@@ -503,12 +817,12 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
                               ),
                             ),
                           ),
-                          ..._favorites.map((favorite) => ListTile(
+                          ..._favoritesSet.map((fav) => ListTile(
                             leading: const Icon(Icons.favorite, color: Colors.red),
-                            title: Text(favorite),
+                            title: Text(fav, style: const TextStyle(fontWeight: FontWeight.bold)),
                             onTap: () {
-                              _originController.text = favorite;
-                              _selectedOrigin = favorite;
+                              _originController.text = fav;
+                              _selectedOrigin = fav;
                               setState(() {
                                 _showOriginSuggestions = false;
                               });
@@ -611,7 +925,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (_favorites.isNotEmpty) ...[
+                        if (_favoritesSet.isNotEmpty) ...[
                           const Padding(
                             padding: EdgeInsets.all(15),
                             child: Text(
@@ -622,12 +936,12 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
                               ),
                             ),
                           ),
-                          ..._favorites.map((favorite) => ListTile(
+                          ..._favoritesSet.map((fav) => ListTile(
                             leading: const Icon(Icons.favorite, color: Colors.red),
-                            title: Text(favorite),
+                            title: Text(fav, style: const TextStyle(fontWeight: FontWeight.bold)),
                             onTap: () {
-                              _destinationController.text = favorite;
-                              _selectedDestination = favorite;
+                              _destinationController.text = fav;
+                              _selectedDestination = fav;
                               setState(() {
                                 _showDestinationSuggestions = false;
                               });
@@ -726,144 +1040,148 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
                     ),
                   ),
                 ),
+
+                // Suggested routes
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: _suggestedRoutes.length,
+                    itemBuilder: (context, index) {
+                      final route = _suggestedRoutes[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.directions_bus,
+                                      color: Color(0xFFFF6A00),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          route['route'],
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${route['duration']} • ${route['transfers']} transbordo',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  _buildBusyLevelIndicator(route['busyLevel']),
+                                ],
+                              ),
+                              const SizedBox(height: 15),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  _buildRouteInfo(
+                                    Icons.directions_walk,
+                                    'Caminar: ${route['walking']}',
+                                  ),
+                                  _buildRouteInfo(
+                                    Icons.stop_circle,
+                                    '${route['stops']} paradas',
+                                  ),
+                                  _buildRouteInfo(
+                                    Icons.attach_money,
+                                    '\$${route['price']}',
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 15),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Próximo bus: ${route['nextBus']}',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () => _showRouteDetails(route),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.grey[200],
+                                              foregroundColor: Colors.black87,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                            ),
+                                            child: const Text('Detalles'),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text('Ruta seleccionada: ${route['route']}'),
+                                                  backgroundColor: const Color(0xFFFF6A00),
+                                                ),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFFFF6A00),
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                            ),
+                                            child: const Text('Seleccionar'),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
-
-          // Suggested routes
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: _suggestedRoutes.length,
-              itemBuilder: (context, index) {
-                final route = _suggestedRoutes[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(
-                                Icons.directions_bus,
-                                color: Color(0xFFFF6A00),
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    route['route'],
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${route['duration']} • ${route['transfers']} transbordo',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            _buildBusyLevelIndicator(route['busyLevel']),
-                          ],
-                        ),
-                        const SizedBox(height: 15),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildRouteInfo(
-                              Icons.directions_walk,
-                              'Caminar: ${route['walking']}',
-                            ),
-                            _buildRouteInfo(
-                              Icons.stop_circle,
-                              '${route['stops']} paradas',
-                            ),
-                            _buildRouteInfo(
-                              Icons.attach_money,
-                              '\$${route['price']}',
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 15),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Próximo bus: ${route['nextBus']}',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Flexible(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () => _showRouteDetails(route),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.grey[200],
-                                      foregroundColor: Colors.black87,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    child: const Text('Detalles'),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Ruta seleccionada: ${route['route']}'),
-                                          backgroundColor: const Color(0xFFFF6A00),
-                                        ),
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFFF6A00),
-                                      foregroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    child: const Text('Seleccionar'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

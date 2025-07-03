@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rouwhite/view/HomePage.dart';
-import 'login.dart';
+import 'package:rouwhite/inicio_sesion_pagina.dart';
+
 
 void main() {
   runApp(const Miapp());
@@ -23,7 +23,7 @@ class Miapp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
