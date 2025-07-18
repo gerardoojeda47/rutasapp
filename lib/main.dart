@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rouwhite/inicio_sesion_pagina.dart';
-
+import 'constants/app_constants.dart';
+import 'utils/theme.dart';
 
 void main() {
   runApp(const Miapp());
@@ -13,16 +14,10 @@ class Miapp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "RouWhite - Rutas Popayán",
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-        primaryColor: const Color(0xFFFF6A00),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFFF6A00),
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
+      title: "${AppConstants.appName} - ${AppConstants.appSubtitle}",
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light, // Se puede hacer dinámico más adelante
       home: const LoginPage(),
     );
   }
