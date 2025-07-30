@@ -289,7 +289,7 @@ class _RutasPaginaState extends State<RutasPagina> {
                           const SizedBox(width: 4),
                           Text(p, style: const TextStyle(fontSize: 15)),
                         ],
-                      )),
+                      )).toList(),
                     ),
                   ),
                   const SizedBox(height: 10),

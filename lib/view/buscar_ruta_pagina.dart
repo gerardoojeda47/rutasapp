@@ -1042,7 +1042,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                 ),
 
                 // Suggested routes
-                Expanded(
+                SizedBox(
+                  height: 300, // Ajusta la altura según lo que necesites
                   child: ListView.builder(
                     padding: const EdgeInsets.all(20),
                     itemCount: _suggestedRoutes.length,
