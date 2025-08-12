@@ -314,16 +314,13 @@ class _RutasPaginaState extends State<RutasPagina> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: ruta['paradas']
-                          .map<Widget>((p) => Row(
-                                children: [
-                                  const Icon(Icons.location_on,
-                                      color: Color(0xFFFF6A00), size: 18),
-                                  const SizedBox(width: 4),
-                                  Text(p, style: const TextStyle(fontSize: 15)),
-                                ],
-                              ))
-                          .toList(),
+                      children: ruta['paradas'].map<Widget>((p) => Row(
+                        children: [
+                          const Icon(Icons.location_on, color: Color(0xFFFF6A00), size: 18),
+                          const SizedBox(width: 4),
+                          Text(p, style: const TextStyle(fontSize: 15)),
+                        ],
+                      )),
                     ),
                   ),
                   const SizedBox(height: 10),

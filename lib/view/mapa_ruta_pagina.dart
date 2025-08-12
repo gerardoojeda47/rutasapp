@@ -1,16 +1,34 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class MapaRutaPagina extends StatelessWidget {
+class MapaRutaPagina extends StatefulWidget {
   final String routeName;
-  final List<String> stops; // Lista de nombres de barrios/paradas
+  final List<String> stops;
 
   const MapaRutaPagina({
     super.key,
     required this.routeName,
     required this.stops,
   });
+
+  @override
+  State<MapaRutaPagina> createState() => _MapaRutaPaginaState();
+}
+
+class _MapaRutaPaginaState extends State<MapaRutaPagina> {
+  late final MapController _mapController;
+  bool _loadingLocation = false;
+  LatLng? _userLocation;
+  int? _selectedStopIndex;
+
+  // Para la ruta realista
+  List<LatLng> _routePoints = [];
+  List _instructions = [];
+  bool _loadingRoute = true;
+  final String _apiKey = 'TU_API_KEY_AQUI'; // <-- PON AQUÍ TU API KEY DE OPENROUTESERVICE
 
   // Coordenadas de ejemplo para algunos barrios de Popayán
   static final Map<String, LatLng> _barriosCoords = {
@@ -46,9 +64,145 @@ class MapaRutaPagina extends StatelessWidget {
   };
 
   @override
+  void initState() {
+    super.initState();
+    _mapController = MapController();
+    _fetchRoute();
+  }
+
+  Future<void> _getUserLocation() async {
+    setState(() => _loadingLocation = true);
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      _userLocation = LatLng(2.444814, -76.614739); // Simula ubicación
+      _loadingLocation = false;
+    });
+    _mapController.move(_userLocation!, 15);
+  }
+
+  Future<void> _fetchRoute() async {
+    setState(() => _loadingRoute = true);
+    final points = widget.stops
+        .map((name) => _barriosCoords[name])
+        .where((coord) => coord != null)
+        .cast<LatLng>()
+        .toList();
+    if (points.length < 2) {
+      setState(() {
+        _routePoints = points;
+        _instructions = [];
+        _loadingRoute = false;
+      });
+      return;
+    }
+    try {
+      final result = await getMultiStopRoute(stops: points, apiKey: _apiKey);
+      setState(() {
+        _routePoints = result['route'];
+        _instructions = result['instructions'];
+        _loadingRoute = false;
+      });
+    } catch (e) {
+      setState(() {
+        _routePoints = points;
+        _instructions = [];
+        _loadingRoute = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error obteniendo la ruta: $e')),
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> getMultiStopRoute({
+    required List<LatLng> stops,
+    required String apiKey,
+  }) async {
+    final coords = stops.map((p) => [p.longitude, p.latitude]).toList();
+    final url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car/geojson');
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'coordinates': coords,
+        'instructions': true,
+        'geometry_simplify': false,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List<LatLng> routePoints = (data['features'][0]['geometry']['coordinates'] as List)
+          .map<LatLng>((c) => LatLng(c[1], c[0]))
+          .toList();
+      final List instructions = data['features'][0]['properties']['segments'][0]['steps'];
+      return {
+        'route': routePoints,
+        'instructions': instructions,
+      };
+    } else {
+      throw Exception('Error obteniendo la ruta: ${response.body}');
+    }
+  }
+
+  void _showStopInfo(int index, String name, LatLng coord) {
+    setState(() => _selectedStopIndex = index);
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text('Coordenadas: ${coord.latitude.toStringAsFixed(6)}, ${coord.longitude.toStringAsFixed(6)}'),
+            if (index == 0)
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Text('Origen de la ruta', style: TextStyle(color: Colors.green)),
+              ),
+            if (index == widget.stops.length - 1)
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Text('Destino final', style: TextStyle(color: Colors.red)),
+              ),
+          ],
+        ),
+      ),
+    ).whenComplete(() => setState(() => _selectedStopIndex = null));
+  }
+
+  void _showInstructions() {
+    if (_instructions.isEmpty) return;
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => ListView.builder(
+        itemCount: _instructions.length,
+        itemBuilder: (context, i) {
+          final step = _instructions[i];
+          return ListTile(
+            leading: const Icon(Icons.directions),
+            title: Text(step['instruction'] ?? ''),
+            subtitle: Text('Distancia: ${step['distance']?.toStringAsFixed(0) ?? ''} m'),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Obtener las coordenadas de las paradas
-    final List<LatLng> points = stops
+    final List<LatLng> points = widget.stops
         .map((name) => _barriosCoords[name])
         .where((coord) => coord != null)
         .cast<LatLng>()
@@ -56,56 +210,138 @@ class MapaRutaPagina extends StatelessWidget {
 
     final LatLng initialPosition = points.isNotEmpty
         ? points.first
-        : LatLng(2.444814, -76.614739); // Centro de Popayán por defecto
+        : LatLng(2.444814, -76.614739);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Mapa de $routeName'),
-        backgroundColor: const Color(0xFFFF6A00),
-      ),
-      body: FlutterMap(
-        options: MapOptions(
-          center: initialPosition,
-          zoom: 13.5,
-        ),
+      body: Stack(
         children: [
-          TileLayer(
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c'],
-            userAgentPackageName: 'com.example.rouwhite',
-          ),
-          PolylineLayer(
-            polylines: [
-              Polyline(
-                points: points,
-                color: Colors.orange,
-                strokeWidth: 5.0,
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              center: initialPosition,
+              zoom: 13.5,
+              onTap: (_, __) {
+                Navigator.of(context).maybePop();
+              },
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: ['a', 'b', 'c'],
+                userAgentPackageName: 'com.example.rouwhite',
+              ),
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: _routePoints.isNotEmpty ? _routePoints : points,
+                    color: Colors.orange,
+                    strokeWidth: 5.0,
+                  ),
+                ],
+              ),
+              MarkerLayer(
+                markers: [
+                  for (int i = 0; i < points.length; i++)
+                    Marker(
+                      width: 60.0,
+                      height: 60.0,
+                      point: points[i],
+                      child: GestureDetector(
+                        onTap: () => _showStopInfo(i, widget.stops[i], points[i]),
+                        child: Icon(
+                          i == 0
+                              ? Icons.location_on
+                              : (i == points.length - 1
+                                  ? Icons.flag
+                                  : (_selectedStopIndex == i ? Icons.directions : Icons.circle)),
+                          color: i == 0
+                              ? Colors.green
+                              : (i == points.length - 1
+                                  ? Colors.red
+                                  : (_selectedStopIndex == i ? Colors.blue : Colors.orange)),
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                  if (_userLocation != null)
+                    Marker(
+                      width: 60,
+                      height: 60,
+                      point: _userLocation!,
+                      child: const Icon(Icons.person_pin_circle, color: Colors.blue, size: 36),
+                    ),
+                ],
               ),
             ],
           ),
-          MarkerLayer(
-            markers: [
-              for (int i = 0; i < points.length; i++)
-                Marker(
-                  width: 60.0,
-                  height: 60.0,
-                  point: points[i],
-                  child: Icon(
-                    i == 0
-                        ? Icons.location_on
-                        : (i == points.length - 1
-                            ? Icons.flag
-                            : Icons.circle),
-                    color: i == 0
-                        ? Colors.green
-                        : (i == points.length - 1
-                            ? Colors.red
-                            : Colors.orange),
-                    size: 36,
-                  ),
-                ),
-            ],
+          // Botón de regreso flotante
+          Positioned(
+            top: 40,
+            left: 16,
+            child: FloatingActionButton(
+              mini: true,
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              elevation: 2,
+              onPressed: () => Navigator.pop(context),
+              child: const Icon(Icons.arrow_back),
+            ),
           ),
+          // Botón para centrar en usuario
+          Positioned(
+            bottom: 40,
+            right: 16,
+            child: FloatingActionButton(
+              heroTag: 'centerUser',
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              onPressed: _getUserLocation,
+              child: const Icon(Icons.my_location),
+            ),
+          ),
+          // Botones de zoom
+          Positioned(
+            bottom: 110,
+            right: 16,
+            child: Column(
+              children: [
+                FloatingActionButton(
+                  heroTag: 'zoomIn',
+                  mini: true,
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  onPressed: () => _mapController.move(_mapController.center, _mapController.zoom + 1),
+                  child: const Icon(Icons.add),
+                ),
+                const SizedBox(height: 8),
+                FloatingActionButton(
+                  heroTag: 'zoomOut',
+                  mini: true,
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  onPressed: () => _mapController.move(_mapController.center, _mapController.zoom - 1),
+                  child: const Icon(Icons.remove),
+                ),
+              ],
+            ),
+          ),
+          // Botón para ver instrucciones
+          Positioned(
+            bottom: 180,
+            right: 16,
+            child: FloatingActionButton(
+              heroTag: 'instructions',
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              onPressed: _showInstructions,
+              child: const Icon(Icons.list),
+            ),
+          ),
+          // Indicador de carga de ubicación o ruta
+          if (_loadingLocation || _loadingRoute)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
         ],
       ),
     );
