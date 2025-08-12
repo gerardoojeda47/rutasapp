@@ -359,14 +359,11 @@ class _ParadasPaginaState extends State<ParadasPagina> {
 
   List<String> _getFilteredBarrios() {
     if (_searchQuery.isEmpty) return [];
-    
+
     List<String> filteredBarrios = [];
     _comunas.forEach((comuna, barrios) {
-      filteredBarrios.addAll(
-        barrios.where((barrio) => 
-          barrio.toLowerCase().contains(_searchQuery.toLowerCase())
-        )
-      );
+      filteredBarrios.addAll(barrios.where((barrio) =>
+          barrio.toLowerCase().contains(_searchQuery.toLowerCase())));
     });
     return filteredBarrios;
   }
@@ -452,13 +449,16 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: _getTrafficColor(ruta['estadoTrafico']).withValues(alpha: 0.1),
+                                    color:
+                                        _getTrafficColor(ruta['estadoTrafico'])
+                                            .withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     ruta['estadoTrafico'],
                                     style: TextStyle(
-                                      color: _getTrafficColor(ruta['estadoTrafico']),
+                                      color: _getTrafficColor(
+                                          ruta['estadoTrafico']),
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -477,16 +477,21 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                               'Paradas:',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            ...ruta['paradas'].map((parada) => Padding(
-                              padding: const EdgeInsets.only(left: 16, top: 4),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.location_on, size: 16, color: Color(0xFFFF6A00)),
-                                  const SizedBox(width: 8),
-                                  Text(parada),
-                                ],
-                              ),
-                            )),
+                            ...ruta['paradas']
+                                .map((parada) => Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 16, top: 4),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.location_on,
+                                              size: 16,
+                                              color: Color(0xFFFF6A00)),
+                                          const SizedBox(width: 8),
+                                          Text(parada),
+                                        ],
+                                      ),
+                                    ))
+                                .toList(),
                             const SizedBox(height: 8),
                             const Text(
                               'Información del bus:',
@@ -502,11 +507,15 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                             ),
                             Wrap(
                               spacing: 8,
-                              children: (ruta['servicios'] as List<String>).map((servicio) => Chip(
-                                label: Text(servicio),
-                                backgroundColor: const Color(0xFFFF6A00).withValues(alpha: 0.1),
-                                labelStyle: const TextStyle(color: Color(0xFFFF6A00)),
-                              )).toList(),
+                              children: (ruta['servicios'] as List<String>)
+                                  .map((servicio) => Chip(
+                                        label: Text(servicio),
+                                        backgroundColor: const Color(0xFFFF6A00)
+                                            .withValues(alpha: 0.1),
+                                        labelStyle: const TextStyle(
+                                            color: Color(0xFFFF6A00)),
+                                      ))
+                                  .toList(),
                             ),
                           ],
                         ),
@@ -592,7 +601,8 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
+                              color: const Color(0xFFFF6A00)
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
@@ -608,7 +618,8 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                             _getComunaForBarrio(barrio),
                             style: TextStyle(color: Colors.grey[600]),
                           ),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                          trailing:
+                              const Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () => _showRutasDialog(barrio),
                         ),
                       );
@@ -620,7 +631,7 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                     itemBuilder: (context, index) {
                       String comuna = _comunas.keys.elementAt(index);
                       List<String> barrios = _comunas[comuna]!;
-                      
+
                       return Card(
                         margin: const EdgeInsets.only(bottom: 16),
                         elevation: 4,
@@ -631,7 +642,8 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
+                              color: const Color(0xFFFF6A00)
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
@@ -651,25 +663,32 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                             '${barrios.length} barrios',
                             style: TextStyle(color: Colors.grey[600]),
                           ),
-                          children: barrios.map((barrio) => ListTile(
-                            leading: const Icon(Icons.location_on, color: Color(0xFFFF6A00)),
-                            title: Text(barrio),
-                            subtitle: Text(
-                              _rutasPorBarrio.containsKey(barrio) 
-                                  ? '${_rutasPorBarrio[barrio]!.length} rutas disponibles'
-                                  : 'Sin rutas registradas',
-                              style: TextStyle(
-                                color: _rutasPorBarrio.containsKey(barrio) 
-                                    ? Colors.green 
-                                    : Colors.grey,
-                                fontSize: 12,
-                              ),
-                            ),
-                            trailing: _rutasPorBarrio.containsKey(barrio)
-                                ? const Icon(Icons.check_circle, color: Colors.green, size: 16)
-                                : const Icon(Icons.info_outline, color: Colors.grey, size: 16),
-                            onTap: () => _showRutasDialog(barrio),
-                          )).toList(),
+                          children: barrios
+                              .map((barrio) => ListTile(
+                                    leading: const Icon(Icons.location_on,
+                                        color: Color(0xFFFF6A00)),
+                                    title: Text(barrio),
+                                    subtitle: Text(
+                                      _rutasPorBarrio.containsKey(barrio)
+                                          ? '${_rutasPorBarrio[barrio]!.length} rutas disponibles'
+                                          : 'Sin rutas registradas',
+                                      style: TextStyle(
+                                        color:
+                                            _rutasPorBarrio.containsKey(barrio)
+                                                ? Colors.green
+                                                : Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    trailing:
+                                        _rutasPorBarrio.containsKey(barrio)
+                                            ? const Icon(Icons.check_circle,
+                                                color: Colors.green, size: 16)
+                                            : const Icon(Icons.info_outline,
+                                                color: Colors.grey, size: 16),
+                                    onTap: () => _showRutasDialog(barrio),
+                                  ))
+                              .toList(),
                         ),
                       );
                     },
@@ -694,4 +713,4 @@ class _ParadasPaginaState extends State<ParadasPagina> {
     _searchController.dispose();
     super.dispose();
   }
-} 
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'ver_buses_pagina.dart';
 import 'mapa_ruta_pagina.dart';
+import '../model/favoritos.dart';
 
 class RutasPagina extends StatefulWidget {
   const RutasPagina({super.key});
@@ -140,6 +141,11 @@ class _RutasPaginaState extends State<RutasPagina> {
   void _toggleFavorito(int index) {
     setState(() {
       _rutas[index]['favorito'] = !_rutas[index]['favorito'];
+      if (_rutas[index]['favorito']) {
+        Favoritos().agregar(_rutas[index]);
+      } else {
+        Favoritos().quitar(_rutas[index]);
+      }
     });
   }
 
@@ -164,7 +170,8 @@ class _RutasPaginaState extends State<RutasPagina> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         image: const DecorationImage(
-          image: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Popayan_Panoramica.jpg/640px-Popayan_Panoramica.jpg'),
+          image: NetworkImage(
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Popayan_Panoramica.jpg/640px-Popayan_Panoramica.jpg'),
           fit: BoxFit.cover,
         ),
         boxShadow: [
@@ -187,7 +194,8 @@ class _RutasPaginaState extends State<RutasPagina> {
             ),
             child: const Text(
               'Mapa de referencia',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
             ),
           ),
         ),
@@ -200,7 +208,8 @@ class _RutasPaginaState extends State<RutasPagina> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
       appBar: AppBar(
-        title: const Text('Rutas de Popayán', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Rutas de Popayán',
+            style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFFF6A00),
         centerTitle: true,
         elevation: 0,
@@ -230,7 +239,8 @@ class _RutasPaginaState extends State<RutasPagina> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.all(8),
-                        child: const Icon(Icons.directions_bus, color: Color(0xFFFF6A00), size: 28),
+                        child: const Icon(Icons.directions_bus,
+                            color: Color(0xFFFF6A00), size: 28),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -262,7 +272,28 @@ class _RutasPaginaState extends State<RutasPagina> {
                           ruta['favorito'] ? Icons.star : Icons.star_border,
                           color: ruta['favorito'] ? Colors.amber : Colors.grey,
                         ),
-                        onPressed: () => _toggleFavorito(index),
+                        onPressed: () {
+                          _toggleFavorito(index);
+                          if (_rutas[index]['favorito']) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FavoritosPagina(
+                                  onRemoveFavorito: (nombreRuta) {
+                                    setState(() {
+                                      final idx = _rutas.indexWhere(
+                                          (r) => r['nombre'] == nombreRuta);
+                                      if (idx != -1) {
+                                        _rutas[idx]['favorito'] = false;
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
+                            ).then(
+                                (_) => setState(() {})); // Refresca al volver
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -283,41 +314,50 @@ class _RutasPaginaState extends State<RutasPagina> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: ruta['paradas'].map<Widget>((p) => Row(
-                        children: [
-                          const Icon(Icons.location_on, color: Color(0xFFFF6A00), size: 18),
-                          const SizedBox(width: 4),
-                          Text(p, style: const TextStyle(fontSize: 15)),
-                        ],
-                      )),
+                      children: ruta['paradas']
+                          .map<Widget>((p) => Row(
+                                children: [
+                                  const Icon(Icons.location_on,
+                                      color: Color(0xFFFF6A00), size: 18),
+                                  const SizedBox(width: 4),
+                                  Text(p, style: const TextStyle(fontSize: 15)),
+                                ],
+                              ))
+                          .toList(),
                     ),
                   ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(Icons.access_time, size: 18, color: Colors.grey),
+                      const Icon(Icons.access_time,
+                          size: 18, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text('Horario: ${ruta['horario']}'),
                       const SizedBox(width: 16),
-                      const Icon(Icons.attach_money, size: 18, color: Colors.green),
+                      const Icon(Icons.attach_money,
+                          size: 18, color: Colors.green),
                       Text(ruta['costo']),
                     ],
                   ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      Icon(_traficoIcon(ruta['trafico']), color: _traficoColor(ruta['trafico']), size: 18),
+                      Icon(_traficoIcon(ruta['trafico']),
+                          color: _traficoColor(ruta['trafico']), size: 18),
                       const SizedBox(width: 4),
                       Text('Tráfico: ${ruta['trafico']}'),
                       const SizedBox(width: 16),
-                      const Icon(Icons.directions_bus_filled, size: 18, color: Colors.blue),
+                      const Icon(Icons.directions_bus_filled,
+                          size: 18, color: Colors.blue),
                       Text('Próximo bus: ${ruta['proxBus']}'),
                     ],
                   ),
                   const SizedBox(height: 14),
                   AnimatedCrossFade(
                     duration: const Duration(milliseconds: 300),
-                    crossFadeState: seleccionada ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                    crossFadeState: seleccionada
+                        ? CrossFadeState.showFirst
+                        : CrossFadeState.showSecond,
                     firstChild: _buildImagenMapa(),
                     secondChild: const SizedBox.shrink(),
                   ),
@@ -344,7 +384,8 @@ class _RutasPaginaState extends State<RutasPagina> {
                             );
                           },
                           icon: const Icon(Icons.map, color: Colors.white),
-                          label: const Text('Ver mapa', style: TextStyle(color: Colors.white)),
+                          label: const Text('Ver mapa',
+                              style: TextStyle(color: Colors.white)),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -357,8 +398,10 @@ class _RutasPaginaState extends State<RutasPagina> {
                             ),
                           ),
                           onPressed: () => _rastrearBus(index),
-                          icon: const Icon(Icons.location_searching, color: Colors.white),
-                          label: const Text('Rastrear', style: TextStyle(color: Colors.white)),
+                          icon: const Icon(Icons.location_searching,
+                              color: Colors.white),
+                          label: const Text('Rastrear',
+                              style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],
@@ -371,4 +414,4 @@ class _RutasPaginaState extends State<RutasPagina> {
       ),
     );
   }
-} 
+}

@@ -6,6 +6,8 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_map/flutter_map.dart' as fm;
 import 'package:latlong2/latlong.dart';
 import 'buscar_ruta_pagina.dart';
+import '../model/favoritos.dart'; // Agrega este import
+import '../view/driver/driver.dart'; // Asegúrate que este archivo contiene la clase DriverPage
 
 class Homepage extends StatefulWidget {
   final String username;
@@ -16,10 +18,25 @@ class Homepage extends StatefulWidget {
   State<Homepage> createState() => _HomepageState();
 }
 
+// Placeholder widget for empty pages (e.g., Favoritos)
+class EmptyPage extends StatelessWidget {
+  const EmptyPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Página vacía',
+        style: TextStyle(fontSize: 18, color: Colors.grey),
+      ),
+    );
+  }
+}
+
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 0;
-  
-  late final List<Widget> _pages;
+
+  late List<Widget> _pages;
 
   @override
   void initState() {
@@ -28,7 +45,11 @@ class _HomepageState extends State<Homepage> {
       const HomeContent(),
       const RutasPagina(),
       const ParadasPagina(),
-      PerfilUsuarioPagina(username: widget.username, onLogout: widget.onLogout),
+      FavoritosPagina(
+        onRemoveFavorito: (_) {
+          setState(() {}); // Refresca la pantalla principal
+        },
+      ),
     ];
   }
 
@@ -36,6 +57,55 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: PopupMenuButton<String>(
+          icon: const Icon(Icons.menu),
+          onSelected: (value) {
+            if (value == 'perfil') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PerfilUsuarioPagina(
+                    username: widget.username,
+                    onLogout: widget.onLogout,
+                  ),
+                ),
+              );
+            } else if (value == 'registrarse') {
+              Navigator.pushNamed(context, '/registro');
+            } else if (value == 'conductor') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const Driver(), // Usa 'const' si DriverPage es StatelessWidget
+                ),
+              );
+            }
+          },
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'perfil',
+              child: ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Perfil'),
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'registrarse',
+              child: ListTile(
+                leading: Icon(Icons.app_registration),
+                title: Text('Registrarse'),
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'conductor',
+              child: ListTile(
+                leading: Icon(Icons.drive_eta), // Icono de conductor
+                title: Text('Conductor'),
+              ),
+            ),
+          ],
+        ),
         title: const Text(
           'ROUWHITE',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -66,7 +136,7 @@ class _HomepageState extends State<Homepage> {
             icon: Icon(Icons.location_on),
             label: 'Paradas',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.star), label: 'favoritos'),
         ],
       ),
     );
@@ -94,6 +164,7 @@ class _HomeContentState extends State<HomeContent> {
       MaterialPageRoute(builder: (context) => const BuscarRutaPagina()),
     );
   }
+
   void _showTourismInfo() {
     showDialog(
       context: context,
@@ -290,7 +361,10 @@ class _HomeContentState extends State<HomeContent> {
                             children: [
                               const Text(
                                 'Descubre los mejores lugares turísticos de Popayán y sus alrededores',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 15),
@@ -381,11 +455,23 @@ class _HomeContentState extends State<HomeContent> {
   }
 }
 
-class RouteCard extends StatelessWidget {
+class RouteCard extends StatefulWidget {
   final String name;
   final String subtitle;
   final bool isFirst;
 
+  const RouteCard({
+    super.key,
+    required this.name,
+    required this.subtitle,
+    this.isFirst = false,
+  });
+
+  @override
+  State<RouteCard> createState() => _RouteCardState();
+}
+
+class _RouteCardState extends State<RouteCard> {
   static final Map<String, LatLng> _barriosCoords = {
     'Centro': const LatLng(2.444814, -76.614739),
     'La Paz': const LatLng(2.449000, -76.601000),
@@ -418,19 +504,16 @@ class RouteCard extends StatelessWidget {
     'Poblado Altos Sauces': const LatLng(2.439000, -76.629000),
   };
 
-  const RouteCard({
-    super.key,
-    required this.name,
-    required this.subtitle,
-    this.isFirst = false,
-  });
-
   @override
   Widget build(BuildContext context) {
-    final LatLng? start = _barriosCoords[name];
-    final LatLng? end = _barriosCoords[subtitle];
-    final List<LatLng> points = [if (start != null) start, if (end != null) end];
-    final LatLng center = points.isNotEmpty ? points.first : const LatLng(2.444814, -76.614739);
+    final LatLng? start = _barriosCoords[widget.name];
+    final LatLng? end = _barriosCoords[widget.subtitle];
+    final List<LatLng> points = [
+      if (start != null) start,
+      if (end != null) end
+    ];
+    final LatLng center =
+        points.isNotEmpty ? points.first : const LatLng(2.444814, -76.614739);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
@@ -440,7 +523,6 @@ class RouteCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
@@ -472,7 +554,8 @@ class RouteCard extends StatelessWidget {
                     ),
                     children: [
                       fm.TileLayer(
-                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                         subdomains: const ['a', 'b', 'c'],
                         userAgentPackageName: 'com.example.rouwhite',
                       ),
@@ -493,14 +576,16 @@ class RouteCard extends StatelessWidget {
                               width: 30,
                               height: 30,
                               point: start,
-                              child: const Icon(Icons.location_on, color: Colors.green, size: 24),
+                              child: const Icon(Icons.location_on,
+                                  color: Colors.green, size: 24),
                             ),
                           if (end != null)
                             fm.Marker(
                               width: 30,
                               height: 30,
                               point: end,
-                              child: const Icon(Icons.flag, color: Colors.red, size: 24),
+                              child: const Icon(Icons.flag,
+                                  color: Colors.red, size: 24),
                             ),
                         ],
                       ),
@@ -528,24 +613,23 @@ class RouteCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  widget.name,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  subtitle,
+                  widget.subtitle,
                   style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
               ],
             ),
           ),
-          if (isFirst)
+          if (widget.isFirst)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                // ignore: deprecated_member_use
                 color: const Color(0xFF4CAF50).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -557,7 +641,165 @@ class RouteCard extends StatelessWidget {
                 ),
               ),
             ),
+          IconButton(
+            icon: Icon(
+              Favoritos().esFavorito(widget.name)
+                  ? Icons.star
+                  : Icons.star_border,
+              color: Favoritos().esFavorito(widget.name)
+                  ? Colors.amber
+                  : Colors.grey,
+            ),
+            onPressed: () {
+              setState(() {
+                if (Favoritos().esFavorito(widget.name)) {
+                  Favoritos().quitar(
+                      {'nombre': widget.name, 'empresa': widget.subtitle});
+                } else {
+                  Favoritos().agregar(
+                      {'nombre': widget.name, 'empresa': widget.subtitle});
+                }
+              });
+            },
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class FavoritosPagina extends StatefulWidget {
+  final void Function(String nombreRuta)? onRemoveFavorito;
+  const FavoritosPagina({super.key, this.onRemoveFavorito});
+
+  @override
+  State<FavoritosPagina> createState() => _FavoritosPaginaState();
+}
+
+class _FavoritosPaginaState extends State<FavoritosPagina> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Favoritos'),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFFF6A00),
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Tus rutas favoritas',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Lista de rutas favoritas
+            for (var favorito in Favoritos().favoritos)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Dismissible(
+                  key: Key(favorito['nombre']),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    setState(() {
+                      Favoritos().quitar(favorito);
+                    });
+                    // Mostrar snackbar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Ruta ${favorito['nombre']} eliminada de favoritos',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  background: Container(
+                    alignment: Alignment.centerRight,
+                    color: Colors.red,
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 20),
+                      child: Icon(Icons.delete, color: Colors.white),
+                    ),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                favorito['nombre'],
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                favorito['empresa'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Favoritos().esFavorito(favorito['nombre'])
+                                ? Icons.star
+                                : Icons.star_border,
+                            color: Favoritos().esFavorito(favorito['nombre'])
+                                ? Colors.amber
+                                : Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              if (Favoritos().esFavorito(favorito['nombre'])) {
+                                Favoritos().quitar(favorito);
+                              } else {
+                                Favoritos().agregar(favorito);
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 80),
+          ],
+        ),
       ),
     );
   }

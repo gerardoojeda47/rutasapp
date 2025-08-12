@@ -38,7 +38,7 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
     {'name': 'Alameda', 'type': 'Barrio', 'comuna': 'Comuna 1'},
     {'name': 'Plateado', 'type': 'Barrio', 'comuna': 'Comuna 1'},
     {'name': 'Poblado Altos Sauces', 'type': 'Barrio', 'comuna': 'Comuna 1'},
-    
+
     // Comuna 2
     {'name': 'González', 'type': 'Barrio', 'comuna': 'Comuna 2'},
     {'name': 'El Tablazo', 'type': 'Barrio', 'comuna': 'Comuna 2'},
@@ -69,7 +69,7 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
     {'name': 'Villa del Norte', 'type': 'Barrio', 'comuna': 'Comuna 2'},
     {'name': 'La Primavera', 'type': 'Barrio', 'comuna': 'Comuna 2'},
     {'name': 'Rinconcito Primaveral', 'type': 'Barrio', 'comuna': 'Comuna 2'},
-    
+
     // Comunas 3, 4, 5, 6 y 8
     {'name': 'Alfonso López', 'type': 'Barrio', 'comuna': 'Comuna 3'},
     {'name': 'Calicanto', 'type': 'Barrio', 'comuna': 'Comuna 3'},
@@ -80,13 +80,13 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
     {'name': 'El Pajonal', 'type': 'Barrio', 'comuna': 'Comuna 3'},
     {'name': 'Gabriel G. Marqués', 'type': 'Barrio', 'comuna': 'Comuna 3'},
     {'name': 'Jorge E.', 'type': 'Barrio', 'comuna': 'Comuna 3'},
-    
+
     // Zona Rural
     {'name': 'Los Cerillos', 'type': 'Vereda', 'comuna': 'Rural'},
     {'name': 'La Yunga', 'type': 'Vereda', 'comuna': 'Rural'},
     {'name': 'Julumito', 'type': 'Vereda', 'comuna': 'Rural'},
     {'name': 'San Bernardino', 'type': 'Vereda', 'comuna': 'Rural'},
-    
+
     // Otros Barrios
     {'name': 'Deportistas', 'type': 'Barrio', 'comuna': 'Otros'},
     {'name': 'Los Hoyos', 'type': 'Barrio', 'comuna': 'Otros'},
@@ -95,25 +95,45 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
     {'name': 'Junín', 'type': 'Barrio', 'comuna': 'Otros'},
     {'name': 'Santa Elena', 'type': 'Barrio', 'comuna': 'Otros'},
     {'name': 'Popular', 'type': 'Barrio', 'comuna': 'Otros'},
-    
+
     // Puntos de Interés
     {'name': 'Terminal de Transportes', 'type': 'Terminal', 'comuna': 'Centro'},
-    {'name': 'Universidad del Cauca', 'type': 'Universidad', 'comuna': 'Centro'},
+    {
+      'name': 'Universidad del Cauca',
+      'type': 'Universidad',
+      'comuna': 'Centro'
+    },
     {'name': 'Hospital San José', 'type': 'Hospital', 'comuna': 'Centro'},
-    {'name': 'Centro Comercial Campanario', 'type': 'Centro Comercial', 'comuna': 'Centro'},
+    {
+      'name': 'Centro Comercial Campanario',
+      'type': 'Centro Comercial',
+      'comuna': 'Centro'
+    },
     {'name': 'Plaza de Mercado', 'type': 'Mercado', 'comuna': 'Centro'},
     {'name': 'Parque Caldas', 'type': 'Parque', 'comuna': 'Centro'},
     {'name': 'Museo de Arte Religioso', 'type': 'Museo', 'comuna': 'Centro'},
     {'name': 'Iglesia de San Francisco', 'type': 'Iglesia', 'comuna': 'Centro'},
     {'name': 'Puente del Humilladero', 'type': 'Monumento', 'comuna': 'Centro'},
     {'name': 'Morro de Tulcán', 'type': 'Monumento', 'comuna': 'Centro'},
-    {'name': 'Cerro de las Tres Cruces', 'type': 'Monumento', 'comuna': 'Centro'},
-    {'name': 'Aeropuerto Guillermo León Valencia', 'type': 'Aeropuerto', 'comuna': 'Rural'},
+    {
+      'name': 'Cerro de las Tres Cruces',
+      'type': 'Monumento',
+      'comuna': 'Centro'
+    },
+    {
+      'name': 'Aeropuerto Guillermo León Valencia',
+      'type': 'Aeropuerto',
+      'comuna': 'Rural'
+    },
     // Más barrios y puntos de interés
     {'name': 'San José', 'type': 'Barrio', 'comuna': 'Comuna 4'},
     {'name': 'La Paz', 'type': 'Barrio', 'comuna': 'Comuna 5'},
     {'name': 'El Recuerdo', 'type': 'Barrio', 'comuna': 'Comuna 6'},
-    {'name': 'Hospital Universitario', 'type': 'Hospital', 'comuna': 'Comuna 3'},
+    {
+      'name': 'Hospital Universitario',
+      'type': 'Hospital',
+      'comuna': 'Comuna 3'
+    },
     {'name': 'Parque Infantil', 'type': 'Parque', 'comuna': 'Comuna 2'},
     {'name': 'San Camilo', 'type': 'Barrio', 'comuna': 'Comuna 7'},
     {'name': 'El Uvo', 'type': 'Barrio', 'comuna': 'Comuna 2'},
@@ -124,17 +144,33 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
     {'name': 'El Limonar', 'type': 'Barrio', 'comuna': 'Comuna 3'},
     {'name': 'El Boquerón', 'type': 'Barrio', 'comuna': 'Comuna 3'},
     {'name': 'Terminal de Transportes', 'type': 'Terminal', 'comuna': 'Centro'},
-    {'name': 'Universidad del Cauca', 'type': 'Universidad', 'comuna': 'Centro'},
+    {
+      'name': 'Universidad del Cauca',
+      'type': 'Universidad',
+      'comuna': 'Centro'
+    },
     {'name': 'Hospital San José', 'type': 'Hospital', 'comuna': 'Centro'},
-    {'name': 'Centro Comercial Campanario', 'type': 'Centro Comercial', 'comuna': 'Centro'},
+    {
+      'name': 'Centro Comercial Campanario',
+      'type': 'Centro Comercial',
+      'comuna': 'Centro'
+    },
     {'name': 'Plaza de Mercado', 'type': 'Mercado', 'comuna': 'Centro'},
     {'name': 'Parque Caldas', 'type': 'Parque', 'comuna': 'Centro'},
     {'name': 'Museo de Arte Religioso', 'type': 'Museo', 'comuna': 'Centro'},
     {'name': 'Iglesia de San Francisco', 'type': 'Iglesia', 'comuna': 'Centro'},
     {'name': 'Puente del Humilladero', 'type': 'Monumento', 'comuna': 'Centro'},
     {'name': 'Morro de Tulcán', 'type': 'Monumento', 'comuna': 'Centro'},
-    {'name': 'Cerro de las Tres Cruces', 'type': 'Monumento', 'comuna': 'Centro'},
-    {'name': 'Aeropuerto Guillermo León Valencia', 'type': 'Aeropuerto', 'comuna': 'Rural'},
+    {
+      'name': 'Cerro de las Tres Cruces',
+      'type': 'Monumento',
+      'comuna': 'Centro'
+    },
+    {
+      'name': 'Aeropuerto Guillermo León Valencia',
+      'type': 'Aeropuerto',
+      'comuna': 'Rural'
+    },
     // Nuevos barrios y lugares
     {'name': 'Villa del Norte', 'type': 'Barrio', 'comuna': 'Comuna 2'},
     {'name': 'La Primavera', 'type': 'Barrio', 'comuna': 'Comuna 2'},
@@ -436,8 +472,10 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
 
   List<Map<String, dynamic>> _getFilteredLocations(String query) {
     if (query.isEmpty) return [];
-    return _locations.where((location) =>
-        location['name'].toLowerCase().contains(query.toLowerCase())).toList();
+    return _locations
+        .where((location) =>
+            location['name'].toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   Widget _buildOptionDropdown({
@@ -474,7 +512,7 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
   Widget _buildBusyLevelIndicator(String level) {
     Color color;
     IconData icon;
-    
+
     switch (level.toLowerCase()) {
       case 'bajo':
         color = Colors.green;
@@ -535,7 +573,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
     );
   }
 
-  Widget _buildLocationSuggestion(Map<String, dynamic> location, bool isOrigin) {
+  Widget _buildLocationSuggestion(
+      Map<String, dynamic> location, bool isOrigin) {
     final isFavorite = _favoritesSet.contains(location['name']);
     return ListTile(
       leading: Icon(
@@ -544,7 +583,9 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
       ),
       title: Row(
         children: [
-          Expanded(child: Text(location['name'], style: const TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              child: Text(location['name'],
+                  style: const TextStyle(fontWeight: FontWeight.bold))),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -638,7 +679,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
             children: [
               SizedBox(
                 height: 120,
-                child: Lottie.asset('assets/animaciones/bus.json', repeat: true),
+                child:
+                    Lottie.asset('assets/animaciones/bus.json', repeat: true),
               ),
               const SizedBox(height: 16),
               const Text('Calculando la mejor ruta para ti'),
@@ -753,7 +795,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                 // Search section
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 0),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
@@ -775,7 +818,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                           decoration: InputDecoration(
                             hintText: '¿Desde dónde?',
                             border: InputBorder.none,
-                            hintStyle: TextStyle(color: Colors.grey[500], fontSize: 18),
+                            hintStyle: TextStyle(
+                                color: Colors.grey[500], fontSize: 18),
                           ),
                           onChanged: (value) {
                             setState(() {
@@ -817,17 +861,22 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                               ),
                             ),
                           ),
-                          ..._favoritesSet.map((fav) => ListTile(
-                            leading: const Icon(Icons.favorite, color: Colors.red),
-                            title: Text(fav, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            onTap: () {
-                              _originController.text = fav;
-                              _selectedOrigin = fav;
-                              setState(() {
-                                _showOriginSuggestions = false;
-                              });
-                            },
-                          )),
+                          ..._favoritesSet
+                              .map((fav) => ListTile(
+                                    leading: const Icon(Icons.favorite,
+                                        color: Colors.red),
+                                    title: Text(fav,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    onTap: () {
+                                      _originController.text = fav;
+                                      _selectedOrigin = fav;
+                                      setState(() {
+                                        _showOriginSuggestions = false;
+                                      });
+                                    },
+                                  ))
+                              .toList(),
                           const Divider(),
                         ],
                         if (_searchHistory.isNotEmpty) ...[
@@ -841,17 +890,20 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                               ),
                             ),
                           ),
-                          ..._searchHistory.map((history) => ListTile(
-                            leading: const Icon(Icons.history, color: Colors.grey),
-                            title: Text(history),
-                            onTap: () {
-                              _originController.text = history;
-                              _selectedOrigin = history;
-                              setState(() {
-                                _showOriginSuggestions = false;
-                              });
-                            },
-                          )),
+                          ..._searchHistory
+                              .map((history) => ListTile(
+                                    leading: const Icon(Icons.history,
+                                        color: Colors.grey),
+                                    title: Text(history),
+                                    onTap: () {
+                                      _originController.text = history;
+                                      _selectedOrigin = history;
+                                      setState(() {
+                                        _showOriginSuggestions = false;
+                                      });
+                                    },
+                                  ))
+                              .toList(),
                           const Divider(),
                         ],
                         const Padding(
@@ -866,13 +918,15 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                         ),
                         ..._getFilteredLocations(_originController.text)
                             .take(5)
-                            .map((location) => _buildLocationSuggestion(location, true)),
+                            .map((location) =>
+                                _buildLocationSuggestion(location, true))
+                            .toList(),
                       ],
                     ),
                   ),
 
                 const SizedBox(height: 15),
-                
+
                 // Destination field
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -936,17 +990,22 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                               ),
                             ),
                           ),
-                          ..._favoritesSet.map((fav) => ListTile(
-                            leading: const Icon(Icons.favorite, color: Colors.red),
-                            title: Text(fav, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            onTap: () {
-                              _destinationController.text = fav;
-                              _selectedDestination = fav;
-                              setState(() {
-                                _showDestinationSuggestions = false;
-                              });
-                            },
-                          )),
+                          ..._favoritesSet
+                              .map((fav) => ListTile(
+                                    leading: const Icon(Icons.favorite,
+                                        color: Colors.red),
+                                    title: Text(fav,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    onTap: () {
+                                      _destinationController.text = fav;
+                                      _selectedDestination = fav;
+                                      setState(() {
+                                        _showDestinationSuggestions = false;
+                                      });
+                                    },
+                                  ))
+                              .toList(),
                           const Divider(),
                         ],
                         if (_searchHistory.isNotEmpty) ...[
@@ -960,17 +1019,20 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                               ),
                             ),
                           ),
-                          ..._searchHistory.map((history) => ListTile(
-                            leading: const Icon(Icons.history, color: Colors.grey),
-                            title: Text(history),
-                            onTap: () {
-                              _destinationController.text = history;
-                              _selectedDestination = history;
-                              setState(() {
-                                _showDestinationSuggestions = false;
-                              });
-                            },
-                          )),
+                          ..._searchHistory
+                              .map((history) => ListTile(
+                                    leading: const Icon(Icons.history,
+                                        color: Colors.grey),
+                                    title: Text(history),
+                                    onTap: () {
+                                      _destinationController.text = history;
+                                      _selectedDestination = history;
+                                      setState(() {
+                                        _showDestinationSuggestions = false;
+                                      });
+                                    },
+                                  ))
+                              .toList(),
                           const Divider(),
                         ],
                         const Padding(
@@ -985,13 +1047,15 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                         ),
                         ..._getFilteredLocations(_destinationController.text)
                             .take(5)
-                            .map((location) => _buildLocationSuggestion(location, false)),
+                            .map((location) =>
+                                _buildLocationSuggestion(location, false))
+                            .toList(),
                       ],
                     ),
                   ),
 
                 const SizedBox(height: 15),
-                
+
                 // Options row
                 Row(
                   children: [
@@ -1008,7 +1072,11 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                     Expanded(
                       child: _buildOptionDropdown(
                         value: _selectedPreference,
-                        items: ['Más rápido', 'Menos transbordos', 'Menos caminar'],
+                        items: [
+                          'Más rápido',
+                          'Menos transbordos',
+                          'Menos caminar'
+                        ],
                         onChanged: (value) {
                           setState(() => _selectedPreference = value!);
                         },
@@ -1017,7 +1085,7 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                   ],
                 ),
                 const SizedBox(height: 15),
-                
+
                 // Search button
                 SizedBox(
                   width: double.infinity,
@@ -1064,7 +1132,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                                   Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
+                                      color: const Color(0xFFFF6A00)
+                                          .withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: const Icon(
@@ -1075,7 +1144,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                                   const SizedBox(width: 15),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           route['route'],
@@ -1098,7 +1168,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                               ),
                               const SizedBox(height: 15),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   _buildRouteInfo(
                                     Icons.directions_walk,
@@ -1116,7 +1187,8 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                               ),
                               const SizedBox(height: 15),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(
@@ -1134,12 +1206,14 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                                       children: [
                                         Expanded(
                                           child: ElevatedButton(
-                                            onPressed: () => _showRouteDetails(route),
+                                            onPressed: () =>
+                                                _showRouteDetails(route),
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.grey[200],
                                               foregroundColor: Colors.black87,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(20),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                               ),
                                             ),
                                             child: const Text('Detalles'),
@@ -1149,18 +1223,23 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              ScaffoldMessenger.of(context).showSnackBar(
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
                                                 SnackBar(
-                                                  content: Text('Ruta seleccionada: ${route['route']}'),
-                                                  backgroundColor: const Color(0xFFFF6A00),
+                                                  content: Text(
+                                                      'Ruta seleccionada: ${route['route']}'),
+                                                  backgroundColor:
+                                                      const Color(0xFFFF6A00),
                                                 ),
                                               );
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: const Color(0xFFFF6A00),
+                                              backgroundColor:
+                                                  const Color(0xFFFF6A00),
                                               foregroundColor: Colors.white,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(20),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                               ),
                                             ),
                                             child: const Text('Seleccionar'),
@@ -1185,4 +1264,4 @@ class _BuscarRutaPaginaState extends State<BuscarRutaPagina> {
       ),
     );
   }
-} 
+}
