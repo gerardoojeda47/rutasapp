@@ -1,8 +1,7 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapaRutaPagina extends StatefulWidget {
   final String routeName;
@@ -19,330 +18,423 @@ class MapaRutaPagina extends StatefulWidget {
 }
 
 class _MapaRutaPaginaState extends State<MapaRutaPagina> {
-  late final MapController _mapController;
-  bool _loadingLocation = false;
-  LatLng? _userLocation;
-  int? _selectedStopIndex;
+  LatLng? myPosition;
+  final MapController _mapController = MapController();
+  List<LatLng> _routeStops = [];
+  bool _isLoading = true;
 
-  // Para la ruta realista
-  List<LatLng> _routePoints = [];
-  List _instructions = [];
-  bool _loadingRoute = true;
-  final String _apiKey = 'TU_API_KEY_AQUI'; // <-- PON AQUÍ TU API KEY DE OPENROUTESERVICE
-
-  // Coordenadas de ejemplo para algunos barrios de Popayán
-  static final Map<String, LatLng> _barriosCoords = {
-    'Centro': LatLng(2.444814, -76.614739),
-    'La Paz': LatLng(2.449000, -76.601000),
-    'Jose María Obando': LatLng(2.453000, -76.599000),
-    'San Camilo': LatLng(2.447500, -76.610000),
-    'La Esmeralda': LatLng(2.440000, -76.600000),
-    'Campan': LatLng(2.441500, -76.602500),
-    'El Recuerdo': LatLng(2.442500, -76.605000),
-    'Terminal': LatLng(2.445000, -76.617000),
-    'El Uvo': LatLng(2.455000, -76.620000),
-    'San Eduardo': LatLng(2.457000, -76.618000),
-    'Bello Horizonte': LatLng(2.438000, -76.610000),
-    'El Placer': LatLng(2.437000, -76.612000),
-    'Alfonso López': LatLng(2.435000, -76.615000),
-    'El Limonar': LatLng(2.433000, -76.617000),
-    'El Boquerón': LatLng(2.431000, -76.619000),
-    'La Floresta': LatLng(2.450000, -76.608000),
-    'Los Sauces': LatLng(2.452000, -76.606000),
-    'La Campiña': LatLng(2.454000, -76.604000),
-    'María Oriente': LatLng(2.456000, -76.602000),
-    'Santa Mónica': LatLng(2.448000, -76.611000),
-    'El Lago': LatLng(2.447000, -76.613000),
-    'Berlín': LatLng(2.446000, -76.615000),
-    'Suizo': LatLng(2.445000, -76.617000),
-    'Las Ferias': LatLng(2.444000, -76.619000),
-    'Los Andes': LatLng(2.443000, -76.621000),
-    'Alameda': LatLng(2.442000, -76.623000),
-    'Colgate Palmolive': LatLng(2.441000, -76.625000),
-    'Plateado': LatLng(2.440000, -76.627000),
-    'Poblado Altos Sauces': LatLng(2.439000, -76.629000),
+  // Coordenadas simuladas para las paradas de Popayán
+  final Map<String, LatLng> _stopCoordinates = {
+    'Centro': const LatLng(2.4389, -76.6064),
+    'La Paz': const LatLng(2.4450, -76.6100),
+    'Jose María Obando': const LatLng(2.4400, -76.6000),
+    'San Camilo': const LatLng(2.4350, -76.6050),
+    'Campan': const LatLng(2.4500, -76.6150),
+    'La Esmeralda': const LatLng(2.4550, -76.6200),
+    'El Recuerdo': const LatLng(2.4600, -76.6250),
+    'Terminal': const LatLng(2.4300, -76.5900),
+    'El Uvo': const LatLng(2.4200, -76.5800),
+    'San Eduardo': const LatLng(2.4250, -76.5850),
+    'Bello Horizonte': const LatLng(2.4650, -76.6300),
+    'El Placer': const LatLng(2.4700, -76.6350),
+    'La Arboleda': const LatLng(2.4750, -76.6400),
+    'Alfonso López': const LatLng(2.4800, -76.6450),
+    'El Limonar': const LatLng(2.4850, -76.6500),
+    'El Boquerón': const LatLng(2.4900, -76.6550),
+    'La Floresta': const LatLng(2.4950, -76.6600),
+    'El Lago': const LatLng(2.5000, -76.6650),
+    'Gabriel G. Marqués': const LatLng(2.5050, -76.6700),
+    'Los Sauces': const LatLng(2.5100, -76.6750),
+    'La Campiña': const LatLng(2.5150, -76.6800),
+    'María Oriente': const LatLng(2.5200, -76.6850),
+    'La Primavera': const LatLng(2.5250, -76.6900),
+    'Universidad': const LatLng(2.4400, -76.6000),
   };
+
+  Future<Position> determinePosition() async {
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Permisos de ubicación denegados');
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Permisos de ubicación denegados permanentemente');
+    }
+    
+    return await Geolocator.getCurrentPosition();
+  }
+
+  void getCurrentLocation() async {
+    try {
+      Position position = await determinePosition();
+      setState(() {
+        myPosition = LatLng(position.latitude, position.longitude);
+        _isLoading = false;
+      });
+    } catch (e) {
+      // Si no se puede obtener la ubicación, usar coordenadas por defecto de Popayán
+      setState(() {
+        myPosition = const LatLng(2.4389, -76.6064); // Centro de Popayán
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _setupRouteStops() {
+    _routeStops.clear();
+    for (String stop in widget.stops) {
+      if (_stopCoordinates.containsKey(stop)) {
+        _routeStops.add(_stopCoordinates[stop]!);
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _mapController = MapController();
-    _fetchRoute();
-  }
-
-  Future<void> _getUserLocation() async {
-    setState(() => _loadingLocation = true);
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() {
-      _userLocation = LatLng(2.444814, -76.614739); // Simula ubicación
-      _loadingLocation = false;
-    });
-    _mapController.move(_userLocation!, 15);
-  }
-
-  Future<void> _fetchRoute() async {
-    setState(() => _loadingRoute = true);
-    final points = widget.stops
-        .map((name) => _barriosCoords[name])
-        .where((coord) => coord != null)
-        .cast<LatLng>()
-        .toList();
-    if (points.length < 2) {
-      setState(() {
-        _routePoints = points;
-        _instructions = [];
-        _loadingRoute = false;
-      });
-      return;
-    }
-    try {
-      final result = await getMultiStopRoute(stops: points, apiKey: _apiKey);
-      setState(() {
-        _routePoints = result['route'];
-        _instructions = result['instructions'];
-        _loadingRoute = false;
-      });
-    } catch (e) {
-      setState(() {
-        _routePoints = points;
-        _instructions = [];
-        _loadingRoute = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error obteniendo la ruta: $e')),
-      );
-    }
-  }
-
-  Future<Map<String, dynamic>> getMultiStopRoute({
-    required List<LatLng> stops,
-    required String apiKey,
-  }) async {
-    final coords = stops.map((p) => [p.longitude, p.latitude]).toList();
-    final url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car/geojson');
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'coordinates': coords,
-        'instructions': true,
-        'geometry_simplify': false,
-      }),
-    );
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List<LatLng> routePoints = (data['features'][0]['geometry']['coordinates'] as List)
-          .map<LatLng>((c) => LatLng(c[1], c[0]))
-          .toList();
-      final List instructions = data['features'][0]['properties']['segments'][0]['steps'];
-      return {
-        'route': routePoints,
-        'instructions': instructions,
-      };
-    } else {
-      throw Exception('Error obteniendo la ruta: ${response.body}');
-    }
-  }
-
-  void _showStopInfo(int index, String name, LatLng coord) {
-    setState(() => _selectedStopIndex = index);
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              name,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text('Coordenadas: ${coord.latitude.toStringAsFixed(6)}, ${coord.longitude.toStringAsFixed(6)}'),
-            if (index == 0)
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Origen de la ruta', style: TextStyle(color: Colors.green)),
-              ),
-            if (index == widget.stops.length - 1)
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text('Destino final', style: TextStyle(color: Colors.red)),
-              ),
-          ],
-        ),
-      ),
-    ).whenComplete(() => setState(() => _selectedStopIndex = null));
-  }
-
-  void _showInstructions() {
-    if (_instructions.isEmpty) return;
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => ListView.builder(
-        itemCount: _instructions.length,
-        itemBuilder: (context, i) {
-          final step = _instructions[i];
-          return ListTile(
-            leading: const Icon(Icons.directions),
-            title: Text(step['instruction'] ?? ''),
-            subtitle: Text('Distancia: ${step['distance']?.toStringAsFixed(0) ?? ''} m'),
-          );
-        },
-      ),
-    );
+    getCurrentLocation();
+    _setupRouteStops();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<LatLng> points = widget.stops
-        .map((name) => _barriosCoords[name])
-        .where((coord) => coord != null)
-        .cast<LatLng>()
-        .toList();
-
-    final LatLng initialPosition = points.isNotEmpty
-        ? points.first
-        : LatLng(2.444814, -76.614739);
-
     return Scaffold(
-      body: Stack(
-        children: [
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              center: initialPosition,
-              zoom: 13.5,
-              onTap: (_, __) {
-                Navigator.of(context).maybePop();
-              },
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: ['a', 'b', 'c'],
-                userAgentPackageName: 'com.example.rouwhite',
-              ),
-              PolylineLayer(
-                polylines: [
-                  Polyline(
-                    points: _routePoints.isNotEmpty ? _routePoints : points,
-                    color: Colors.orange,
-                    strokeWidth: 5.0,
+      backgroundColor: const Color(0xFFF6F6F6),
+      appBar: AppBar(
+        title: Text(
+          'Mapa: ${widget.routeName}',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFFFF6A00),
+        centerTitle: true,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.my_location),
+            onPressed: () {
+              if (myPosition != null) {
+                _mapController.move(myPosition!, 18);
+              }
+            },
+            tooltip: 'Mi ubicación',
+          ),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Cargando mapa...',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),
-              MarkerLayer(
-                markers: [
-                  for (int i = 0; i < points.length; i++)
-                    Marker(
-                      width: 60.0,
-                      height: 60.0,
-                      point: points[i],
-                      child: GestureDetector(
-                        onTap: () => _showStopInfo(i, widget.stops[i], points[i]),
-                        child: Icon(
-                          i == 0
-                              ? Icons.location_on
-                              : (i == points.length - 1
-                                  ? Icons.flag
-                                  : (_selectedStopIndex == i ? Icons.directions : Icons.circle)),
-                          color: i == 0
-                              ? Colors.green
-                              : (i == points.length - 1
-                                  ? Colors.red
-                                  : (_selectedStopIndex == i ? Colors.blue : Colors.orange)),
-                          size: 36,
+            )
+          : Column(
+              children: [
+                // Información de la ruta
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.directions_bus,
+                            color: const Color(0xFFFF6A00),
+                            size: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            widget.routeName,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFFF6A00),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${widget.stops.length} paradas • Ruta activa',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
                         ),
                       ),
-                    ),
-                  if (_userLocation != null)
-                    Marker(
-                      width: 60,
-                      height: 60,
-                      point: _userLocation!,
-                      child: const Icon(Icons.person_pin_circle, color: Colors.blue, size: 36),
-                    ),
-                ],
-              ),
-            ],
-          ),
-          // Botón de regreso flotante
-          Positioned(
-            top: 40,
-            left: 16,
-            child: FloatingActionButton(
-              mini: true,
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              elevation: 2,
-              onPressed: () => Navigator.pop(context),
-              child: const Icon(Icons.arrow_back),
-            ),
-          ),
-          // Botón para centrar en usuario
-          Positioned(
-            bottom: 40,
-            right: 16,
-            child: FloatingActionButton(
-              heroTag: 'centerUser',
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              onPressed: _getUserLocation,
-              child: const Icon(Icons.my_location),
-            ),
-          ),
-          // Botones de zoom
-          Positioned(
-            bottom: 110,
-            right: 16,
-            child: Column(
-              children: [
-                FloatingActionButton(
-                  heroTag: 'zoomIn',
-                  mini: true,
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  onPressed: () => _mapController.move(_mapController.center, _mapController.zoom + 1),
-                  child: const Icon(Icons.add),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 8),
-                FloatingActionButton(
-                  heroTag: 'zoomOut',
-                  mini: true,
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  onPressed: () => _mapController.move(_mapController.center, _mapController.zoom - 1),
-                  child: const Icon(Icons.remove),
+                
+                // Mapa
+                Expanded(
+                  child: FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      initialCenter: myPosition!,
+                      initialZoom: 15,
+                      minZoom: 10,
+                      maxZoom: 20,
+                      onMapReady: () {
+                        // Ajustar vista para mostrar toda la ruta
+                        if (_routeStops.isNotEmpty) {
+                          _fitBoundsToRoute();
+                        }
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.example.rutasapp',
+                      ),
+                      
+                      // Marcador de mi ubicación
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: myPosition!,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 2),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.blue.withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.person_pin,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      // Marcadores de paradas
+                      MarkerLayer(
+                        markers: _routeStops.asMap().entries.map((entry) {
+                          int index = entry.key;
+                          LatLng stop = entry.value;
+                          String stopName = widget.stops[index];
+                          
+                          return Marker(
+                            point: stop,
+                            child: GestureDetector(
+                              onTap: () => _showStopInfo(stopName, stop, index + 1),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFF6A00),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFFF6A00).withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  '${index + 1}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      
+                      // Línea de la ruta
+                      if (_routeStops.length > 1)
+                        PolylineLayer(
+                          polylines: [
+                            Polyline(
+                              points: _routeStops,
+                              strokeWidth: 4,
+                              color: const Color(0xFFFF6A00).withOpacity(0.7),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-          // Botón para ver instrucciones
-          Positioned(
-            bottom: 180,
-            right: 16,
-            child: FloatingActionButton(
-              heroTag: 'instructions',
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              onPressed: _showInstructions,
-              child: const Icon(Icons.list),
+    );
+  }
+
+  void _fitBoundsToRoute() {
+    if (_routeStops.isEmpty) return;
+    
+    double minLat = _routeStops.map((p) => p.latitude).reduce((a, b) => a < b ? a : b);
+    double maxLat = _routeStops.map((p) => p.latitude).reduce((a, b) => a > b ? a : b);
+    double minLng = _routeStops.map((p) => p.longitude).reduce((a, b) => a < b ? a : b);
+    double maxLng = _routeStops.map((p) => p.longitude).reduce((a, b) => a > b ? a : b);
+    
+    // Agregar margen
+    double latMargin = (maxLat - minLat) * 0.1;
+    double lngMargin = (maxLng - minLng) * 0.1;
+    
+    LatLngBounds bounds = LatLngBounds(
+      LatLng(minLat - latMargin, minLng - lngMargin),
+      LatLng(maxLat + latMargin, maxLng + lngMargin),
+    );
+    
+    _mapController.fitBounds(bounds);
+  }
+
+  void _showStopInfo(String stopName, LatLng position, int stopNumber) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
             ),
-          ),
-          // Indicador de carga de ubicación o ruta
-          if (_loadingLocation || _loadingRoute)
-            const Center(
-              child: CircularProgressIndicator(),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF6A00).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '$stopNumber',
+                    style: const TextStyle(
+                      color: Color(0xFFFF6A00),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        stopName,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Parada ${stopNumber} de ${widget.stops.length}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-        ],
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on,
+                  color: const Color(0xFFFF6A00),
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Coordenadas: ${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _mapController.move(position, 18);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF6A00),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text(
+                  'Centrar en esta parada',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
