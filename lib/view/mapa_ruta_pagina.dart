@@ -60,11 +60,11 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
         return Future.error('Permisos de ubicación denegados');
       }
     }
-    
+
     if (permission == LocationPermission.deniedForever) {
       return Future.error('Permisos de ubicación denegados permanentemente');
     }
-    
+
     return await Geolocator.getCurrentPosition();
   }
 
@@ -134,7 +134,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
                   ),
                   SizedBox(height: 16),
                   Text(
@@ -195,7 +196,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                     ],
                   ),
                 ),
-                
+
                 // Mapa
                 Expanded(
                   child: FlutterMap(
@@ -214,10 +215,11 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                     ),
                     children: [
                       TileLayer(
-                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         userAgentPackageName: 'com.example.rutasapp',
                       ),
-                      
+
                       // Marcador de mi ubicación
                       MarkerLayer(
                         markers: [
@@ -227,7 +229,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                               decoration: BoxDecoration(
                                 color: Colors.blue,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2),
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.blue.withOpacity(0.3),
@@ -245,27 +248,30 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                           ),
                         ],
                       ),
-                      
+
                       // Marcadores de paradas
                       MarkerLayer(
                         markers: _routeStops.asMap().entries.map((entry) {
                           int index = entry.key;
                           LatLng stop = entry.value;
                           String stopName = widget.stops[index];
-                          
+
                           return Marker(
                             point: stop,
                             child: GestureDetector(
-                              onTap: () => _showStopInfo(stopName, stop, index + 1),
+                              onTap: () =>
+                                  _showStopInfo(stopName, stop, index + 1),
                               child: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFFF6A00),
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.white, width: 2),
+                                  border:
+                                      Border.all(color: Colors.white, width: 2),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF6A00).withOpacity(0.3),
+                                      color: const Color(0xFFFF6A00)
+                                          .withOpacity(0.3),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -284,7 +290,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                           );
                         }).toList(),
                       ),
-                      
+
                       // Línea de la ruta
                       if (_routeStops.length > 1)
                         PolylineLayer(
@@ -306,21 +312,25 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
 
   void _fitBoundsToRoute() {
     if (_routeStops.isEmpty) return;
-    
-    double minLat = _routeStops.map((p) => p.latitude).reduce((a, b) => a < b ? a : b);
-    double maxLat = _routeStops.map((p) => p.latitude).reduce((a, b) => a > b ? a : b);
-    double minLng = _routeStops.map((p) => p.longitude).reduce((a, b) => a < b ? a : b);
-    double maxLng = _routeStops.map((p) => p.longitude).reduce((a, b) => a > b ? a : b);
-    
+
+    double minLat =
+        _routeStops.map((p) => p.latitude).reduce((a, b) => a < b ? a : b);
+    double maxLat =
+        _routeStops.map((p) => p.latitude).reduce((a, b) => a > b ? a : b);
+    double minLng =
+        _routeStops.map((p) => p.longitude).reduce((a, b) => a < b ? a : b);
+    double maxLng =
+        _routeStops.map((p) => p.longitude).reduce((a, b) => a > b ? a : b);
+
     // Agregar margen
     double latMargin = (maxLat - minLat) * 0.1;
     double lngMargin = (maxLng - minLng) * 0.1;
-    
+
     LatLngBounds bounds = LatLngBounds(
       LatLng(minLat - latMargin, minLng - lngMargin),
       LatLng(maxLat + latMargin, maxLng + lngMargin),
     );
-    
+
     _mapController.fitBounds(bounds);
   }
 
@@ -438,4 +448,4 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
       ),
     );
   }
-} 
+}
