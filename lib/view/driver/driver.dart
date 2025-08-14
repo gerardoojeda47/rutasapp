@@ -11,8 +11,12 @@ class _DriverState extends State<Driver> {
   // Controladores para los campos del formulario
   final TextEditingController _busNumberController = TextEditingController();
   final TextEditingController _indicatorController = TextEditingController();
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
+  String? _selectedShift;
+
+  final List<String> _shifts = [
+    'Turno Mañana',
+    'Turno Tarde',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +87,9 @@ class _DriverState extends State<Driver> {
             ),
             const SizedBox(height: 30),
 
-            // Título de la sección de horarios
+            // Título de la sección de turno
             const Text(
-              'Horarios de Servicio',
+              'Turno de Servicio',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -94,68 +98,8 @@ class _DriverState extends State<Driver> {
             ),
             const SizedBox(height: 20),
 
-            // Campos de horario
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTimeField(
-                    label: 'Hora de Inicio',
-                    icon: Icons.access_time,
-                    time: _startTime,
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: _startTime ?? TimeOfDay.now(),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: Color(0xFFFF6A00),
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          _startTime = picked;
-                        });
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: _buildTimeField(
-                    label: 'Hora de Fin',
-                    icon: Icons.access_time_filled,
-                    time: _endTime,
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: _endTime ?? TimeOfDay.now(),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: Color(0xFFFF6A00),
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          _endTime = picked;
-                        });
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
+            // Campo de turno (Dropdown)
+            _buildShiftDropdown(),
             const SizedBox(height: 40),
 
             // Botón de registro
@@ -236,12 +180,7 @@ class _DriverState extends State<Driver> {
     );
   }
 
-  Widget _buildTimeField({
-    required String label,
-    required IconData icon,
-    required TimeOfDay? time,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildShiftDropdown() {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -253,63 +192,41 @@ class _DriverState extends State<Driver> {
           ),
         ],
       ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
+      child: DropdownButtonFormField<String>(
+        value: _selectedShift,
+        decoration: InputDecoration(
+          labelText: 'Turno',
+          prefixIcon: const Icon(Icons.schedule, color: Color(0xFFFF6A00)),
+          border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: time != null
-                  ? const Color(0xFFFF6A00)
-                  : Colors.grey.withOpacity(0.3),
-              width: time != null ? 2 : 1,
-            ),
+            borderSide: BorderSide.none,
           ),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                color: time != null ? const Color(0xFFFF6A00) : Colors.grey,
-                size: 24,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      time != null ? time!.format(context) : 'Seleccionar',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: time != null
-                            ? const Color(0xFFFF6A00)
-                            : Colors.grey[400],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_drop_down,
-                color: time != null ? const Color(0xFFFF6A00) : Colors.grey,
-              ),
-            ],
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
+          labelStyle: const TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+          ),
+          floatingLabelStyle: const TextStyle(
+            color: Color(0xFFFF6A00),
+            fontWeight: FontWeight.bold,
           ),
         ),
+        items: _shifts
+            .map((shift) => DropdownMenuItem(
+                  value: shift,
+                  child: Text(shift),
+                ))
+            .toList(),
+        onChanged: (value) {
+          setState(() {
+            _selectedShift = value;
+          });
+        },
       ),
     );
   }
@@ -317,16 +234,8 @@ class _DriverState extends State<Driver> {
   void _validateAndSubmit() {
     if (_busNumberController.text.isEmpty ||
         _indicatorController.text.isEmpty ||
-        _startTime == null ||
-        _endTime == null) {
+        _selectedShift == null) {
       _showErrorDialog('Por favor, complete todos los campos');
-      return;
-    }
-
-    if (_startTime!.hour > _endTime!.hour ||
-        (_startTime!.hour == _endTime!.hour &&
-            _startTime!.minute >= _endTime!.minute)) {
-      _showErrorDialog('La hora de fin debe ser posterior a la hora de inicio');
       return;
     }
 
@@ -380,8 +289,7 @@ class _DriverState extends State<Driver> {
   void _showSuccessDialog() {
     final busNumber = _busNumberController.text;
     final indicator = _indicatorController.text;
-    final startTime = _startTime!.format(context);
-    final endTime = _endTime!.format(context);
+    final shift = _selectedShift ?? '';
 
     showDialog(
       context: context,
@@ -414,9 +322,7 @@ class _DriverState extends State<Driver> {
             const SizedBox(height: 8),
             _buildInfoRow('Indicador:', indicator),
             const SizedBox(height: 8),
-            _buildInfoRow('Inicio:', startTime),
-            const SizedBox(height: 8),
-            _buildInfoRow('Fin:', endTime),
+            _buildInfoRow('Turno:', shift),
           ],
         ),
         actions: [
@@ -469,8 +375,7 @@ class _DriverState extends State<Driver> {
     setState(() {
       _busNumberController.clear();
       _indicatorController.clear();
-      _startTime = null;
-      _endTime = null;
+      _selectedShift = null;
     });
   }
 }

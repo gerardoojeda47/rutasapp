@@ -5,6 +5,7 @@ import 'paradas_pagina.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_map/flutter_map.dart' as fm;
 import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 import 'buscar_ruta_pagina.dart';
 import '../model/favoritos.dart'; // Agrega este import
 import '../view/driver/driver.dart'; // Asegúrate que este archivo contiene la clase DriverPage
@@ -152,11 +153,61 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   final TextEditingController _searchController = TextEditingController();
+  Position? _currentPosition;
+  bool _isLoadingLocation = true;
+  final fm.MapController _mapController = fm.MapController();
 
-  final List<Map<String, String>> routes = [
-    {'name': 'La Paz', 'subtitle': 'Jose María Obando'},
-    {'name': 'La Esmeralda', 'subtitle': 'Campan'},
-  ];
+  // Coordenadas de Popayán como fallback
+  static const LatLng _popayanCenter = LatLng(2.444814, -76.614739);
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      // Verificar permisos de ubicación
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() {
+            _isLoadingLocation = false;
+          });
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          _isLoadingLocation = false;
+        });
+        return;
+      }
+
+      // Obtener ubicación actual
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      setState(() {
+        _currentPosition = position;
+        _isLoadingLocation = false;
+      });
+
+      // Centrar el mapa en la ubicación del usuario
+      _mapController.move(
+        LatLng(position.latitude, position.longitude),
+        15.0,
+      );
+    } catch (e) {
+      setState(() {
+        _isLoadingLocation = false;
+      });
+    }
+  }
 
   void _navigateToSearch() {
     Navigator.push(
@@ -165,292 +216,279 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
-  void _showTourismInfo() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Turismo en Popayán'),
-          content: const SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Lugares turísticos destacados:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                Text('• Centro Histórico (Patrimonio de la Humanidad)'),
-                Text('• Puente del Humilladero'),
-                Text('• Iglesia de San Francisco'),
-                Text('• Museo de Arte Religioso'),
-                Text('• Cerro de las Tres Cruces'),
-                Text('• Parque Caldas'),
-                Text('• Morro de Tulcán'),
-                SizedBox(height: 10),
-                Text(
-                  '¿Te gustaría ver las rutas que te llevan a estos lugares?',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cerrar'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RutasPagina()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF6A00),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Ver Rutas'),
-            ),
-          ],
-        );
-      },
-    );
+  void _centerOnUserLocation() {
+    if (_currentPosition != null) {
+      _mapController.move(
+        LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+        15.0,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header de la ciudad
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF6A00),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
+    return Column(
+      children: [
+        // Header de la ciudad
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFF6A00),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: const Offset(0, 3),
               ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'POPAYÁN',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _isLoadingLocation
+                    ? 'Obteniendo ubicación...'
+                    : 'Tu ubicación en tiempo real',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Mapa interactivo
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  // ignore: deprecated_member_use
-                  color: Colors.grey.withOpacity(0.5),
+                  color: Colors.grey.withOpacity(0.3),
                   spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
                 ),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'POPAYÁN',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Historial de rutas',
-                  style: TextStyle(
-                    fontSize: 18,
-                    // ignore: deprecated_member_use
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Animación Lottie centrada
-          Center(
-            child: Lottie.asset(
-              'assets/animaciones/bus.json',
-              height: 140,
-              repeat: true,
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Rutas recientes
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Rutas recientes',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
-                for (int i = 0; i < routes.length; i++)
-                  RouteCard(
-                    name: routes[i]['name']!,
-                    subtitle: routes[i]['subtitle']!,
-                    isFirst: i == 0,
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 30),
-          // Turismo
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Turismo',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
-                Container(
-                  padding: const EdgeInsets.all(0),
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        // ignore: deprecated_member_use
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.network(
-                          'https://images.unsplash.com/photo-1581269875754-aea2a9b3970a?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              // ignore: deprecated_member_use
-                              Colors.black.withOpacity(0.7),
-                            ],
-                          ),
-                        ),
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Descubre los mejores lugares turísticos de Popayán y sus alrededores',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 15),
-                              ElevatedButton(
-                                onPressed: _showTourismInfo,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: const Color(0xFFFF6A00),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 30,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                ),
-                                child: const Text(
-                                  '¡Click aquí!',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFFFF6A00),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 30),
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 5,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    // ignore: deprecated_member_use
-                    color: Colors.grey.withOpacity(0.3),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Stack(
                 children: [
-                  Icon(Icons.search, color: Colors.grey[600]),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: _navigateToSearch,
-                      child: TextField(
-                        controller: _searchController,
-                        enabled: false,
-                        decoration: InputDecoration(
-                          hintText: 'Buscar ruta o destino...',
-                          hintStyle: TextStyle(color: Colors.grey[600]),
-                          border: InputBorder.none,
+                  fm.FlutterMap(
+                    mapController: _mapController,
+                    options: fm.MapOptions(
+                      center: _currentPosition != null
+                          ? LatLng(_currentPosition!.latitude,
+                              _currentPosition!.longitude)
+                          : _popayanCenter,
+                      zoom: 15.0,
+                      interactiveFlags: fm.InteractiveFlag.all,
+                      onMapReady: () {
+                        if (_currentPosition != null) {
+                          _mapController.move(
+                            LatLng(_currentPosition!.latitude,
+                                _currentPosition!.longitude),
+                            15.0,
+                          );
+                        }
+                      },
+                    ),
+                    children: [
+                      fm.TileLayer(
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: const ['a', 'b', 'c'],
+                        userAgentPackageName: 'com.example.rouwhite',
+                      ),
+
+                      // Marcador de la ubicación del usuario
+                      if (_currentPosition != null)
+                        fm.MarkerLayer(
+                          markers: [
+                            fm.Marker(
+                              width: 40,
+                              height: 40,
+                              point: LatLng(_currentPosition!.latitude,
+                                  _currentPosition!.longitude),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFF6A00),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 3,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.my_location,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+
+                      // Marcadores de puntos de interés (paradas de bus)
+                      fm.MarkerLayer(
+                        markers: [
+                          // Centro de Popayán
+                          fm.Marker(
+                            width: 30,
+                            height: 30,
+                            point: const LatLng(2.444814, -76.614739),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
+                              ),
+                              child: const Icon(
+                                Icons.directions_bus,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                          // Terminal de transportes
+                          fm.Marker(
+                            width: 30,
+                            height: 30,
+                            point: const LatLng(2.445000, -76.617000),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
+                              ),
+                              child: const Icon(
+                                Icons.directions_bus,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                          // Plaza de Caldas
+                          fm.Marker(
+                            width: 30,
+                            height: 30,
+                            point: const LatLng(2.444814, -76.614739),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.orange,
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
+                              ),
+                              child: const Icon(
+                                Icons.location_city,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // Botón para centrar en ubicación del usuario
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: FloatingActionButton(
+                      heroTag: "centerLocation",
+                      onPressed: _centerOnUserLocation,
+                      backgroundColor: const Color(0xFFFF6A00),
+                      child: const Icon(
+                        Icons.my_location,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.search, color: Color(0xFFFF6A00)),
-                    onPressed: _navigateToSearch,
-                  ),
+
+                  // Indicador de carga
+                  if (_isLoadingLocation)
+                    Container(
+                      color: Colors.black.withOpacity(0.3),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFFFF6A00)),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 20),
-        ],
-      ),
+        ),
+
+        // Barra de búsqueda
+        Container(
+          margin: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 15,
+            vertical: 5,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.search, color: Colors.grey[600]),
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  onTap: _navigateToSearch,
+                  child: TextField(
+                    controller: _searchController,
+                    enabled: false,
+                    decoration: InputDecoration(
+                      hintText: 'Buscar ruta o destino...',
+                      hintStyle: TextStyle(color: Colors.grey[600]),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.search, color: Color(0xFFFF6A00)),
+                onPressed: _navigateToSearch,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
