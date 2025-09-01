@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rouwhite/inicio_sesion_pagina.dart';
-
+import 'view/bienvenida_pagina.dart';
+import 'core/constants/app_colors.dart';
 
 void main() {
   runApp(const Miapp());
@@ -16,14 +16,103 @@ class Miapp extends StatelessWidget {
       title: "RouWhite - Rutas Popayán",
       theme: ThemeData(
         primarySwatch: Colors.orange,
-        primaryColor: const Color(0xFFFF6A00),
+        primaryColor: AppColors.primary,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFFF6A00),
+          seedColor: AppColors.primary,
           brightness: Brightness.light,
+          primary: AppColors.primary,
+          secondary: AppColors.secondary,
+          surface: AppColors.surface,
+          error: AppColors.error,
         ),
         useMaterial3: true,
+        // Configuración del AppBar
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        // Configuración de botones
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        // Configuración de campos de texto
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.surface,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: AppColors.textLight),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: AppColors.textLight),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.error, width: 2),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
+        ),
+        // Configuración de colores de texto
+        textTheme: const TextTheme(
+          headlineLarge: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+          headlineMedium: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+          titleLarge: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+          bodyLarge: TextStyle(
+            color: AppColors.textPrimary,
+          ),
+          bodyMedium: TextStyle(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        // Configuración de iconos
+        iconTheme: const IconThemeData(
+          color: AppColors.primary,
+        ),
+        // Configuración de sombras
+        cardTheme: CardTheme(
+          elevation: 4,
+          shadowColor: AppColors.shadowMedium,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
       ),
-      home: const LoginPage(),
+      home: const BienvenidaPagina(),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'ver_buses_pagina.dart';
 import 'mapa_ruta_pagina.dart';
 import '../model/favoritos.dart';
+import '../data/popayan_bus_routes.dart';
 
 class RutasPagina extends StatefulWidget {
   const RutasPagina({super.key});
@@ -11,106 +11,16 @@ class RutasPagina extends StatefulWidget {
 }
 
 class _RutasPaginaState extends State<RutasPagina> {
-  final List<Map<String, dynamic>> _rutas = [
-    {
-      'nombre': 'Ruta 1',
-      'empresa': 'Transpubenza',
-      'trayecto': 'Centro - La Paz',
-      'paradas': ['Centro', 'La Paz', 'Jose María Obando', 'San Camilo'],
-      'horario': '6:00 AM - 8:00 PM',
-      'costo': '2.500',
-      'trafico': 'Fluido',
-      'proxBus': '5 min',
-      'favorito': false,
-      'busId': 'TP001',
-    },
-    {
-      'nombre': 'Ruta 2',
-      'empresa': 'Coopetrans',
-      'trayecto': 'Centro - La Esmeralda',
-      'paradas': ['Centro', 'Campan', 'La Esmeralda', 'El Recuerdo'],
-      'horario': '5:30 AM - 9:00 PM',
-      'costo': '2.500',
-      'trafico': 'Moderado',
-      'proxBus': '8 min',
-      'favorito': false,
-      'busId': 'CT002',
-    },
-    {
-      'nombre': 'Ruta 3',
-      'empresa': 'Transpubenza',
-      'trayecto': 'Terminal - El Uvo',
-      'paradas': ['Terminal', 'El Uvo', 'San Eduardo', 'La Paz'],
-      'horario': '6:00 AM - 8:30 PM',
-      'costo': '2.500',
-      'trafico': 'Congestionado',
-      'proxBus': '12 min',
-      'favorito': false,
-      'busId': 'TP003',
-    },
-    {
-      'nombre': 'Ruta 4',
-      'empresa': 'Coopetrans',
-      'trayecto': 'Centro - Bello Horizonte',
-      'paradas': ['Centro', 'Bello Horizonte', 'El Placer', 'La Arboleda'],
-      'horario': '5:45 AM - 8:00 PM',
-      'costo': '2.500',
-      'trafico': 'Fluido',
-      'proxBus': '7 min',
-      'favorito': false,
-      'busId': 'CT004',
-    },
-    {
-      'nombre': 'Ruta 5',
-      'empresa': 'Transpubenza',
-      'trayecto': 'Centro - Alfonso López',
-      'paradas': ['Centro', 'Alfonso López', 'El Limonar', 'El Boquerón'],
-      'horario': '6:00 AM - 8:00 PM',
-      'costo': '2.500',
-      'trafico': 'Moderado',
-      'proxBus': '10 min',
-      'favorito': false,
-      'busId': 'TP005',
-    },
-    {
-      'nombre': 'Ruta 6',
-      'empresa': 'Coopetrans',
-      'trayecto': 'Centro - La Floresta',
-      'paradas': ['Centro', 'La Floresta', 'El Lago', 'Gabriel G. Marqués'],
-      'horario': '5:30 AM - 9:00 PM',
-      'costo': '2.500',
-      'trafico': 'Fluido',
-      'proxBus': '6 min',
-      'favorito': false,
-      'busId': 'CT006',
-    },
-    {
-      'nombre': 'Ruta 7',
-      'empresa': 'Transpubenza',
-      'trayecto': 'Centro - Los Sauces',
-      'paradas': ['Centro', 'Los Sauces', 'La Campiña', 'María Oriente'],
-      'horario': '6:00 AM - 8:00 PM',
-      'costo': '2.500',
-      'trafico': 'Fluido',
-      'proxBus': '9 min',
-      'favorito': false,
-      'busId': 'TP007',
-    },
-    {
-      'nombre': 'Ruta 8',
-      'empresa': 'Coopetrans',
-      'trayecto': 'Centro - Bello Horizonte',
-      'paradas': ['Centro', 'Bello Horizonte', 'El Placer', 'La Primavera'],
-      'horario': '5:45 AM - 8:00 PM',
-      'costo': '2.500',
-      'trafico': 'Moderado',
-      'proxBus': '11 min',
-      'favorito': false,
-      'busId': 'CT008',
-    },
-  ];
-
+  late List<BusRoute> _rutas;
+  List<bool> _favoritos = [];
   int? _rutaSeleccionada;
+
+  @override
+  void initState() {
+    super.initState();
+    _rutas = PopayanBusRoutes.getAllRoutes();
+    _favoritos = List.filled(_rutas.length, false);
+  }
 
   Color _traficoColor(String trafico) {
     switch (trafico.toLowerCase()) {
@@ -140,11 +50,26 @@ class _RutasPaginaState extends State<RutasPagina> {
 
   void _toggleFavorito(int index) {
     setState(() {
-      _rutas[index]['favorito'] = !_rutas[index]['favorito'];
-      if (_rutas[index]['favorito']) {
-        Favoritos().agregar(_rutas[index]);
+      _favoritos[index] = !_favoritos[index];
+      if (_favoritos[index]) {
+        // Convertir BusRoute a Map para compatibilidad con Favoritos
+        final rutaMap = {
+          'nombre': _rutas[index].name,
+          'empresa': _rutas[index].company,
+          'trayecto': _rutas[index].neighborhoods.join(' - '),
+          'paradas': _rutas[index].neighborhoods,
+          'horario': _rutas[index].schedule,
+          'costo': _rutas[index].fare,
+          'busId': _rutas[index].id,
+        };
+        Favoritos().agregar(rutaMap);
       } else {
-        Favoritos().quitar(_rutas[index]);
+        final rutaMap = {
+          'nombre': _rutas[index].name,
+          'empresa': _rutas[index].company,
+          'busId': _rutas[index].id,
+        };
+        Favoritos().quitar(rutaMap);
       }
     });
   }
@@ -155,8 +80,7 @@ class _RutasPaginaState extends State<RutasPagina> {
       context,
       MaterialPageRoute(
         builder: (context) => MapaRutaPagina(
-          routeName: ruta['nombre'],
-          stops: List<String>.from(ruta['paradas']),
+          route: ruta,
         ),
       ),
     );
@@ -176,7 +100,7 @@ class _RutasPaginaState extends State<RutasPagina> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -189,7 +113,7 @@ class _RutasPaginaState extends State<RutasPagina> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Text(
@@ -235,7 +159,7 @@ class _RutasPaginaState extends State<RutasPagina> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF6A00).withOpacity(0.1),
+                          color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.all(8),
@@ -248,7 +172,7 @@ class _RutasPaginaState extends State<RutasPagina> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              ruta['nombre'],
+                              ruta.name,
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -257,7 +181,7 @@ class _RutasPaginaState extends State<RutasPagina> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              ruta['empresa'],
+                              ruta.company,
                               style: const TextStyle(
                                 fontSize: 13,
                                 color: Colors.black54,
@@ -269,37 +193,18 @@ class _RutasPaginaState extends State<RutasPagina> {
                       ),
                       IconButton(
                         icon: Icon(
-                          ruta['favorito'] ? Icons.star : Icons.star_border,
-                          color: ruta['favorito'] ? Colors.amber : Colors.grey,
+                          _favoritos[index] ? Icons.star : Icons.star_border,
+                          color: _favoritos[index] ? Colors.amber : Colors.grey,
                         ),
                         onPressed: () {
                           _toggleFavorito(index);
-                          if (_rutas[index]['favorito']) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FavoritosPagina(
-                                  onRemoveFavorito: (nombreRuta) {
-                                    setState(() {
-                                      final idx = _rutas.indexWhere(
-                                          (r) => r['nombre'] == nombreRuta);
-                                      if (idx != -1) {
-                                        _rutas[idx]['favorito'] = false;
-                                      }
-                                    });
-                                  },
-                                ),
-                              ),
-                            ).then(
-                                (_) => setState(() {})); // Refresca al volver
-                          }
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    ruta['trayecto'],
+                    ruta.neighborhoods.join(' - '),
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
@@ -314,13 +219,14 @@ class _RutasPaginaState extends State<RutasPagina> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: ruta['paradas']
+                      children: ruta.neighborhoods
                           .map<Widget>((p) => Row(
                                 children: [
                                   const Icon(Icons.location_on,
                                       color: Color(0xFFFF6A00), size: 18),
                                   const SizedBox(width: 4),
                                   Text(p, style: const TextStyle(fontSize: 15)),
+                                  const SizedBox(width: 8),
                                 ],
                               ))
                           .toList(),
@@ -332,24 +238,24 @@ class _RutasPaginaState extends State<RutasPagina> {
                       const Icon(Icons.access_time,
                           size: 18, color: Colors.grey),
                       const SizedBox(width: 4),
-                      Text('Horario: ${ruta['horario']}'),
+                      Text('Horario: ${ruta.schedule}'),
                       const SizedBox(width: 16),
                       const Icon(Icons.attach_money,
                           size: 18, color: Colors.green),
-                      Text(ruta['costo']),
+                      Text(ruta.fare),
                     ],
                   ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      Icon(_traficoIcon(ruta['trafico']),
-                          color: _traficoColor(ruta['trafico']), size: 18),
+                      Icon(_traficoIcon('moderado'),
+                          color: _traficoColor('moderado'), size: 18),
                       const SizedBox(width: 4),
-                      Text('Tráfico: ${ruta['trafico']}'),
+                      const Text('Tráfico: moderado'),
                       const SizedBox(width: 16),
                       const Icon(Icons.directions_bus_filled,
                           size: 18, color: Colors.blue),
-                      Text('Próximo bus: ${ruta['proxBus']}'),
+                      const Text('Próximo bus: 5 min'),
                     ],
                   ),
                   const SizedBox(height: 14),
@@ -377,8 +283,7 @@ class _RutasPaginaState extends State<RutasPagina> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => MapaRutaPagina(
-                                  routeName: ruta['nombre'],
-                                  stops: List<String>.from(ruta['paradas']),
+                                  route: ruta,
                                 ),
                               ),
                             );

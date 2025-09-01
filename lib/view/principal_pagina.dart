@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'rutas_pagina.dart';
-import 'perfil_usuario_pagina.dart';
 import 'paradas_pagina.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_map/flutter_map.dart' as fm;
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'buscar_ruta_pagina.dart';
+
 import '../model/favoritos.dart'; // Agrega este import
 import '../view/driver/driver.dart'; // Asegúrate que este archivo contiene la clase DriverPage
 
+import 'widgets/animated_markers.dart';
+import 'smart_search_page.dart';
+
 class Homepage extends StatefulWidget {
   final String username;
-  final VoidCallback onLogout;
-  const Homepage({super.key, required this.username, required this.onLogout});
+  const Homepage({super.key, required this.username});
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -61,19 +62,7 @@ class _HomepageState extends State<Homepage> {
         leading: PopupMenuButton<String>(
           icon: const Icon(Icons.menu),
           onSelected: (value) {
-            if (value == 'perfil') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PerfilUsuarioPagina(
-                    username: widget.username,
-                    onLogout: widget.onLogout,
-                  ),
-                ),
-              );
-            } else if (value == 'registrarse') {
-              Navigator.pushNamed(context, '/registro');
-            } else if (value == 'conductor') {
+            if (value == 'conductor') {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -84,20 +73,6 @@ class _HomepageState extends State<Homepage> {
             }
           },
           itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'perfil',
-              child: ListTile(
-                leading: Icon(Icons.person),
-                title: Text('Perfil'),
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'registrarse',
-              child: ListTile(
-                leading: Icon(Icons.app_registration),
-                title: Text('Registrarse'),
-              ),
-            ),
             const PopupMenuItem(
               value: 'conductor',
               child: ListTile(
@@ -152,7 +127,6 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  final TextEditingController _searchController = TextEditingController();
   Position? _currentPosition;
   bool _isLoadingLocation = true;
   final fm.MapController _mapController = fm.MapController();
@@ -209,13 +183,6 @@ class _HomeContentState extends State<HomeContent> {
     }
   }
 
-  void _navigateToSearch() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const BuscarRutaPagina()),
-    );
-  }
-
   void _centerOnUserLocation() {
     if (_currentPosition != null) {
       _mapController.move(
@@ -223,6 +190,15 @@ class _HomeContentState extends State<HomeContent> {
         15.0,
       );
     }
+  }
+
+  void _mostrarNavegacionDetallada() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SmartSearchPage(),
+      ),
+    );
   }
 
   @override
@@ -241,7 +217,7 @@ class _HomeContentState extends State<HomeContent> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.grey.withValues(alpha: 0.5),
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
@@ -266,7 +242,7 @@ class _HomeContentState extends State<HomeContent> {
                     : 'Tu ubicación en tiempo real',
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
               ),
             ],
@@ -281,7 +257,7 @@ class _HomeContentState extends State<HomeContent> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withValues(alpha: 0.3),
                   spreadRadius: 2,
                   blurRadius: 10,
                   offset: const Offset(0, 5),
@@ -295,12 +271,14 @@ class _HomeContentState extends State<HomeContent> {
                   fm.FlutterMap(
                     mapController: _mapController,
                     options: fm.MapOptions(
-                      center: _currentPosition != null
+                      initialCenter: _currentPosition != null
                           ? LatLng(_currentPosition!.latitude,
                               _currentPosition!.longitude)
                           : _popayanCenter,
-                      zoom: 15.0,
-                      interactiveFlags: fm.InteractiveFlag.all,
+                      initialZoom: 15.0,
+                      interactionOptions: const fm.InteractionOptions(
+                        flags: fm.InteractiveFlag.all,
+                      ),
                       onMapReady: () {
                         if (_currentPosition != null) {
                           _mapController.move(
@@ -319,92 +297,85 @@ class _HomeContentState extends State<HomeContent> {
                         userAgentPackageName: 'com.example.rouwhite',
                       ),
 
-                      // Marcador de la ubicación del usuario
+                      // Marcador animado de la ubicación del usuario
                       if (_currentPosition != null)
                         fm.MarkerLayer(
                           markers: [
                             fm.Marker(
-                              width: 40,
-                              height: 40,
+                              width: 60,
+                              height: 60,
                               point: LatLng(_currentPosition!.latitude,
                                   _currentPosition!.longitude),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFF6A00),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 3,
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.my_location,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
+                              child: const PulsingLocationMarker(
+                                size: 50,
+                                color: Color(0xFFFF6A00),
+                                pulseColor: Color(0xFFFF6A00),
                               ),
                             ),
                           ],
                         ),
 
-                      // Marcadores de puntos de interés (paradas de bus)
+                      // Marcadores animados de puntos de interés
                       fm.MarkerLayer(
-                        markers: [
-                          // Centro de Popayán
+                        markers: const [
+                          // Centro de Popayán - Parada activa
                           fm.Marker(
-                            width: 30,
-                            height: 30,
-                            point: const LatLng(2.444814, -76.614739),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
-                              ),
-                              child: const Icon(
-                                Icons.directions_bus,
-                                color: Colors.white,
-                                size: 16,
-                              ),
+                            width: 50,
+                            height: 50,
+                            point: LatLng(2.444814, -76.614739),
+                            child: AnimatedBusStopMarker(
+                              size: 35,
+                              color: Colors.blue,
+                              isActive: true,
+                              busId: 'TP001',
                             ),
                           ),
-                          // Terminal de transportes
+                          // Terminal de transportes - Parada muy activa
                           fm.Marker(
-                            width: 30,
-                            height: 30,
-                            point: const LatLng(2.445000, -76.617000),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
-                              ),
-                              child: const Icon(
-                                Icons.directions_bus,
-                                color: Colors.white,
-                                size: 16,
-                              ),
+                            width: 50,
+                            height: 50,
+                            point: LatLng(2.445000, -76.617000),
+                            child: AnimatedBusStopMarker(
+                              size: 35,
+                              color: Colors.green,
+                              isActive: true,
+                              busId: 'CT002',
                             ),
                           ),
-                          // Plaza de Caldas
+                          // Plaza de Caldas - Punto de interés
                           fm.Marker(
-                            width: 30,
-                            height: 30,
-                            point: const LatLng(2.444814, -76.614739),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.orange,
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
-                              ),
-                              child: const Icon(
-                                Icons.location_city,
-                                color: Colors.white,
-                                size: 16,
-                              ),
+                            width: 60,
+                            height: 80,
+                            point: LatLng(2.444814, -76.614739),
+                            child: InterestPointMarker(
+                              size: 35,
+                              color: Colors.orange,
+                              icon: Icons.location_city,
+                              label: 'Plaza Caldas',
+                            ),
+                          ),
+                          // Universidad del Cauca
+                          fm.Marker(
+                            width: 60,
+                            height: 80,
+                            point: LatLng(2.443000, -76.612000),
+                            child: InterestPointMarker(
+                              size: 35,
+                              color: Colors.purple,
+                              icon: Icons.school,
+                              label: 'Unicauca',
+                            ),
+                          ),
+                          // Hospital San José
+                          fm.Marker(
+                            width: 60,
+                            height: 80,
+                            point: LatLng(2.446000, -76.616000),
+                            child: InterestPointMarker(
+                              size: 35,
+                              color: Colors.red,
+                              icon: Icons.local_hospital,
+                              label: 'Hospital',
                             ),
                           ),
                         ],
@@ -430,7 +401,7 @@ class _HomeContentState extends State<HomeContent> {
                   // Indicador de carga
                   if (_isLoadingLocation)
                     Container(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       child: const Center(
                         child: CircularProgressIndicator(
                           valueColor:
@@ -444,46 +415,54 @@ class _HomeContentState extends State<HomeContent> {
           ),
         ),
 
-        // Barra de búsqueda
+        // Botón de navegación detallada con voz
         Container(
-          margin: const EdgeInsets.all(20),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 5,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Column(
             children: [
-              Icon(Icons.search, color: Colors.grey[600]),
-              const SizedBox(width: 10),
-              Expanded(
-                child: GestureDetector(
-                  onTap: _navigateToSearch,
-                  child: TextField(
-                    controller: _searchController,
-                    enabled: false,
-                    decoration: InputDecoration(
-                      hintText: 'Buscar ruta o destino...',
-                      hintStyle: TextStyle(color: Colors.grey[600]),
-                      border: InputBorder.none,
-                    ),
+              ElevatedButton.icon(
+                onPressed: _mostrarNavegacionDetallada,
+                icon: const Icon(Icons.search, color: Colors.white),
+                label: const Text(
+                  'Buscar Destino en Popayán',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF6A00),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
                   ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.search, color: Color(0xFFFF6A00)),
-                onPressed: _navigateToSearch,
+              const SizedBox(height: 8),
+              // Descripción de la nueva funcionalidad
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.location_on,
+                      color: Color(0xFFFF6A00),
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Navegación inteligente con lugares reales de Popayán',
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -561,7 +540,7 @@ class _RouteCardState extends State<RouteCard> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -583,12 +562,11 @@ class _RouteCardState extends State<RouteCard> {
                   borderRadius: BorderRadius.circular(12),
                   child: fm.FlutterMap(
                     options: fm.MapOptions(
-                      // ignore: deprecated_member_use
-                      center: center,
-                      // ignore: deprecated_member_use
-                      zoom: 14.0,
-                      // ignore: deprecated_member_use
-                      interactiveFlags: fm.InteractiveFlag.none,
+                      initialCenter: center,
+                      initialZoom: 14.0,
+                      interactionOptions: const fm.InteractionOptions(
+                        flags: fm.InteractiveFlag.none,
+                      ),
                     ),
                     children: [
                       fm.TileLayer(
@@ -668,7 +646,7 @@ class _RouteCardState extends State<RouteCard> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: const Color(0xFF4CAF50).withOpacity(0.1),
+                color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(
@@ -747,7 +725,7 @@ class _FavoritosPaginaState extends State<FavoritosPagina> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Dismissible(
-                  key: Key(favorito['nombre']),
+                  key: Key(favorito['nombre'] as String? ?? 'favorito'),
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
                     setState(() {
@@ -757,7 +735,7 @@ class _FavoritosPaginaState extends State<FavoritosPagina> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          'Ruta ${favorito['nombre']} eliminada de favoritos',
+                          'Ruta ${favorito['nombre'] as String? ?? 'Sin nombre'} eliminada de favoritos',
                           style: const TextStyle(color: Colors.white),
                         ),
                         backgroundColor: Colors.red,
@@ -780,7 +758,7 @@ class _FavoritosPaginaState extends State<FavoritosPagina> {
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withValues(alpha: 0.2),
                           spreadRadius: 1,
                           blurRadius: 5,
                           offset: const Offset(0, 3),
@@ -794,7 +772,7 @@ class _FavoritosPaginaState extends State<FavoritosPagina> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                favorito['nombre'],
+                                favorito['nombre'] as String? ?? 'Sin nombre',
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -802,7 +780,7 @@ class _FavoritosPaginaState extends State<FavoritosPagina> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                favorito['empresa'],
+                                favorito['empresa'] as String? ?? 'Sin empresa',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.grey[600],
@@ -813,16 +791,19 @@ class _FavoritosPaginaState extends State<FavoritosPagina> {
                         ),
                         IconButton(
                           icon: Icon(
-                            Favoritos().esFavorito(favorito['nombre'])
+                            Favoritos().esFavorito(
+                                    favorito['nombre'] as String? ?? '')
                                 ? Icons.star
                                 : Icons.star_border,
-                            color: Favoritos().esFavorito(favorito['nombre'])
+                            color: Favoritos().esFavorito(
+                                    favorito['nombre'] as String? ?? '')
                                 ? Colors.amber
                                 : Colors.grey,
                           ),
                           onPressed: () {
                             setState(() {
-                              if (Favoritos().esFavorito(favorito['nombre'])) {
+                              if (Favoritos().esFavorito(
+                                  favorito['nombre'] as String? ?? '')) {
                                 Favoritos().quitar(favorito);
                               } else {
                                 Favoritos().agregar(favorito);

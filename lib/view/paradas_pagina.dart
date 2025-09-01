@@ -392,14 +392,14 @@ class _ParadasPaginaState extends State<ParadasPagina> {
           child: rutas.isEmpty
               ? Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
+                  children: const [
+                    Icon(
                       Icons.bus_alert,
                       size: 50,
                       color: Colors.grey,
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
+                    SizedBox(height: 16),
+                    Text(
                       'No hay rutas registradas para este barrio',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -407,8 +407,8 @@ class _ParadasPaginaState extends State<ParadasPagina> {
                         color: Colors.grey,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
+                    SizedBox(height: 8),
+                    Text(
                       'Las rutas se actualizarán próximamente',
                       textAlign: TextAlign.center,
                       style: TextStyle(

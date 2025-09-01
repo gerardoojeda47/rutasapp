@@ -261,7 +261,7 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
                     userProfile['email'],
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -281,7 +281,7 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     spreadRadius: 2,
                     blurRadius: 5,
                     offset: const Offset(0, 3),
@@ -522,7 +522,7 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: const Color(0xFFFF6A00).withOpacity(0.1),
+          color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Icon(
@@ -560,7 +560,7 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.1),
+          color: Colors.green.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Icon(

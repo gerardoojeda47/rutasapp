@@ -45,7 +45,7 @@ class _DriverState extends State<Driver> {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF6A00).withOpacity(0.1),
+                  color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Icon(
@@ -115,7 +115,7 @@ class _DriverState extends State<Driver> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   elevation: 4,
-                  shadowColor: const Color(0xFFFF6A00).withOpacity(0.3),
+                  shadowColor: const Color(0xFFFF6A00).withValues(alpha: 0.3),
                 ),
                 child: const Text(
                   'Registrar Conductor',
@@ -144,7 +144,7 @@ class _DriverState extends State<Driver> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -186,7 +186,7 @@ class _DriverState extends State<Driver> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

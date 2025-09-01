@@ -1,55 +1,48 @@
+// cSpell:locale es
+// Página del mapa de rutas de buses en Popayán, Colombia
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import '../data/popayan_bus_routes.dart';
 
 class MapaRutaPagina extends StatefulWidget {
-  final String routeName;
-  final List<String> stops;
+  final BusRoute route;
 
   const MapaRutaPagina({
     super.key,
-    required this.routeName,
-    required this.stops,
+    required this.route,
   });
 
   @override
   State<MapaRutaPagina> createState() => _MapaRutaPaginaState();
 }
 
-class _MapaRutaPaginaState extends State<MapaRutaPagina> {
+class _MapaRutaPaginaState extends State<MapaRutaPagina>
+    with TickerProviderStateMixin {
   LatLng? myPosition;
   final MapController _mapController = MapController();
   List<LatLng> _routeStops = [];
   bool _isLoading = true;
 
-  // Coordenadas simuladas para las paradas de Popayán
-  final Map<String, LatLng> _stopCoordinates = {
-    'Centro': const LatLng(2.4389, -76.6064),
-    'La Paz': const LatLng(2.4450, -76.6100),
-    'Jose María Obando': const LatLng(2.4400, -76.6000),
-    'San Camilo': const LatLng(2.4350, -76.6050),
-    'Campan': const LatLng(2.4500, -76.6150),
-    'La Esmeralda': const LatLng(2.4550, -76.6200),
-    'El Recuerdo': const LatLng(2.4600, -76.6250),
-    'Terminal': const LatLng(2.4300, -76.5900),
-    'El Uvo': const LatLng(2.4200, -76.5800),
-    'San Eduardo': const LatLng(2.4250, -76.5850),
-    'Bello Horizonte': const LatLng(2.4650, -76.6300),
-    'El Placer': const LatLng(2.4700, -76.6350),
-    'La Arboleda': const LatLng(2.4750, -76.6400),
-    'Alfonso López': const LatLng(2.4800, -76.6450),
-    'El Limonar': const LatLng(2.4850, -76.6500),
-    'El Boquerón': const LatLng(2.4900, -76.6550),
-    'La Floresta': const LatLng(2.4950, -76.6600),
-    'El Lago': const LatLng(2.5000, -76.6650),
-    'Gabriel G. Marqués': const LatLng(2.5050, -76.6700),
-    'Los Sauces': const LatLng(2.5100, -76.6750),
-    'La Campiña': const LatLng(2.5150, -76.6800),
-    'María Oriente': const LatLng(2.5200, -76.6850),
-    'La Primavera': const LatLng(2.5250, -76.6900),
-    'Universidad': const LatLng(2.4400, -76.6000),
-  };
+  // Animación del bus
+  late AnimationController _busAnimationController;
+  late Animation<double> _busAnimation;
+  LatLng? _currentBusPosition;
+  Timer? _busTimer;
+  bool _isAnimating = false;
+  late AnimationController _pulseController;
+
+  // Animaciones futuristas
+  late AnimationController _neonController;
+  late AnimationController _waveController;
+  late AnimationController _particleController;
+  late Animation<double> _neonAnimation;
+  late Animation<double> _waveAnimation;
+  late Animation<double> _particleAnimation;
+  List<LatLng> _energyParticles = [];
 
   Future<Position> determinePosition() async {
     LocationPermission permission;
@@ -66,6 +59,19 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
     }
 
     return await Geolocator.getCurrentPosition();
+  }
+
+  Color _parseRouteColor() {
+    try {
+      String colorHex = widget.route.color;
+      if (colorHex.startsWith('#')) {
+        colorHex = colorHex.substring(1);
+      }
+      return Color(int.parse('FF$colorHex', radix: 16));
+    } catch (e) {
+      // Color por defecto si hay error
+      return const Color(0xFFFF6A00);
+    }
   }
 
   void getCurrentLocation() async {
@@ -86,11 +92,171 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
 
   void _setupRouteStops() {
     _routeStops.clear();
-    for (String stop in widget.stops) {
-      if (_stopCoordinates.containsKey(stop)) {
-        _routeStops.add(_stopCoordinates[stop]!);
+    // Generar ruta realista con waypoints siguiendo las calles
+    _routeStops.addAll(_generateRealisticRoute(widget.route));
+  }
+
+  /// Genera una ruta realista usando waypoints específicos de Popayán
+  List<LatLng> _generateRealisticRoute(BusRoute route) {
+    List<LatLng> smoothRoute = [];
+
+    // Puntos clave de las calles principales de Popayán
+    final Map<String, LatLng> streetIntersections = {
+      'parque_caldas': const LatLng(2.4448, -76.6147),
+      'carrera_5_calle_5': const LatLng(2.4448, -76.6140),
+      'carrera_6_calle_5': const LatLng(2.4448, -76.6145),
+      'carrera_9_calle_5': const LatLng(2.4448, -76.6120),
+      'carrera_5_norte': const LatLng(2.4480, -76.6140),
+      'carrera_5_sur': const LatLng(2.4420, -76.6140),
+      'terminal_area': const LatLng(2.4500, -76.6170),
+      'campanario_area': const LatLng(2.4448, -76.6147),
+    };
+
+    // Agregar el primer punto
+    if (route.stops.isNotEmpty) {
+      smoothRoute.add(route.stops.first);
+    }
+
+    // Crear rutas que sigan las calles principales
+    for (int i = 0; i < route.stops.length - 1; i++) {
+      LatLng start = route.stops[i];
+      LatLng end = route.stops[i + 1];
+
+      // Crear ruta que siga las calles principales
+      List<LatLng> streetRoute =
+          _createStreetBasedRoute(start, end, streetIntersections);
+      smoothRoute.addAll(streetRoute);
+
+      // Agregar el punto final
+      smoothRoute.add(end);
+    }
+
+    return smoothRoute;
+  }
+
+  /// Crea una ruta que sigue las calles principales de Popayán
+  List<LatLng> _createStreetBasedRoute(
+      LatLng start, LatLng end, Map<String, LatLng> intersections) {
+    List<LatLng> route = [];
+
+    // Determinar si necesitamos usar intersecciones intermedias
+    double distance = _calculateDistance(start, end);
+
+    if (distance > 0.008) {
+      // Para distancias largas, usar intersecciones
+      // Encontrar la mejor intersección intermedia
+      LatLng? bestIntersection =
+          _findBestIntersection(start, end, intersections);
+
+      if (bestIntersection != null) {
+        // Crear ruta: inicio -> intersección -> final
+        route.addAll(_createDirectStreetPath(start, bestIntersection));
+        route.add(bestIntersection);
+        route.addAll(_createDirectStreetPath(bestIntersection, end));
+      } else {
+        // Si no hay intersección buena, crear ruta directa con curvas suaves
+        route.addAll(_createDirectStreetPath(start, end));
+      }
+    } else {
+      // Para distancias cortas, ruta directa con curvas suaves
+      route.addAll(_createDirectStreetPath(start, end));
+    }
+
+    return route;
+  }
+
+  /// Encuentra la mejor intersección intermedia entre dos puntos
+  LatLng? _findBestIntersection(
+      LatLng start, LatLng end, Map<String, LatLng> intersections) {
+    LatLng? bestIntersection;
+    double bestScore = double.infinity;
+
+    for (LatLng intersection in intersections.values) {
+      // Calcular si la intersección está en una buena posición intermedia
+      double distToStart = _calculateDistance(start, intersection);
+      double distToEnd = _calculateDistance(intersection, end);
+      double directDist = _calculateDistance(start, end);
+
+      // La intersección debe estar relativamente cerca de la línea directa
+      double totalDist = distToStart + distToEnd;
+      double efficiency = totalDist / directDist;
+
+      // Preferir intersecciones que no desvíen mucho la ruta
+      if (efficiency < 1.5 && efficiency < bestScore) {
+        bestScore = efficiency;
+        bestIntersection = intersection;
       }
     }
+
+    return bestIntersection;
+  }
+
+  /// Crea un camino directo entre dos puntos siguiendo las calles
+  List<LatLng> _createDirectStreetPath(LatLng start, LatLng end) {
+    List<LatLng> path = [];
+
+    double latDiff = end.latitude - start.latitude;
+    double lngDiff = end.longitude - start.longitude;
+    double distance = sqrt(latDiff * latDiff + lngDiff * lngDiff);
+
+    // Número de puntos intermedios basado en la distancia
+    int numPoints = (distance * 8000).round().clamp(3, 12);
+
+    for (int i = 1; i < numPoints; i++) {
+      double t = i / numPoints;
+
+      // Determinar si seguir carrera (norte-sur) o calle (este-oeste)
+      if (latDiff.abs() > lngDiff.abs()) {
+        // Movimiento principalmente norte-sur: seguir carrera
+        path.addAll(_createCarreraPath(start, end, t));
+      } else {
+        // Movimiento principalmente este-oeste: seguir calle
+        path.addAll(_createCallePath(start, end, t));
+      }
+    }
+
+    return path;
+  }
+
+  /// Crea puntos siguiendo una carrera (calle vertical)
+  List<LatLng> _createCarreraPath(LatLng start, LatLng end, double t) {
+    List<LatLng> points = [];
+
+    double latDiff = end.latitude - start.latitude;
+    double lngDiff = end.longitude - start.longitude;
+
+    // Primero moverse en latitud (norte-sur por la carrera)
+    double midLat = start.latitude + (latDiff * t);
+    double midLng =
+        start.longitude + (lngDiff * 0.2 * t); // Pequeño ajuste en longitud
+
+    points.add(LatLng(midLat, midLng));
+
+    return points;
+  }
+
+  /// Crea puntos siguiendo una calle (calle horizontal)
+  List<LatLng> _createCallePath(LatLng start, LatLng end, double t) {
+    List<LatLng> points = [];
+
+    double latDiff = end.latitude - start.latitude;
+    double lngDiff = end.longitude - start.longitude;
+
+    // Primero moverse en longitud (este-oeste por la calle)
+    double midLat =
+        start.latitude + (latDiff * 0.2 * t); // Pequeño ajuste en latitud
+    double midLng = start.longitude + (lngDiff * t);
+
+    points.add(LatLng(midLat, midLng));
+
+    return points;
+  }
+
+  /// Calcula la distancia entre dos puntos
+  double _calculateDistance(LatLng point1, LatLng point2) {
+    double latDiff = point1.latitude - point2.latitude;
+    double lngDiff = point1.longitude - point2.longitude;
+    return sqrt(latDiff * latDiff + lngDiff * lngDiff);
   }
 
   @override
@@ -98,6 +264,171 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
     super.initState();
     getCurrentLocation();
     _setupRouteStops();
+    _initializeBusAnimation();
+  }
+
+  void _initializeBusAnimation() {
+    _busAnimationController = AnimationController(
+      duration:
+          const Duration(seconds: 30), // 30 segundos para recorrer toda la ruta
+      vsync: this,
+    );
+
+    _pulseController = AnimationController(
+      duration: const Duration(seconds: 2), // Pulso cada 2 segundos
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _busAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _busAnimationController,
+      curve: Curves.easeInOut, // Curva más suave
+    ));
+
+    _busAnimation.addListener(() {
+      if (_routeStops.isNotEmpty) {
+        _updateBusPosition();
+      }
+    });
+
+    _busAnimation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        // Reiniciar la animación después de una pausa
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            _busAnimationController.reset();
+            _busAnimationController.forward();
+          }
+        });
+      }
+    });
+
+    // Inicializar animaciones futuristas
+    _initializeFuturisticAnimations();
+  }
+
+  void _initializeFuturisticAnimations() {
+    // Animación de neón pulsante
+    _neonController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _neonAnimation = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _neonController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Animación de ondas
+    _waveController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat();
+
+    _waveAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _waveController,
+      curve: Curves.easeOut,
+    ));
+
+    // Animación de partículas
+    _particleController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    )..repeat();
+
+    _particleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _particleController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Generar partículas de energía
+    _generateEnergyParticles();
+  }
+
+  void _generateEnergyParticles() {
+    _energyParticles.clear();
+    if (_routeStops.isNotEmpty) {
+      for (int i = 0; i < _routeStops.length; i += 3) {
+        _energyParticles.add(_routeStops[i]);
+      }
+    }
+  }
+
+  void _updateBusPosition() {
+    if (_routeStops.isEmpty) return;
+
+    double progress = _busAnimation.value;
+    int totalPoints = _routeStops.length;
+    double exactIndex = progress * (totalPoints - 1);
+    int currentIndex = exactIndex.floor();
+    double fraction = exactIndex - currentIndex;
+
+    if (currentIndex >= totalPoints - 1) {
+      setState(() {
+        _currentBusPosition = _routeStops.last;
+      });
+      debugPrint('🚌 Bus llegó al final: ${_routeStops.last}');
+      return;
+    }
+
+    LatLng currentPoint = _routeStops[currentIndex];
+    LatLng nextPoint = _routeStops[currentIndex + 1];
+
+    // Interpolación entre puntos
+    double lat = currentPoint.latitude +
+        (nextPoint.latitude - currentPoint.latitude) * fraction;
+    double lng = currentPoint.longitude +
+        (nextPoint.longitude - currentPoint.longitude) * fraction;
+
+    setState(() {
+      _currentBusPosition = LatLng(lat, lng);
+    });
+
+    // Log cada 10% del progreso
+    if ((progress * 10).toInt() != ((progress - 0.01) * 10).toInt()) {
+      debugPrint('🚌 Bus en progreso ${(progress * 100).toInt()}%: $lat, $lng');
+    }
+  }
+
+  void _startBusAnimation() {
+    if (!_isAnimating && _routeStops.isNotEmpty) {
+      setState(() {
+        _isAnimating = true;
+        _currentBusPosition = _routeStops.first;
+      });
+          debugPrint('🚌 Iniciando animación del bus en: ${_routeStops.first}');
+    debugPrint('🚌 Total de puntos en la ruta: ${_routeStops.length}');
+      _busAnimationController.forward();
+    }
+  }
+
+  void _stopBusAnimation() {
+    setState(() {
+      _isAnimating = false;
+    });
+    _busAnimationController.stop();
+  }
+
+  @override
+  void dispose() {
+    _busAnimationController.dispose();
+    _pulseController.dispose();
+    _neonController.dispose();
+    _waveController.dispose();
+    _particleController.dispose();
+    _busTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -106,7 +437,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
       backgroundColor: const Color(0xFFF6F6F6),
       appBar: AppBar(
         title: Text(
-          'Mapa: ${widget.routeName}',
+          'Mapa: ${widget.route.name}',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -117,6 +448,20 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+          IconButton(
+            icon: Icon(_isAnimating ? Icons.pause : Icons.play_arrow),
+            onPressed: () {
+                  debugPrint('🚌 Botón presionado - Animando: $_isAnimating');
+    debugPrint('🚌 Posición actual del bus: $_currentBusPosition');
+    debugPrint('🚌 Puntos de ruta: ${_routeStops.length}');
+              if (_isAnimating) {
+                _stopBusAnimation();
+              } else {
+                _startBusAnimation();
+              }
+            },
+            tooltip: _isAnimating ? 'Pausar animación' : 'Iniciar animación',
+          ),
           IconButton(
             icon: const Icon(Icons.my_location),
             onPressed: () {
@@ -158,7 +503,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -176,22 +521,97 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            widget.routeName,
-                            style: const TextStyle(
+                            widget.route.name,
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFFFF6A00),
+                              color: _parseRouteColor(),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        '${widget.stops.length} paradas • Ruta activa',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            '${widget.route.neighborhoods.length} paradas • Ruta activa',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const Spacer(),
+                          if (_isAnimating)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: const [
+                                      Icon(
+                                        Icons.directions_bus,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'En ruta',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: _parseRouteColor()
+                                        .withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: _parseRouteColor()
+                                          .withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.speed,
+                                        color: _parseRouteColor(),
+                                        size: 14,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '${(_busAnimation.value * 100).toInt()}%',
+                                        style: TextStyle(
+                                          color: _parseRouteColor(),
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
                       ),
                     ],
                   ),
@@ -233,7 +653,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                                     Border.all(color: Colors.white, width: 2),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.blue.withOpacity(0.3),
+                                    color: Colors.blue.withValues(alpha: 0.3),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -249,64 +669,423 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                         ],
                       ),
 
-                      // Marcadores de paradas
+                      // Marcador del bus animado - SÚPER VISIBLE
+                      if (_currentBusPosition != null)
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: _currentBusPosition!,
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.red, // Color súper visible
+                                  shape: BoxShape.circle,
+                                  border:
+                                      Border.all(color: Colors.white, width: 3),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.red.withValues(alpha: 0.6),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                    BoxShadow(
+                                      color:
+                                          Colors.black.withValues(alpha: 0.3),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.directions_bus,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                      // Marcadores de paradas mejorados con alta visibilidad
                       MarkerLayer(
-                        markers: _routeStops.asMap().entries.map((entry) {
+                        markers:
+                            widget.route.stops.asMap().entries.map((entry) {
                           int index = entry.key;
                           LatLng stop = entry.value;
-                          String stopName = widget.stops[index];
+                          String stopName =
+                              index < widget.route.neighborhoods.length
+                                  ? widget.route.neighborhoods[index]
+                                  : 'Parada ${index + 1}';
+
+                          bool isFirstStop = index == 0;
+                          bool isLastStop =
+                              index == widget.route.stops.length - 1;
 
                           return Marker(
                             point: stop,
                             child: GestureDetector(
                               onTap: () =>
                                   _showStopInfo(stopName, stop, index + 1),
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFF6A00),
-                                  shape: BoxShape.circle,
-                                  border:
-                                      Border.all(color: Colors.white, width: 2),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFFFF6A00)
-                                          .withOpacity(0.3),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Círculo de fondo con efecto de pulso
+                                  Container(
+                                    width: 35,
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      color: isFirstStop
+                                          ? Colors.green.withValues(alpha: 0.2)
+                                          : isLastStop
+                                              ? Colors.red
+                                                  .withValues(alpha: 0.2)
+                                              : _parseRouteColor()
+                                                  .withValues(alpha: 0.2),
+                                      shape: BoxShape.circle,
                                     ),
-                                  ],
-                                ),
-                                child: Text(
-                                  '${index + 1}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
                                   ),
-                                ),
+                                  // Marcador principal
+                                  Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      color: isFirstStop
+                                          ? Colors.green
+                                          : isLastStop
+                                              ? Colors.red
+                                              : _parseRouteColor(),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.white, width: 4),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: (isFirstStop
+                                                  ? Colors.green
+                                                  : isLastStop
+                                                      ? Colors.red
+                                                      : _parseRouteColor())
+                                              .withValues(alpha: 0.5),
+                                          blurRadius: 15,
+                                          offset: const Offset(0, 5),
+                                        ),
+                                        BoxShadow(
+                                          color: Colors.black
+                                              .withValues(alpha: 0.2),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: isFirstStop
+                                          ? const Icon(
+                                              Icons.play_arrow,
+                                              color: Colors.white,
+                                              size: 14,
+                                            )
+                                          : isLastStop
+                                              ? const Icon(
+                                                  Icons.stop,
+                                                  color: Colors.white,
+                                                  size: 14,
+                                                )
+                                              : Text(
+                                                  '${index + 1}',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
                         }).toList(),
                       ),
 
-                      // Línea de la ruta
-                      if (_routeStops.length > 1)
-                        PolylineLayer(
-                          polylines: [
-                            Polyline(
-                              points: _routeStops,
-                              strokeWidth: 4,
-                              color: const Color(0xFFFF6A00).withOpacity(0.7),
-                            ),
-                          ],
+                      // Líneas de la ruta - Estilo futurista con efectos de neón
+                      if (_routeStops.length > 1) ...[
+                        // Capa de efectos futuristas
+                        AnimatedBuilder(
+                          animation: _neonAnimation,
+                          builder: (context, child) {
+                            return PolylineLayer(
+                              polylines: [
+                                // Efecto de onda expansiva desde el bus
+                                if (_isAnimating && _currentBusPosition != null)
+                                  Polyline(
+                                    points: _createWaveEffect(
+                                        _currentBusPosition!, _waveAnimation.value * 0.01),
+                                    strokeWidth:
+                                        12 * (1 - _waveAnimation.value),
+                                    color: _parseRouteColor().withValues(
+                                      alpha:
+                                          0.3 * (1 - _waveAnimation.value),
+                                    ),
+                                  ),
+
+                                // Sombra exterior con efecto de resplandor
+                                Polyline(
+                                  points: _routeStops,
+                                  strokeWidth: 12 + (4 * _neonAnimation.value),
+                                  color: _parseRouteColor().withValues(
+                                    alpha: 0.1 + (0.1 * _neonAnimation.value),
+                                  ),
+                                ),
+
+                                // Línea de base con gradiente
+                                Polyline(
+                                  points: _routeStops,
+                                  strokeWidth: 8,
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                ),
+
+                                // Línea principal con efecto neón pulsante
+                                Polyline(
+                                  points: _routeStops,
+                                  strokeWidth: 6,
+                                  color: _parseRouteColor().withValues(
+                                    alpha: 0.7 + (0.3 * _neonAnimation.value),
+                                  ),
+                                ),
+
+                                // Línea central brillante
+                                Polyline(
+                                  points: _routeStops,
+                                  strokeWidth: 2 + (1 * _neonAnimation.value),
+                                  color: Colors.white.withValues(
+                                    alpha: 0.8 + (0.2 * _neonAnimation.value),
+                                  ),
+                                ),
+
+                                // Efecto de progreso futurista
+                                if (_isAnimating &&
+                                    _currentBusPosition != null) ...[
+                                  // Resplandor del progreso con pulso
+                                  Polyline(
+                                    points: _getProgressRoute(),
+                                    strokeWidth:
+                                        15 + (5 * _neonAnimation.value),
+                                    color: Colors.cyan.withValues(
+                                      alpha: 0.2 + (0.2 * _neonAnimation.value),
+                                    ),
+                                  ),
+
+                                  // Línea de progreso principal brillante
+                                  Polyline(
+                                    points: _getProgressRoute(),
+                                    strokeWidth: 8,
+                                    color: Colors.cyan.withValues(alpha: 0.9),
+                                  ),
+
+                                  // Núcleo del progreso ultra brillante
+                                  Polyline(
+                                    points: _getProgressRoute(),
+                                    strokeWidth: 3,
+                                    color: Colors.white,
+                                  ),
+
+                                  // Efecto de chispas en el progreso
+                                  // Nota: _createSparkEffect() devuelve Widgets, no Polylines
+                                ],
+                              ],
+                            );
+                          },
                         ),
+
+                        // Partículas de energía flotantes
+                        if (_isAnimating)
+                          AnimatedBuilder(
+                            animation: _particleAnimation,
+                            builder: (context, child) {
+                              return PolylineLayer(
+                                polylines: _createEnergyParticles(),
+                              );
+                            },
+                          ),
+                      ],
                     ],
                   ),
                 ),
               ],
             ),
+      bottomSheet: _isAnimating
+          ? Container(
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.95),
+                    Colors.white,
+                  ],
+                ),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // Barra de progreso moderna
+                    Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          AnimatedBuilder(
+                            animation: _busAnimation,
+                            builder: (context, child) {
+                              return FractionallySizedBox(
+                                widthFactor: _busAnimation.value,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        _parseRouteColor()
+                                            .withValues(alpha: 0.7),
+                                        _parseRouteColor(),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Información del bus
+                    Row(
+                      children: [
+                        // Icono del bus animado
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: _parseRouteColor(),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    _parseRouteColor().withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.directions_bus,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // Información de progreso
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Bus ${widget.route.name.split(' ')[1]} en movimiento',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: _parseRouteColor(),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              AnimatedBuilder(
+                                animation: _busAnimation,
+                                builder: (context, child) {
+                                  return Text(
+                                    'Progreso: ${(_busAnimation.value * 100).toInt()}% • ${widget.route.neighborhoods.length} paradas',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Botón de control
+                        Container(
+                          decoration: BoxDecoration(
+                            color: _parseRouteColor().withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              if (_isAnimating) {
+                                _stopBusAnimation();
+                              } else {
+                                _startBusAnimation();
+                              }
+                            },
+                            icon: Icon(
+                              _isAnimating ? Icons.pause : Icons.play_arrow,
+                              color: _parseRouteColor(),
+                              size: 28,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          if (!_isAnimating)
+            FloatingActionButton(
+              heroTag: "bus_animation",
+              onPressed: _startBusAnimation,
+              backgroundColor: _parseRouteColor(),
+              child: const Icon(
+                Icons.play_arrow,
+                color: Colors.white,
+              ),
+            ),
+          if (!_isAnimating) const SizedBox(height: 16),
+          FloatingActionButton(
+            heroTag: "center_route",
+            onPressed: _fitBoundsToRoute,
+            backgroundColor: Colors.white,
+            child: Icon(
+              Icons.center_focus_strong,
+              color: _parseRouteColor(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -331,7 +1110,40 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
       LatLng(maxLat + latMargin, maxLng + lngMargin),
     );
 
-    _mapController.fitBounds(bounds);
+    _mapController.fitCamera(CameraFit.bounds(bounds: bounds));
+
+    // Iniciar la animación automáticamente después de ajustar la vista
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted && !_isAnimating) {
+        debugPrint('🚌 Iniciando animación automática...');
+        _startBusAnimation();
+      }
+    });
+  }
+
+  /// Obtiene la parte de la ruta que ya ha sido recorrida por el bus
+  List<LatLng> _getProgressRoute() {
+    if (_routeStops.isEmpty || _currentBusPosition == null) {
+      return [];
+    }
+
+    List<LatLng> progressRoute = [];
+    double progress = _busAnimation.value;
+    int totalPoints = _routeStops.length;
+    double exactIndex = progress * (totalPoints - 1);
+    int currentIndex = exactIndex.floor();
+
+    // Agregar todos los puntos hasta el índice actual
+    for (int i = 0; i <= currentIndex && i < _routeStops.length; i++) {
+      progressRoute.add(_routeStops[i]);
+    }
+
+    // Agregar la posición actual del bus
+    if (_currentBusPosition != null) {
+      progressRoute.add(_currentBusPosition!);
+    }
+
+    return progressRoute;
   }
 
   void _showStopInfo(String stopName, LatLng position, int stopNumber) {
@@ -364,7 +1176,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF6A00).withOpacity(0.1),
+                    color: const Color(0xFFFF6A00).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -389,7 +1201,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
                         ),
                       ),
                       Text(
-                        'Parada ${stopNumber} de ${widget.stops.length}',
+                        'Parada ${stopNumber} de ${widget.route.neighborhoods.length}',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -448,4 +1260,40 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina> {
       ),
     );
   }
+
+  /// Crea efecto de onda expansiva desde la posición del bus
+  List<LatLng> _createWaveEffect(LatLng center, double radius) {
+    final List<LatLng> wavePoints = [];
+    const int segments = 16;
+    
+    for (int i = 0; i <= segments; i++) {
+      final angle = (i * 2 * pi) / segments;
+      final lat = center.latitude + (radius * cos(angle));
+      final lng = center.longitude + (radius * sin(angle));
+      wavePoints.add(LatLng(lat, lng));
+    }
+    
+    return wavePoints;
+  }
+
+
+
+  /// Crea partículas de energía flotantes
+  List<Polyline> _createEnergyParticles() {
+    return List.generate(8, (index) {
+      final progress = _particleAnimation.value;
+      final offset = (index * 0.125) + progress;
+      final x = 200 + (100 * (offset % 1.0));
+      final y = 150 + (50 * (offset % 1.0));
+      
+      return Polyline(
+        points: [
+          LatLng(x, y),
+          LatLng(x + 2, y + 2),
+        ],
+        color: Colors.blue.withValues(alpha: 0.6),
+        strokeWidth: 2,
+      );
+    });
+    }
 }
