@@ -7,6 +7,115 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../data/popayan_bus_routes.dart';
+import '../core/services/routing_service.dart';
+import '../domain/entities/ruta_detallada.dart';
+
+// Clase para representar puntos de interés en el mapa
+class PointOfInterest {
+  final String name;
+  final LatLng position;
+  final POIType type;
+  final String? description;
+
+  PointOfInterest({
+    required this.name,
+    required this.position,
+    required this.type,
+    this.description,
+  });
+}
+
+// Tipos de puntos de interés
+enum POIType {
+  hospital,
+  school,
+  university,
+  park,
+  church,
+  mall,
+  restaurant,
+  bank,
+  gasStation,
+  police,
+  hotel,
+  museum,
+  library,
+  pharmacy,
+  supermarket,
+}
+
+// Extensión para obtener el icono según el tipo de POI
+extension POITypeExtension on POIType {
+  IconData get icon {
+    switch (this) {
+      case POIType.hospital:
+        return Icons.local_hospital;
+      case POIType.school:
+        return Icons.school;
+      case POIType.university:
+        return Icons.account_balance;
+      case POIType.park:
+        return Icons.park;
+      case POIType.church:
+        return Icons.church;
+      case POIType.mall:
+        return Icons.shopping_bag;
+      case POIType.restaurant:
+        return Icons.restaurant;
+      case POIType.bank:
+        return Icons.account_balance;
+      case POIType.gasStation:
+        return Icons.local_gas_station;
+      case POIType.police:
+        return Icons.local_police;
+      case POIType.hotel:
+        return Icons.hotel;
+      case POIType.museum:
+        return Icons.museum;
+      case POIType.library:
+        return Icons.local_library;
+      case POIType.pharmacy:
+        return Icons.local_pharmacy;
+      case POIType.supermarket:
+        return Icons.shopping_cart;
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case POIType.hospital:
+        return Colors.red;
+      case POIType.school:
+        return Colors.orange;
+      case POIType.university:
+        return Colors.deepPurple;
+      case POIType.park:
+        return Colors.green;
+      case POIType.church:
+        return Colors.indigo;
+      case POIType.mall:
+        return Colors.pink;
+      case POIType.restaurant:
+        return Colors.amber;
+      case POIType.bank:
+        return Colors.blue;
+      case POIType.gasStation:
+        return Colors.red.shade800;
+      case POIType.police:
+        return Colors.blue.shade900;
+      case POIType.hotel:
+        return Colors.teal;
+      case POIType.museum:
+        return Colors.brown;
+      case POIType.library:
+        return Colors.deepOrange;
+      case POIType.pharmacy:
+        return Colors.lightGreen;
+      case POIType.supermarket:
+        return Colors.cyan;
+    }
+  }
+}
 
 class MapaRutaPagina extends StatefulWidget {
   final BusRoute route;
@@ -26,6 +135,185 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
   final MapController _mapController = MapController();
   List<LatLng> _routeStops = [];
   bool _isLoading = true;
+
+  // Integración con OpenRouteService
+  final RoutingService _routingService = RoutingService();
+  RutaDetallada? _rutaDetallada;
+  
+  // Lista de puntos de interés en Popayán
+  final List<PointOfInterest> _pointsOfInterest = [
+    // Hospitales
+    PointOfInterest(
+      name: 'Hospital Universitario San José',
+      position: const LatLng(2.4427, -76.6064),
+      type: POIType.hospital,
+      description: 'Hospital principal de Popayán',
+    ),
+    PointOfInterest(
+      name: 'Clínica La Estancia',
+      position: const LatLng(2.4489, -76.5972),
+      type: POIType.hospital,
+      description: 'Clínica privada',
+    ),
+    PointOfInterest(
+      name: 'Hospital Susana López de Valencia',
+      position: const LatLng(2.4631, -76.5936),
+      type: POIType.hospital,
+      description: 'Hospital público',
+    ),
+    
+    // Universidades y colegios
+    PointOfInterest(
+      name: 'Universidad del Cauca',
+      position: const LatLng(2.4448, -76.6060),
+      type: POIType.university,
+      description: 'Universidad pública',
+    ),
+    PointOfInterest(
+      name: 'Colegio Mayor del Cauca',
+      position: const LatLng(2.4417, -76.6068),
+      type: POIType.university,
+      description: 'Institución universitaria',
+    ),
+    PointOfInterest(
+      name: 'Colegio INEM Francisco José de Caldas',
+      position: const LatLng(2.4550, -76.5950),
+      type: POIType.school,
+      description: 'Colegio público',
+    ),
+    PointOfInterest(
+      name: 'Colegio Champagnat',
+      position: const LatLng(2.4380, -76.6120),
+      type: POIType.school,
+      description: 'Colegio privado',
+    ),
+    
+    // Parques
+    PointOfInterest(
+      name: 'Parque Caldas',
+      position: const LatLng(2.4418, -76.6060),
+      type: POIType.park,
+      description: 'Parque principal de Popayán',
+    ),
+    PointOfInterest(
+      name: 'Parque de la Salud',
+      position: const LatLng(2.4520, -76.5980),
+      type: POIType.park,
+      description: 'Parque recreativo',
+    ),
+    
+    // Iglesias
+    PointOfInterest(
+      name: 'Catedral Basílica Nuestra Señora de la Asunción',
+      position: const LatLng(2.4415, -76.6063),
+      type: POIType.church,
+      description: 'Catedral principal',
+    ),
+    PointOfInterest(
+      name: 'Iglesia San Francisco',
+      position: const LatLng(2.4425, -76.6075),
+      type: POIType.church,
+      description: 'Iglesia colonial',
+    ),
+    
+    // Centros comerciales
+    PointOfInterest(
+      name: 'Centro Comercial Campanario',
+      position: const LatLng(2.4550, -76.5920),
+      type: POIType.mall,
+      description: 'Principal centro comercial',
+    ),
+    PointOfInterest(
+      name: 'Centro Comercial Anarkos',
+      position: const LatLng(2.4420, -76.6055),
+      type: POIType.mall,
+      description: 'Centro comercial en el centro histórico',
+    ),
+    
+    // Restaurantes
+    PointOfInterest(
+      name: 'La Cosecha',
+      position: const LatLng(2.4410, -76.6050),
+      type: POIType.restaurant,
+      description: 'Restaurante de comida típica',
+    ),
+    PointOfInterest(
+      name: 'Italiano D\'Verona',
+      position: const LatLng(2.4430, -76.6040),
+      type: POIType.restaurant,
+      description: 'Restaurante italiano',
+    ),
+    
+    // Bancos
+    PointOfInterest(
+      name: 'Banco de la República',
+      position: const LatLng(2.4415, -76.6050),
+      type: POIType.bank,
+      description: 'Banco central',
+    ),
+    
+    // Estaciones de gasolina
+    PointOfInterest(
+      name: 'Estación Terpel',
+      position: const LatLng(2.4500, -76.5950),
+      type: POIType.gasStation,
+      description: 'Estación de servicio',
+    ),
+    
+    // Policía
+    PointOfInterest(
+      name: 'Comando de Policía Cauca',
+      position: const LatLng(2.4440, -76.6020),
+      type: POIType.police,
+      description: 'Comando departamental',
+    ),
+    
+    // Hoteles
+    PointOfInterest(
+      name: 'Hotel Monasterio',
+      position: const LatLng(2.4410, -76.6070),
+      type: POIType.hotel,
+      description: 'Hotel colonial',
+    ),
+    
+    // Museos
+    PointOfInterest(
+      name: 'Museo Arquidiocesano de Arte Religioso',
+      position: const LatLng(2.4415, -76.6065),
+      type: POIType.museum,
+      description: 'Museo de arte religioso',
+    ),
+    
+    // Bibliotecas
+    PointOfInterest(
+      name: 'Biblioteca del Banco de la República',
+      position: const LatLng(2.4415, -76.6048),
+      type: POIType.library,
+      description: 'Biblioteca pública',
+    ),
+    
+    // Farmacias
+    PointOfInterest(
+      name: 'Droguería La Rebaja',
+      position: const LatLng(2.4420, -76.6055),
+      type: POIType.pharmacy,
+      description: 'Cadena de farmacias',
+    ),
+    
+    // Supermercados
+    PointOfInterest(
+      name: 'Éxito',
+      position: const LatLng(2.4550, -76.5925),
+      type: POIType.supermarket,
+      description: 'Supermercado',
+    ),
+    PointOfInterest(
+      name: 'Olímpica',
+      position: const LatLng(2.4430, -76.6030),
+      type: POIType.supermarket,
+      description: 'Supermercado',
+    ),
+  ];
 
   // Animación del bus
   late AnimationController _busAnimationController;
@@ -62,16 +350,22 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
   }
 
   Color _parseRouteColor() {
+    // Usar el color definido en la ruta (hex ej. "#FF6A00"). Fallback a azul.
     try {
-      String colorHex = widget.route.color;
-      if (colorHex.startsWith('#')) {
-        colorHex = colorHex.substring(1);
-      }
-      return Color(int.parse('FF$colorHex', radix: 16));
-    } catch (e) {
-      // Color por defecto si hay error
-      return const Color(0xFFFF6A00);
+      return _colorFromHex(widget.route.color);
+    } catch (_) {
+      return Colors.blue;
     }
+  }
+
+  // Convierte un string HEX a Color de Flutter
+  Color _colorFromHex(String hex) {
+    String cleaned = hex.replaceAll('#', '').toUpperCase();
+    if (cleaned.length == 6) {
+      cleaned = 'FF$cleaned'; // Alpha por defecto
+    }
+    final intColor = int.parse(cleaned, radix: 16);
+    return Color(intColor);
   }
 
   void getCurrentLocation() async {
@@ -90,10 +384,35 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     }
   }
 
-  void _setupRouteStops() {
+  void _setupRouteStops() async {
     _routeStops.clear();
-    // Generar ruta realista con waypoints siguiendo las calles
-    _routeStops.addAll(_generateRealisticRoute(widget.route));
+
+    // Si hay al menos dos puntos, consultamos ORS para geometría real
+    if (widget.route.stops.length >= 2) {
+      try {
+        // Solicitar ruta que pase por TODAS las paradas como waypoints
+        final ruta = await _routingService.obtenerRutaConWaypoints(
+          waypoints: widget.route.stops,
+          perfil: 'driving-car',
+          incluirInstrucciones: true,
+        );
+        setState(() {
+          _rutaDetallada = ruta;
+          _routeStops.addAll(ruta.puntos);
+        });
+      } catch (e) {
+        debugPrint(
+            '⚠️ ORS falló o API Key no válida. Usando fallback local. Error: $e');
+        // Fallback a la lógica local si falla ORS o no hay API Key
+        setState(() {
+          _routeStops.addAll(_generateRealisticRoute(widget.route));
+        });
+      }
+    } else {
+      // Rutas con menos de 2 paradas: usar datos locales
+      _routeStops.addAll(_generateRealisticRoute(widget.route));
+      setState(() {});
+    }
   }
 
   /// Genera una ruta realista usando waypoints específicos de Popayán
@@ -191,31 +510,43 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     return bestIntersection;
   }
 
-  /// Crea un camino directo entre dos puntos siguiendo las calles
+  /// Crea un camino tipo "cuadrícula" entre dos puntos (L-shape) y lo densifica.
   List<LatLng> _createDirectStreetPath(LatLng start, LatLng end) {
-    List<LatLng> path = [];
+    final double latDiff = end.latitude - start.latitude;
+    final double lngDiff = end.longitude - start.longitude;
 
-    double latDiff = end.latitude - start.latitude;
-    double lngDiff = end.longitude - start.longitude;
-    double distance = sqrt(latDiff * latDiff + lngDiff * lngDiff);
+    // Dos variantes: primero vertical (carrera) luego horizontal (calle), o al revés
+    final LatLng codoVerticalPrimero = LatLng(end.latitude, start.longitude);
+    final LatLng codoHorizontalPrimero = LatLng(start.latitude, end.longitude);
 
-    // Número de puntos intermedios basado en la distancia
-    int numPoints = (distance * 8000).round().clamp(3, 12);
+    // Elegimos según el eje predominante para que el giro sea más natural
+    final List<LatLng> esqueleto = latDiff.abs() >= lngDiff.abs()
+        ? [start, codoVerticalPrimero, end]
+        : [start, codoHorizontalPrimero, end];
 
-    for (int i = 1; i < numPoints; i++) {
-      double t = i / numPoints;
+    return _densificarRuta(esqueleto);
+  }
 
-      // Determinar si seguir carrera (norte-sur) o calle (este-oeste)
-      if (latDiff.abs() > lngDiff.abs()) {
-        // Movimiento principalmente norte-sur: seguir carrera
-        path.addAll(_createCarreraPath(start, end, t));
-      } else {
-        // Movimiento principalmente este-oeste: seguir calle
-        path.addAll(_createCallePath(start, end, t));
+  /// Inserta puntos intermedios entre cada par de puntos para suavizar la polilínea.
+  List<LatLng> _densificarRuta(List<LatLng> puntosBase) {
+    final List<LatLng> resultado = [];
+    for (int i = 0; i < puntosBase.length - 1; i++) {
+      final a = puntosBase[i];
+      final b = puntosBase[i + 1];
+      // Distancia euclidiana aproximada para definir densidad
+      final dLat = b.latitude - a.latitude;
+      final dLng = b.longitude - a.longitude;
+      final dist = sqrt(dLat * dLat + dLng * dLng);
+      // Más distancia => más puntos (entre 6 y 20)
+      final pasos = (dist * 12000).round().clamp(6, 20);
+      for (int s = 1; s < pasos; s++) {
+        final t = s / pasos;
+        final lat = a.latitude + dLat * t;
+        final lng = a.longitude + dLng * t;
+        resultado.add(LatLng(lat, lng));
       }
     }
-
-    return path;
+    return resultado;
   }
 
   /// Crea puntos siguiendo una carrera (calle vertical)
@@ -265,6 +596,12 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     getCurrentLocation();
     _setupRouteStops();
     _initializeBusAnimation();
+    
+    // Inicializar el controlador de pulso para los POIs
+    _pulseController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
   }
 
   void _initializeBusAnimation() {
@@ -407,8 +744,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
         _isAnimating = true;
         _currentBusPosition = _routeStops.first;
       });
-          debugPrint('🚌 Iniciando animación del bus en: ${_routeStops.first}');
-    debugPrint('🚌 Total de puntos en la ruta: ${_routeStops.length}');
+      debugPrint('🚌 Iniciando animación del bus en: ${_routeStops.first}');
+      debugPrint('🚌 Total de puntos en la ruta: ${_routeStops.length}');
       _busAnimationController.forward();
     }
   }
@@ -451,9 +788,9 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
           IconButton(
             icon: Icon(_isAnimating ? Icons.pause : Icons.play_arrow),
             onPressed: () {
-                  debugPrint('🚌 Botón presionado - Animando: $_isAnimating');
-    debugPrint('🚌 Posición actual del bus: $_currentBusPosition');
-    debugPrint('🚌 Puntos de ruta: ${_routeStops.length}');
+              debugPrint('🚌 Botón presionado - Animando: $_isAnimating');
+              debugPrint('🚌 Posición actual del bus: $_currentBusPosition');
+              debugPrint('🚌 Puntos de ruta: ${_routeStops.length}');
               if (_isAnimating) {
                 _stopBusAnimation();
               } else {
@@ -707,6 +1044,26 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                           ],
                         ),
 
+                      // Polilínea de la ruta
+                      if (_routeStops.isNotEmpty)
+                        PolylineLayer(
+                          polylines: [
+                            Polyline(
+                              points: _routeStops,
+                              color: Colors.blue.withValues(alpha: 0.9),
+                              strokeWidth: 5,
+                            ),
+                            // Progreso de la ruta (recorrido)
+                            if (_currentBusPosition != null)
+                              Polyline(
+                                points: _getProgressRoute(),
+                                color:
+                                    Colors.greenAccent.withValues(alpha: 0.9),
+                                strokeWidth: 6,
+                              ),
+                          ],
+                        ),
+
                       // Marcadores de paradas mejorados con alta visibilidad
                       MarkerLayer(
                         markers:
@@ -806,6 +1163,64 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                           );
                         }).toList(),
                       ),
+                      
+                      // Marcadores de puntos de interés (hospitales, colegios, etc.)
+                      MarkerLayer(
+                        markers: _pointsOfInterest.map((poi) {
+                          return Marker(
+                            point: poi.position,
+                            child: GestureDetector(
+                              onTap: () => _showPOIInfo(poi),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Círculo de fondo con efecto de pulso
+                                  AnimatedBuilder(
+                                    animation: _pulseController,
+                                    builder: (context, child) {
+                                      return Container(
+                                        width: 35 + (5 * _pulseController.value),
+                                        height: 35 + (5 * _pulseController.value),
+                                        decoration: BoxDecoration(
+                                          color: poi.type.color.withValues(alpha: 0.2),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  // Marcador principal
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: poi.type.color,
+                                        width: 2,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: poi.type.color.withValues(alpha: 0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        poi.type.icon,
+                                        color: poi.type.color,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
 
                       // Líneas de la ruta - Estilo futurista con efectos de neón
                       if (_routeStops.length > 1) ...[
@@ -819,12 +1234,12 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                                 if (_isAnimating && _currentBusPosition != null)
                                   Polyline(
                                     points: _createWaveEffect(
-                                        _currentBusPosition!, _waveAnimation.value * 0.01),
+                                        _currentBusPosition!,
+                                        _waveAnimation.value * 0.01),
                                     strokeWidth:
                                         12 * (1 - _waveAnimation.value),
                                     color: _parseRouteColor().withValues(
-                                      alpha:
-                                          0.3 * (1 - _waveAnimation.value),
+                                      alpha: 0.3 * (1 - _waveAnimation.value),
                                     ),
                                   ),
 
@@ -1265,18 +1680,16 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
   List<LatLng> _createWaveEffect(LatLng center, double radius) {
     final List<LatLng> wavePoints = [];
     const int segments = 16;
-    
+
     for (int i = 0; i <= segments; i++) {
       final angle = (i * 2 * pi) / segments;
       final lat = center.latitude + (radius * cos(angle));
       final lng = center.longitude + (radius * sin(angle));
       wavePoints.add(LatLng(lat, lng));
     }
-    
+
     return wavePoints;
   }
-
-
 
   /// Crea partículas de energía flotantes
   List<Polyline> _createEnergyParticles() {
@@ -1285,7 +1698,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       final offset = (index * 0.125) + progress;
       final x = 200 + (100 * (offset % 1.0));
       final y = 150 + (50 * (offset % 1.0));
-      
+
       return Polyline(
         points: [
           LatLng(x, y),
@@ -1295,5 +1708,270 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
         strokeWidth: 2,
       );
     });
+  }
+  
+  // Método para mostrar información de un punto de interés
+  void _showPOIInfo(PointOfInterest poi) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              spreadRadius: 5,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: poi.type.color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    poi.type.icon,
+                    color: poi.type.color,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        poi.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _getPoiTypeText(poi.type),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (poi.description != null) ...[
+              Text(
+                'Descripción:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                poi.description!,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+            
+            // Información específica según el tipo de POI
+            _buildSpecificPOIInfo(poi),
+            
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Centrar el mapa en este POI
+                      _mapController.move(poi.position, 18);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: poi.type.color,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.center_focus_strong, color: Colors.white),
+                    label: const Text(
+                      'Centrar en mapa',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF6A00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    label: const Text(
+                      'Cerrar',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  // Método para obtener el texto del tipo de POI
+  String _getPoiTypeText(POIType type) {
+    switch (type) {
+      case POIType.hospital:
+        return 'Hospital / Centro médico';
+      case POIType.school:
+        return 'Colegio';
+      case POIType.university:
+        return 'Universidad';
+      case POIType.park:
+        return 'Parque';
+      case POIType.church:
+        return 'Iglesia';
+      case POIType.mall:
+        return 'Centro comercial';
+      case POIType.restaurant:
+        return 'Restaurante';
+      case POIType.bank:
+        return 'Banco';
+      case POIType.gasStation:
+        return 'Estación de gasolina';
+      case POIType.police:
+        return 'Estación de policía';
+      case POIType.hotel:
+        return 'Hotel';
+      case POIType.museum:
+        return 'Museo';
+      case POIType.library:
+        return 'Biblioteca';
+      case POIType.pharmacy:
+        return 'Farmacia';
+      case POIType.supermarket:
+        return 'Supermercado';
     }
+  }
+  
+  // Método para construir información específica según el tipo de POI
+  Widget _buildSpecificPOIInfo(PointOfInterest poi) {
+    switch (poi.type) {
+      case POIType.hospital:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _infoItem(Icons.access_time, 'Horario', '24 horas', Colors.blue),
+            const SizedBox(height: 8),
+            _infoItem(Icons.local_phone, 'Teléfono', '(+57) 602-123-4567', Colors.green),
+          ],
+        );
+      case POIType.school:
+      case POIType.university:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _infoItem(Icons.access_time, 'Horario', '7:00 AM - 5:00 PM', Colors.blue),
+            const SizedBox(height: 8),
+            _infoItem(Icons.event, 'Período', 'En clases', Colors.orange),
+          ],
+        );
+      case POIType.restaurant:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _infoItem(Icons.access_time, 'Horario', '11:00 AM - 10:00 PM', Colors.blue),
+            const SizedBox(height: 8),
+            _infoItem(Icons.star, 'Calificación', '4.5/5', Colors.amber),
+          ],
+        );
+      case POIType.mall:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _infoItem(Icons.access_time, 'Horario', '10:00 AM - 8:00 PM', Colors.blue),
+            const SizedBox(height: 8),
+            _infoItem(Icons.local_parking, 'Estacionamiento', 'Disponible', Colors.green),
+          ],
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+  
+  // Widget para mostrar un elemento de información
+  Widget _infoItem(IconData icon, String title, String value, Color color) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: color,
+          size: 20,
+        ),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }

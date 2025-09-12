@@ -3,6 +3,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import '../data/popayan_places_data.dart';
 import '../data/popayan_bus_routes.dart';
+import '../core/utils/icon_helper.dart';
+import '../core/services/bus_tracking_service.dart';
 import 'navegacion_detallada_pagina.dart';
 
 class SmartSearchPage extends StatefulWidget {
@@ -173,6 +175,96 @@ class _SmartSearchPageState extends State<SmartSearchPage>
     _onSearchChanged();
   }
 
+  /// Búsqueda directa por categoría desde los iconos (plurales → singulares)
+  void _searchByCategory(String categoryPlural) {
+    final Map<String, String> pluralToSingular = {
+      'Restaurantes': 'Restaurante',
+      'Hospitales': 'Hospital',
+      'Bancos': 'Banco',
+      'Hoteles': 'Hotel',
+      'Supermercados': 'Supermercado',
+      'Universidades': 'Universidad',
+    };
+
+    final String? singular = pluralToSingular[categoryPlural];
+    if (singular == null) {
+      _searchController.text = categoryPlural;
+      _onSearchChanged();
+      return;
+    }
+
+    setState(() {
+      _searchController.text = categoryPlural;
+      _isSearching = false;
+      _showSuggestions = false;
+      _searchResults = PopayanPlacesDatabase.getPlacesByCategory(singular);
+    });
+
+    // Ofrecer acciones rápidas para esa categoría
+    _showCategoryActions(categoryPlural, singular);
+  }
+
+  void _showCategoryActions(String categoryPlural, String categorySingular) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(IconHelper.search),
+                title: Text('Ver ${categoryPlural.toLowerCase()}'),
+                onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                leading: const Icon(IconHelper.navigation),
+                title: Text('Ir al ${categorySingular.toLowerCase()} más cercano'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _openNearestPlaceForCategory(categorySingular);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _openNearestPlaceForCategory(String categorySingular) {
+    if (!_locationPermissionGranted || _currentPosition == null) {
+      _showLocationRequiredDialog();
+      return;
+    }
+
+    final places = PopayanPlacesDatabase.getPlacesByCategory(categorySingular);
+    if (places.isEmpty) return;
+
+    final origin =
+        LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
+
+    // Encontrar el lugar más cercano
+    double bestDistance = double.infinity;
+    PopayanPlace? bestPlace;
+    for (final place in places) {
+      final dx = origin.latitude - place.coordinates.latitude;
+      final dy = origin.longitude - place.coordinates.longitude;
+      final d2 = dx * dx + dy * dy; // distancia aproximada suficiente para elegir
+      if (d2 < bestDistance) {
+        bestDistance = d2;
+        bestPlace = place;
+      }
+    }
+
+    if (bestPlace != null) {
+      _selectPlace(bestPlace);
+    }
+  }
+
   void _showLocationRequiredDialog() {
     showDialog(
       context: context,
@@ -272,8 +364,8 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                 ),
                 child: Icon(
                   _locationPermissionGranted
-                      ? Icons.location_on
-                      : Icons.location_off,
+                      ? IconHelper.locationOn
+                      : IconHelper.locationOff,
                   color: Colors.white,
                   size: 24,
                 ),
@@ -346,7 +438,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
             child: Row(
               children: [
                 Icon(
-                  Icons.search,
+                  IconHelper.search,
                   color: Colors.grey[600],
                   size: 24,
                 ),
@@ -386,7 +478,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                       _searchFocusNode.unfocus();
                     },
                     icon: Icon(
-                      Icons.clear,
+                      IconHelper.clear,
                       color: Colors.grey[600],
                     ),
                   ),
@@ -471,18 +563,18 @@ class _SmartSearchPageState extends State<SmartSearchPage>
     final categories = [
       {
         'name': 'Restaurantes',
-        'icon': Icons.restaurant,
+        'icon': IconHelper.restaurant,
         'color': Colors.orange
       },
-      {'name': 'Hospitales', 'icon': Icons.local_hospital, 'color': Colors.red},
-      {'name': 'Bancos', 'icon': Icons.account_balance, 'color': Colors.blue},
-      {'name': 'Hoteles', 'icon': Icons.hotel, 'color': Colors.purple},
+      {'name': 'Hospitales', 'icon': IconHelper.hospital, 'color': Colors.red},
+      {'name': 'Bancos', 'icon': IconHelper.bank, 'color': Colors.blue},
+      {'name': 'Hoteles', 'icon': IconHelper.hotel, 'color': Colors.purple},
       {
         'name': 'Supermercados',
-        'icon': Icons.shopping_cart,
+        'icon': IconHelper.supermarket,
         'color': Colors.green
       },
-      {'name': 'Universidades', 'icon': Icons.school, 'color': Colors.indigo},
+      {'name': 'Universidades', 'icon': IconHelper.university, 'color': Colors.indigo},
     ];
 
     return Container(
@@ -512,8 +604,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                 final category = categories[index];
                 return GestureDetector(
                   onTap: () {
-                    _searchController.text = category['name'] as String;
-                    _onSearchChanged();
+                    _searchByCategory(category['name'] as String);
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -572,6 +663,9 @@ class _SmartSearchPageState extends State<SmartSearchPage>
         final place = _searchResults[index];
         final nearbyRoutes =
             PopayanBusRoutes.findNearbyRoutes(place.coordinates, 2.0);
+        final busArrivals = BusTrackingService.getBusArrivals(place.coordinates);
+        final routeInfos = BusTrackingService.getRoutesToDestination(place.coordinates);
+        final trafficInfo = BusTrackingService.getTrafficInfo();
 
         return Container(
           margin: const EdgeInsets.only(bottom: 15),
@@ -673,7 +767,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
-                    Icons.navigation,
+                    IconHelper.navigation,
                     color: Colors.white,
                     size: 20,
                   ),
@@ -681,8 +775,39 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                 onTap: () => _selectPlace(place),
               ),
 
-              // Información de rutas de bus cercanas
-              if (nearbyRoutes.isNotEmpty)
+              // Información de tráfico en tiempo real
+              Container(
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+                child: Row(
+                  children: [
+                    Icon(
+                      IconHelper.traffic,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Tráfico: ${trafficInfo.levelText}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      trafficInfo.description,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Información de buses en tiempo real
+              if (busArrivals.isNotEmpty)
                 Container(
                   padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
                   child: Column(
@@ -697,10 +822,84 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                       Row(
                         children: [
                           Icon(
-                            Icons.directions_bus,
+                            IconHelper.bus,
                             size: 16,
                             color: Colors.grey[600],
                           ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Buses en tiempo real:',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ...busArrivals.take(3).map((arrival) => _buildBusArrivalCard(arrival)),
+                    ],
+                  ),
+                ),
+
+              // Información de rutas disponibles
+              if (routeInfos.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 1,
+                        color: Colors.grey[200],
+                        margin: const EdgeInsets.only(bottom: 10),
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            IconHelper.route,
+                            size: 16,
+                            color: Colors.grey[600],
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Rutas disponibles:',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ...routeInfos.take(3).map((routeInfo) => _buildRouteInfoCard(routeInfo)),
+                    ],
+                  ),
+                ),
+
+              // Información de rutas de bus cercanas (legacy)
+              if (nearbyRoutes.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 1,
+                        color: Colors.grey[200],
+                        margin: const EdgeInsets.only(bottom: 10),
+                      ),
+                        Row(
+                          children: [
+                            Icon(
+                              IconHelper.bus,
+                              size: 16,
+                              color: Colors.grey[600],
+                            ),
                           const SizedBox(width: 6),
                           Text(
                             'Rutas de bus cercanas:',
@@ -801,7 +1000,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.search_off,
+            IconHelper.search,
             size: 80,
             color: Colors.grey[400],
           ),
@@ -830,35 +1029,283 @@ class _SmartSearchPageState extends State<SmartSearchPage>
   IconData _getCategoryIcon(String category) {
     switch (category.toLowerCase()) {
       case 'restaurante':
-        return Icons.restaurant;
+        return IconHelper.restaurant;
       case 'hospital':
-        return Icons.local_hospital;
+        return IconHelper.hospital;
       case 'banco':
-        return Icons.account_balance;
+        return IconHelper.bank;
       case 'hotel':
-        return Icons.hotel;
+        return IconHelper.hotel;
       case 'supermercado':
-        return Icons.shopping_cart;
+        return IconHelper.supermarket;
       case 'universidad':
-        return Icons.school;
+        return IconHelper.university;
       case 'centro comercial':
-        return Icons.shopping_bag;
+        return IconHelper.shopping;
       case 'sitio turístico':
-        return Icons.place;
+        return IconHelper.place;
       case 'iglesia':
-        return Icons.church;
+        return IconHelper.church;
       case 'terminal':
-        return Icons.directions_bus;
+        return IconHelper.terminal;
       case 'aeropuerto':
-        return Icons.flight;
+        return IconHelper.airport;
       case 'parque':
-        return Icons.park;
+        return IconHelper.park;
       case 'farmacia':
-        return Icons.local_pharmacy;
+        return IconHelper.pharmacy;
       case 'barrio':
-        return Icons.location_city;
+        return IconHelper.neighborhood;
       default:
-        return Icons.place;
+        return IconHelper.place;
     }
+  }
+
+  /// Construye la tarjeta de información de llegada de bus
+  Widget _buildBusArrivalCard(BusArrivalInfo arrival) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: arrival.isTranspubenza 
+            ? const Color(0xFF2196F3).withValues(alpha: 0.1)
+            : const Color(0xFF4CAF50).withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: arrival.isTranspubenza 
+              ? const Color(0xFF2196F3).withValues(alpha: 0.3)
+              : const Color(0xFF4CAF50).withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: arrival.isTranspubenza 
+                  ? const Color(0xFF2196F3)
+                  : const Color(0xFF4CAF50),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                arrival.busNumber,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      arrival.routeName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (arrival.isTranspubenza) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2196F3),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'TRANSPUBENZA',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  arrival.arrivalText,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${arrival.nextStop} • ${arrival.occupancyText}',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '${arrival.currentPassengers}/${arrival.maxCapacity}',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 11,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                arrival.status,
+                style: TextStyle(
+                  color: arrival.status == 'Retrasado' 
+                      ? Colors.red 
+                      : Colors.green,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Construye la tarjeta de información de ruta
+  Widget _buildRouteInfoCard(RouteInfo routeInfo) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: routeInfo.isTranspubenza 
+            ? const Color(0xFF2196F3).withValues(alpha: 0.1)
+            : const Color(0xFF4CAF50).withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: routeInfo.isTranspubenza 
+              ? const Color(0xFF2196F3).withValues(alpha: 0.3)
+              : const Color(0xFF4CAF50).withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: routeInfo.isTranspubenza 
+                  ? const Color(0xFF2196F3)
+                  : const Color(0xFF4CAF50),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                routeInfo.routeNumber,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      routeInfo.routeName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (routeInfo.isTranspubenza) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2196F3),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'TRANSPUBENZA',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(IconHelper.time, size: 12, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${routeInfo.durationText} • ${routeInfo.frequency}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Icon(IconHelper.money, size: 12, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${routeInfo.fare} • ${routeInfo.distanceText}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                routeInfo.nextBus,
+                style: const TextStyle(
+                  color: Color(0xFFFF6A00),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${routeInfo.stops} paradas',
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

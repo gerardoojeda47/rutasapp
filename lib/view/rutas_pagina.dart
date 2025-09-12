@@ -127,6 +127,34 @@ class _RutasPaginaState extends State<RutasPagina> {
     );
   }
 
+  List<String> _proximosBuses(BusRoute ruta) {
+    // Inferir frecuencia a partir de services (si contiene "Frecuencia X-Y min")
+    final services = ruta.services ?? [];
+    final regex = RegExp(r'Frecuencia\s+(\d+)(?:-(\d+))?\s+min');
+    int frecuenciaMin = 12; // valor por defecto
+    for (final s in services) {
+      final m = regex.firstMatch(s);
+      if (m != null) {
+        final a = int.tryParse(m.group(1) ?? '12') ?? 12;
+        final b = int.tryParse(m.group(2) ?? '${a}') ?? a;
+        frecuenciaMin = ((a + b) / 2).round();
+        break;
+      }
+    }
+
+    // Generar 3 próximas llegadas basadas en la hora actual
+    final now = TimeOfDay.now();
+    final nowMinutes = now.hour * 60 + now.minute;
+    final List<String> horarios = [];
+    for (int i = 1; i <= 3; i++) {
+      final m = nowMinutes + frecuenciaMin * i;
+      final h = (m ~/ 60) % 24;
+      final mm = m % 60;
+      horarios.add('${h.toString().padLeft(2, '0')}:${mm.toString().padLeft(2, '0')}');
+    }
+    return horarios;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,6 +172,7 @@ class _RutasPaginaState extends State<RutasPagina> {
         itemBuilder: (context, index) {
           final ruta = _rutas[index];
           final seleccionada = _rutaSeleccionada == index;
+          final proximos = _proximosBuses(ruta);
           return Card(
             margin: const EdgeInsets.only(bottom: 24),
             elevation: 6,
@@ -233,29 +262,36 @@ class _RutasPaginaState extends State<RutasPagina> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
                       const Icon(Icons.access_time,
                           size: 18, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Text('Horario: ${ruta.schedule}'),
-                      const SizedBox(width: 16),
+                      Text('Horario: ${ruta.schedule}',
+                          overflow: TextOverflow.ellipsis),
+                      const SizedBox(width: 8),
                       const Icon(Icons.attach_money,
                           size: 18, color: Colors.green),
-                      Text(ruta.fare),
+                      Text(ruta.fare, overflow: TextOverflow.ellipsis),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
                       Icon(_traficoIcon('moderado'),
                           color: _traficoColor('moderado'), size: 18),
-                      const SizedBox(width: 4),
                       const Text('Tráfico: moderado'),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 8),
                       const Icon(Icons.directions_bus_filled,
                           size: 18, color: Colors.blue),
-                      const Text('Próximo bus: 5 min'),
+                      Text('Próximos: ${proximos.join(', ')}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1),
                     ],
                   ),
                   const SizedBox(height: 14),

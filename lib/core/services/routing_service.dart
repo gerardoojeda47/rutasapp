@@ -18,7 +18,7 @@ class RoutingService {
     };
   }
 
-  /// Obtiene una ruta detallada entre dos puntos
+  /// Obtiene una ruta detallada entre dos puntos (punto a punto)
   Future<RutaDetallada> obtenerRutaDetallada({
     required LatLng origen,
     required LatLng destino,
@@ -27,18 +27,18 @@ class RoutingService {
     bool incluirGeometria = true,
   }) async {
     try {
-      final response = await _dio.get(
-        '/directions/$perfil',
-        queryParameters: {
-          'start': '${origen.longitude},${origen.latitude}',
-          'end': '${destino.longitude},${destino.latitude}',
+      // Usar POST con coordinates para mayor consistencia con la API
+      final response = await _dio.post(
+        '/directions/$perfil/geojson',
+        data: {
+          'coordinates': [
+            [origen.longitude, origen.latitude],
+            [destino.longitude, destino.latitude],
+          ],
           'instructions': incluirInstrucciones,
           'geometry': incluirGeometria,
-          'format': 'json',
-          'units': 'm',
           'language': 'es',
-          'geometry_format': 'geojson',
-          'instructions_format': 'json',
+          'units': 'm',
         },
       );
 
@@ -47,6 +47,45 @@ class RoutingService {
       throw TimeoutException(message: _handleDioError(e));
     } catch (e) {
       throw const ServerException(message: 'Error al obtener la ruta');
+    }
+  }
+
+  /// Obtiene una ruta que pasa por todos los waypoints en orden (paradas)
+  Future<RutaDetallada> obtenerRutaConWaypoints({
+    required List<LatLng> waypoints,
+    String perfil = 'driving-car',
+    bool incluirInstrucciones = true,
+  }) async {
+    if (waypoints.length < 2) {
+      throw const ServerException(message: 'Se requieren al menos 2 puntos');
+    }
+
+    try {
+      final coords = waypoints
+          .map((p) => [p.longitude, p.latitude])
+          .toList(growable: false);
+
+      final response = await _dio.post(
+        '/directions/$perfil/geojson',
+        data: {
+          'coordinates': coords,
+          'instructions': incluirInstrucciones,
+          'geometry': true,
+          'language': 'es',
+          'units': 'm',
+        },
+      );
+
+      return _parseRutaDetallada(
+        response.data,
+        waypoints.first,
+        waypoints.last,
+      );
+    } on DioException catch (e) {
+      throw TimeoutException(message: _handleDioError(e));
+    } catch (e) {
+      throw const ServerException(
+          message: 'Error al obtener la ruta con paradas');
     }
   }
 
@@ -126,12 +165,35 @@ class RoutingService {
     LatLng origen,
     LatLng destino,
   ) {
-    final routes = data['routes'] as List;
-    if (routes.isEmpty) {
-      throw const ServerException(message: 'No se encontraron rutas');
+    // Soporta ambas variantes: JSON (routes[]) y GeoJSON (features[])
+    if (data.containsKey('routes')) {
+      final routes = data['routes'] as List;
+      if (routes.isEmpty) {
+        throw const ServerException(message: 'No se encontraron rutas');
+      }
+      return _parseRutaIndividual(
+          routes.first as Map<String, dynamic>, origen, destino);
     }
 
-    return _parseRutaIndividual(routes.first, origen, destino);
+    if (data.containsKey('features')) {
+      final features = data['features'] as List;
+      if (features.isEmpty) {
+        throw const ServerException(message: 'No se encontraron rutas');
+      }
+      final feature = features.first as Map<String, dynamic>;
+      final properties = feature['properties'] as Map<String, dynamic>;
+      final geometry = feature['geometry'] as Map<String, dynamic>;
+
+      // Normalizamos a la estructura que espera _parseRutaIndividual
+      final normalized = <String, dynamic>{
+        'summary': properties['summary'] ?? <String, dynamic>{},
+        'segments': properties['segments'] ?? <dynamic>[],
+        'geometry': geometry,
+      };
+      return _parseRutaIndividual(normalized, origen, destino);
+    }
+
+    throw const ServerException(message: 'Formato de respuesta no soportado');
   }
 
   /// Parsea una ruta individual
@@ -141,13 +203,14 @@ class RoutingService {
     LatLng destino,
   ) {
     final summary = route['summary'] as Map<String, dynamic>;
+    // Compatibilidad con respuesta GeoJSON (geometry ya está anidada) o plana
     final geometry = route['geometry'] as Map<String, dynamic>;
     final segments = route['segments'] as List;
 
-    // Parsear puntos de la geometría
+    // Parsear puntos de la geometría (GeoJSON: [lng, lat])
     final coordinates = geometry['coordinates'] as List;
     final puntos = coordinates.map<LatLng>((coord) {
-      return LatLng(coord[1], coord[0]); // lat, lng
+      return LatLng((coord[1] as num).toDouble(), (coord[0] as num).toDouble());
     }).toList();
 
     // Parsear instrucciones

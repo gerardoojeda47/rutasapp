@@ -372,6 +372,731 @@ class PopayanBusRoutes {
       distance: 11.0,
       estimatedTime: 38,
     ),
+    // TRANSPUBENZA - RUTA 1: La Paz/La Esmeralda/Tomás C./Los Naranjos
+    BusRoute(
+      id: 'transpubenza_ruta_1',
+      name: 'Transpubenza Ruta 1 - La Paz/La Esmeralda/Tomás C./Los Naranjos',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4490, -76.6080), // La Paz
+        LatLng(2.4515, -76.6065), // La Esmeralda (aprox)
+        LatLng(2.4400, -76.6080), // Tomás Cipriano de Mosquera
+        LatLng(2.4530, -76.6035), // Los Naranjos (aprox)
+      ],
+      neighborhoods: ['La Paz', 'La Esmeralda', 'Tomás C.', 'Los Naranjos'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description:
+          'Conecta el norte (La Paz, La Esmeralda) con Tomás Cipriano y el sector de Los Naranjos.',
+      pointsOfInterest: [
+        'La Paz',
+        'La Esmeralda',
+        'Tomás Cipriano',
+        'Los Naranjos'
+      ],
+      services: ['Servicio continuo', 'Paradas señalizadas'],
+      distance: 8.0,
+      estimatedTime: 28,
+    ),
+
+    // TRANSPUBENZA - RUTA 2: Tomás C./Chirimía/Cra 6/Campanario/Jardines de Paz
+    BusRoute(
+      id: 'transpubenza_ruta_2',
+      name:
+          'Transpubenza Ruta 2 - Tomás C./Chirimía/Cra 6/Campanario/Jardines de Paz',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4400, -76.6080), // Tomás C.
+        LatLng(2.4410, -76.6180), // Chirimía
+        LatLng(2.4445, -76.6145), // Carrera 6 - Centro
+        LatLng(2.4448, -76.6147), // Campanario (eje Calle 5)
+        LatLng(2.4575, -76.6065), // Jardines de Paz (aprox)
+      ],
+      neighborhoods: [
+        'Tomás C.',
+        'Chirimía',
+        'Carrera 6',
+        'Campanario',
+        'Jardines de Paz'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description:
+          'Ruta transversal con paso por el centro y el eje comercial.',
+      pointsOfInterest: ['Carrera 6', 'CC Campanario', 'Jardines de Paz'],
+      services: ['Conexión con centro', 'Frecuencia 10-12 min'],
+      distance: 9.0,
+      estimatedTime: 30,
+    ),
+
+    // TRANSPUBENZA - RUTA 3: Los Naranjos/Centro/Terminal/La Aldea
+    BusRoute(
+      id: 'transpubenza_ruta_3',
+      name: 'Transpubenza Ruta 3 - Los Naranjos/Centro/Terminal/La Aldea',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4530, -76.6035), // Los Naranjos (aprox)
+        LatLng(2.4448, -76.6147), // Centro - Parque Caldas
+        LatLng(2.4500, -76.6170), // Terminal
+        LatLng(2.4640, -76.5980), // La Aldea (aprox NE)
+      ],
+      neighborhoods: ['Los Naranjos', 'Centro', 'Terminal', 'La Aldea'],
+      schedule: '5:00 AM - 9:30 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description:
+          'Conecta norte-centro-terminal con extensión hacia La Aldea.',
+      pointsOfInterest: ['Parque Caldas', 'Terminal'],
+      services: ['Paradas principales', 'Acceso a terminal'],
+      distance: 10.5,
+      estimatedTime: 36,
+    ),
+
+    // TRANSPUBENZA - RUTA 4: Línea TP4BT Piscinas Comfa/Cra 5/Cll 13/Lomas Granada
+    BusRoute(
+      id: 'transpubenza_ruta_4',
+      name:
+          'Transpubenza Ruta 4 - TP4BT Piscinas Comfa/Cra 5/Cll 13/Lomas Granada',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4315, -76.6125), // Piscinas Comfa (aprox)
+        LatLng(2.4440, -76.6130), // Carrera 5 (centro)
+        LatLng(2.4475, -76.6065), // Calle 13 (aprox)
+        LatLng(2.4540, -76.6130), // Lomas Granada
+      ],
+      neighborhoods: [
+        'Piscinas Comfa',
+        'Carrera 5',
+        'Calle 13',
+        'Lomas Granada'
+      ],
+      schedule: '5:00 AM - 9:30 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description:
+          'Ruta TP4BT con eje centro-Calle 13 y conexión a Lomas Granada.',
+      pointsOfInterest: ['Puente Humilladero', 'Calle 13'],
+      services: ['Frecuencia 12-15 min'],
+      distance: 11.0,
+      estimatedTime: 38,
+    ),
+
+    // TRANSPUBENZA - RUTA 5: Yambitará/Cra 6/Cll 13/Cementerio/Tomás C.
+    BusRoute(
+      id: 'transpubenza_ruta_5',
+      name: 'Transpubenza Ruta 5 - Yambitará/Cra 6/Cll 13/Cementerio/Tomás C.',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4565, -76.5955), // Yambitará (aprox)
+        LatLng(2.4445, -76.6145), // Carrera 6
+        LatLng(2.4475, -76.6065), // Calle 13
+        LatLng(2.4470, -76.6125), // Cementerio (aprox)
+        LatLng(2.4400, -76.6080), // Tomás C.
+      ],
+      neighborhoods: [
+        'Yambitará',
+        'Carrera 6',
+        'Calle 13',
+        'Cementerio',
+        'Tomás C.'
+      ],
+      schedule: '5:00 AM - 9:30 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description: 'Eje norte-centro con paso por Calle 13 y Cementerio.',
+      pointsOfInterest: ['Carrera 6', 'Cementerio'],
+      services: ['Paradas señalizadas'],
+      distance: 10.2,
+      estimatedTime: 34,
+    ),
+
+    // TRANSPUBENZA - RUTA 6: La Paz/Lácteos Puracé/Calle 13/Los Naranjos
+    BusRoute(
+      id: 'transpubenza_ruta_6',
+      name: 'Transpubenza Ruta 6 - La Paz/Lácteos Puracé/Calle 13/Los Naranjos',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4490, -76.6080), // La Paz
+        LatLng(2.4520, -76.6020), // Lácteos Puracé (aprox)
+        LatLng(2.4475, -76.6065), // Calle 13
+        LatLng(2.4530, -76.6035), // Los Naranjos
+      ],
+      neighborhoods: ['La Paz', 'Lácteos Puracé', 'Calle 13', 'Los Naranjos'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description:
+          'Conecta La Paz con el eje productivo de Lácteos Puracé y Los Naranjos.',
+      pointsOfInterest: ['Lácteos Puracé', 'Calle 13'],
+      services: ['Servicio continuo'],
+      distance: 8.6,
+      estimatedTime: 29,
+    ),
+
+    // TRANSPUBENZA - RUTA 7: Piscinas Comfa/Campanario/Camilo Torres/Cll 13
+    BusRoute(
+      id: 'transpubenza_ruta_7',
+      name:
+          'Transpubenza Ruta 7 - Piscinas Comfa/Campanario/Camilo Torres/Cll 13',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4315, -76.6125), // Piscinas Comfa (aprox)
+        LatLng(2.4448, -76.6147), // Campanario
+        LatLng(2.4360, -76.6150), // Camilo Torres (aprox sur)
+        LatLng(2.4475, -76.6065), // Calle 13
+      ],
+      neighborhoods: [
+        'Piscinas Comfa',
+        'Campanario',
+        'Camilo Torres',
+        'Calle 13'
+      ],
+      schedule: '5:30 AM - 9:30 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description:
+          'Ruta sur-centro-norte con cruce por Camilo Torres y Calle 13.',
+      pointsOfInterest: ['CC Campanario'],
+      services: ['Frecuencia 12-15 min'],
+      distance: 10.8,
+      estimatedTime: 37,
+    ),
+
+    // TRANSPUBENZA - RUTA 8: Lomas Granada/La Esmeralda/Centro/La Villa
+    BusRoute(
+      id: 'transpubenza_ruta_8',
+      name: 'Transpubenza Ruta 8 - Lomas Granada/La Esmeralda/Centro/La Villa',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4540, -76.6130), // Lomas Granada
+        LatLng(2.4515, -76.6065), // La Esmeralda (aprox)
+        LatLng(2.4448, -76.6147), // Centro
+        LatLng(2.4485, -76.6070), // La Villa (aprox)
+      ],
+      neighborhoods: ['Lomas Granada', 'La Esmeralda', 'Centro', 'La Villa'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description: 'Eje norte-centro con destino residencial La Villa.',
+      pointsOfInterest: ['Centro Histórico'],
+      services: ['Paradas principales'],
+      distance: 9.1,
+      estimatedTime: 33,
+    ),
+
+    // TRANSPUBENZA - RUTA 9: Los Naranjos/Tomás C./La Esmeralda/Cll 13/Morinda
+    BusRoute(
+      id: 'transpubenza_ruta_9',
+      name:
+          'Transpubenza Ruta 9 - Los Naranjos/Tomás C./La Esmeralda/Cll 13/Morinda',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4530, -76.6035), // Los Naranjos
+        LatLng(2.4400, -76.6080), // Tomás C.
+        LatLng(2.4515, -76.6065), // La Esmeralda
+        LatLng(2.4475, -76.6065), // Calle 13
+        LatLng(2.4470, -76.6110), // Morinda (aprox)
+      ],
+      neighborhoods: [
+        'Los Naranjos',
+        'Tomás C.',
+        'La Esmeralda',
+        'Calle 13',
+        'Morinda'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description: 'Anillo norte con paso por eje Calle 13 y Morinda.',
+      pointsOfInterest: ['Calle 13', 'Morinda'],
+      services: ['Servicio continuo'],
+      distance: 9.7,
+      estimatedTime: 34,
+    ),
+
+    // TRANSPUBENZA - RUTA 10: Cra 10/Chirimía/La Esmeralda/Modelo/Morinda
+    BusRoute(
+      id: 'transpubenza_ruta_10',
+      name:
+          'Transpubenza Ruta 10 - Cra 10/Chirimía/La Esmeralda/Modelo/Morinda',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4460, -76.6100), // Cra 10 (aprox)
+        LatLng(2.4410, -76.6180), // Chirimía
+        LatLng(2.4515, -76.6065), // La Esmeralda
+        LatLng(2.4550, -76.6050), // Modelo (aprox)
+        LatLng(2.4470, -76.6110), // Morinda (aprox)
+      ],
+      neighborhoods: [
+        'Carrera 10',
+        'Chirimía',
+        'La Esmeralda',
+        'Modelo',
+        'Morinda'
+      ],
+      schedule: '5:00 AM - 9:30 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description: 'Eje norte-oriente con retorno por Morinda.',
+      pointsOfInterest: ['Barrio Modelo'],
+      services: ['Frecuencia 12-15 min'],
+      distance: 10.0,
+      estimatedTime: 35,
+    ),
+
+    // TRANSPUBENZA - RUTA 11: Los Naranjos/Tomás C./Cll 13/Centro/La Venta
+    BusRoute(
+      id: 'transpubenza_ruta_11',
+      name:
+          'Transpubenza Ruta 11 - Los Naranjos/Tomás C./Cll 13/Centro/La Venta',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4530, -76.6035), // Los Naranjos
+        LatLng(2.4400, -76.6080), // Tomás C.
+        LatLng(2.4475, -76.6065), // Calle 13
+        LatLng(2.4448, -76.6147), // Centro
+        LatLng(2.4680, -76.5920), // La Venta (aprox)
+      ],
+      neighborhoods: [
+        'Los Naranjos',
+        'Tomás C.',
+        'Calle 13',
+        'Centro',
+        'La Venta'
+      ],
+      schedule: '5:00 AM - 9:30 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description: 'Extensión hacia el nororiente (La Venta) desde eje centro.',
+      pointsOfInterest: ['Centro Histórico', 'Calle 13'],
+      services: ['Paradas principales'],
+      distance: 12.3,
+      estimatedTime: 42,
+    ),
+
+    // TRANSPUBENZA - RUTA 12: Lomas Granada/La Esmeralda/Campanario/SENA Norte
+    BusRoute(
+      id: 'transpubenza_ruta_12',
+      name:
+          'Transpubenza Ruta 12 - Lomas Granada/La Esmeralda/Campanario/SENA Norte',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4540, -76.6130), // Lomas Granada
+        LatLng(2.4515, -76.6065), // La Esmeralda
+        LatLng(2.4448, -76.6147), // Campanario
+        LatLng(2.4590, -76.6040), // SENA Norte (aprox)
+      ],
+      neighborhoods: [
+        'Lomas Granada',
+        'La Esmeralda',
+        'Campanario',
+        'SENA Norte'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description: 'Conexión norte con eje educativo SENA Norte.',
+      pointsOfInterest: ['CC Campanario', 'SENA Norte'],
+      services: ['Frecuencia 12-15 min'],
+      distance: 9.4,
+      estimatedTime: 33,
+    ),
+
+    // TRANSPUBENZA - RUTA 13: Puelenje/Centro/Cra 6/Lácteos Puracé/Calibío
+    BusRoute(
+      id: 'transpubenza_ruta_13',
+      name:
+          'Transpubenza Ruta 13 - Puelenje/Centro/Cra 6/Lácteos Puracé/Calibío',
+      company: 'TRANSPUBENZA',
+      stops: [
+        LatLng(2.4250, -76.6400), // Puelenje (aprox SW)
+        LatLng(2.4448, -76.6147), // Centro
+        LatLng(2.4445, -76.6145), // Carrera 6
+        LatLng(2.4520, -76.6020), // Lácteos Puracé
+        LatLng(2.4425, -76.5900), // Calibío (aprox E)
+      ],
+      neighborhoods: [
+        'Puelenje',
+        'Centro',
+        'Carrera 6',
+        'Lácteos Puracé',
+        'Calibío'
+      ],
+      schedule: '5:00 AM - 9:00 PM',
+      fare: '\$2.800',
+      color: '#2E86DE',
+      description:
+          'Ruta larga que cruza de suroccidente al oriente por el centro.',
+      pointsOfInterest: ['Centro Histórico', 'Carrera 6'],
+      services: ['Servicio extendido'],
+      distance: 16.0,
+      estimatedTime: 55,
+    ),
+
+    // TRANSLIBERTAD - RUTA 1: Calle 5
+    BusRoute(
+      id: 'translibertad_ruta_1',
+      name: 'Translibertad Ruta 1 - Calle 5',
+      company: 'TRANSLIBERTAD',
+      stops: [
+        LatLng(2.4510, -76.6200), // Calle 5 - Occidente
+        LatLng(2.4448, -76.6147), // Calle 5 - Centro
+        LatLng(2.4450, -76.6120), // Carrera 9
+        LatLng(2.4460, -76.6100), // Carrera 10
+        LatLng(2.4490, -76.6080), // La Paz (conexión norte)
+      ],
+      neighborhoods: ['Calle 5', 'Centro', 'Carrera 9', 'Carrera 10', 'La Paz'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#1ABC9C',
+      description:
+          'Recorrido principal por la Calle 5 conectando el occidente con el Centro y el norte.',
+      pointsOfInterest: ['Parque Caldas', 'Centro Histórico'],
+      services: ['Frecuencia 8-12 min'],
+      distance: 7.2,
+      estimatedTime: 24,
+    ),
+
+    // TRANSLIBERTAD - RUTA 2: Transversal 9 Norte
+    BusRoute(
+      id: 'translibertad_ruta_2',
+      name: 'Translibertad Ruta 2 - Transversal 9 Norte',
+      company: 'TRANSLIBERTAD',
+      stops: [
+        LatLng(2.4540, -76.6130), // Lomas de Granada
+        LatLng(2.4520, -76.6050), // Zona Anarkos / Carrera 9 Norte
+        LatLng(2.4580, -76.6030), // Transversal 9 Norte
+        LatLng(2.4610, -76.5990), // Calle 68 Norte (aprox)
+        LatLng(2.4630, -76.5960), // Carrera 17 Norte (aprox)
+        LatLng(2.4490, -76.6080), // La Paz
+      ],
+      neighborhoods: [
+        'Lomas de Granada',
+        'Carrera 9 Norte',
+        'Transversal 9 Norte',
+        'Calle 68 Norte',
+        'Carrera 17',
+        'La Paz'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#16A085',
+      description:
+          'Conecta el corredor de la Transversal 9 Norte con Lomas de Granada y La Paz.',
+      services: ['Frecuencia 10-15 min'],
+      distance: 10.3,
+      estimatedTime: 33,
+    ),
+
+    // TRANSLIBERTAD - RUTA 3: Corredor Carrera 9 Norte
+    BusRoute(
+      id: 'translibertad_ruta_3',
+      name: 'Translibertad Ruta 3 - Carrera 9 Norte/Centro',
+      company: 'TRANSLIBERTAD',
+      stops: [
+        LatLng(2.4520, -76.6050), // Carrera 9 Norte (Anarkos)
+        LatLng(2.4480, -76.6080), // Conexión norte-centro
+        LatLng(2.4448, -76.6147), // Centro - Calle 5
+        LatLng(2.4460, -76.6130), // Centro Histórico
+        LatLng(2.4600, -76.6000), // Carrera 17 Norte
+        LatLng(2.4615, -76.5950), // Calle 68 Norte
+      ],
+      neighborhoods: [
+        'Carrera 9 Norte',
+        'Centro',
+        'Calle 5',
+        'Carrera 17',
+        'Calle 68 Norte'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#27AE60',
+      description:
+          'Eje norte por Carrera 9 con conexión al Centro y retorno por el sector 17 Norte.',
+      services: ['Frecuencia 10-15 min'],
+      distance: 9.1,
+      estimatedTime: 31,
+    ),
+
+    // TRANSLIBERTAD - RUTA 4: TL2M Lomas de Granada → Calle 5
+    BusRoute(
+      id: 'translibertad_ruta_4',
+      name: 'Translibertad Ruta 4 - Lomas de Granada/Calle 5',
+      company: 'TRANSLIBERTAD',
+      stops: [
+        LatLng(2.4545, -76.6135), // Lomas de Granada
+        LatLng(2.4520, -76.6100), // Calle 3B (aprox)
+        LatLng(2.4485, -76.6125), // Conexión hacia centro
+        LatLng(2.4448, -76.6147), // Calle 5 - Centro
+      ],
+      neighborhoods: ['Lomas de Granada', 'Calle 3B', 'Centro', 'Calle 5'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#2ECC71',
+      description:
+          'Línea TL2M conectando Lomas de Granada con el Centro por la Calle 5.',
+      services: ['Frecuencia 12-18 min'],
+      distance: 6.4,
+      estimatedTime: 22,
+    ),
+
+    // TRANSLIBERTAD - RUTA 5: Oeste Calle 5 – Centro – Norte
+    BusRoute(
+      id: 'translibertad_ruta_5',
+      name: 'Translibertad Ruta 5 - Calle 5/Carreras 6-9/Transversal 7',
+      company: 'TRANSLIBERTAD',
+      stops: [
+        LatLng(2.4390, -76.6200), // Calle 5 - occidente
+        LatLng(2.4448, -76.6147), // Calle 5 - Centro
+        LatLng(2.4445, -76.6145), // Carrera 6
+        LatLng(2.4560, -76.5950), // Transversal 7 - 48 Norte
+        LatLng(2.4450, -76.6120), // Carrera 9
+      ],
+      neighborhoods: [
+        'Calle 5',
+        'Centro',
+        'Carrera 6',
+        'Transversal 7',
+        'Carrera 9'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#3498DB',
+      description:
+          'Cubre el eje de la Calle 5 y se abre hacia el norte por Transversal 7 y Carrera 9.',
+      services: ['Frecuencia 10-15 min'],
+      distance: 10.8,
+      estimatedTime: 36,
+    ),
+
+    // TRANSLIBERTAD - RUTA 6: Calle 73 Norte circular
+    BusRoute(
+      id: 'translibertad_ruta_6',
+      name: 'Translibertad Ruta 6 - Calle 73 Norte (circular)',
+      company: 'TRANSLIBERTAD',
+      stops: [
+        LatLng(2.4680, -76.5950), // Calle 73 Norte - Oriente
+        LatLng(2.4700, -76.6000), // Calle 73 Norte - Occidente
+        LatLng(2.4660, -76.5970), // Tramo medio
+      ],
+      neighborhoods: ['Calle 73 Norte', 'Zona Norte'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#9B59B6',
+      description:
+          'Servicio circular en el extremo norte alrededor de la Calle 73 Norte.',
+      services: ['Frecuencia 15-20 min'],
+      distance: 5.0,
+      estimatedTime: 18,
+    ),
+
+    // TRANSLIBERTAD - RUTA 7: Piendamó – Popayán
+    BusRoute(
+      id: 'translibertad_ruta_7',
+      name: 'Translibertad Ruta 7 - Piendamó/Popayán/Calle 5',
+      company: 'TRANSLIBERTAD',
+      stops: [
+        LatLng(2.6560, -76.5350), // Piendamó (aprox)
+        LatLng(2.4710, -76.6000), // Ingreso norte Popayán (aprox)
+        LatLng(2.4540, -76.6130), // Lomas de Granada
+        LatLng(2.4448, -76.6147), // Calle 5 - Centro
+        LatLng(2.4410, -76.6160), // Calle 5 - Occidente
+        LatLng(2.4500, -76.6170), // Terminal de Transportes
+      ],
+      neighborhoods: [
+        'Piendamó',
+        'Ingresos Norte',
+        'Lomas de Granada',
+        'Calle 5',
+        'Terminal'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#E67E22',
+      description:
+          'Servicio intermunicipal Piendamó - Popayán con ingreso por el norte y paso por Calle 5.',
+      services: ['Frecuencia variable', 'Conexión intermunicipal'],
+      distance: 32.0,
+      estimatedTime: 70,
+    ),
+
+    // TRANSLIBERTAD - RUTA 8: Corredor Carrera 45 y Calle 5
+    BusRoute(
+      id: 'translibertad_ruta_8',
+      name: 'Translibertad Ruta 8 - Carrera 45/Calle 5/Carrera 9',
+      company: 'TRANSLIBERTAD',
+      stops: [
+        LatLng(2.4700, -76.5850), // Carrera 45 (aprox oriente/norte)
+        LatLng(2.4540, -76.6130), // Lomas de Granada
+        LatLng(2.4448, -76.6147), // Calle 5 - Centro
+        LatLng(2.4520, -76.6050), // Carrera 9 Norte
+        LatLng(2.4500, -76.6170), // Terminal de Transportes
+      ],
+      neighborhoods: [
+        'Carrera 45',
+        'Lomas de Granada',
+        'Calle 5',
+        'Carrera 9',
+        'Terminal'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#F1C40F',
+      description:
+          'Conecta el eje oriental (Cra 45) con el Centro y la Carrera 9, finalizando en el Terminal.',
+      services: ['Frecuencia 12-18 min'],
+      distance: 12.6,
+      estimatedTime: 40,
+    ),
+    // TRANSTAMBO - RUTA 1: Villa Del Viento/Piscinas Comfa./Cra6/Cll13/Lomas G.
+    BusRoute(
+      id: 'transtambo_ruta_1',
+      name: 'Transtambo Ruta 1 - Villa Del Viento/Piscinas Comfa./Cra 6/Cll 13/Lomas G.',
+      company: 'TRANSTAMBO',
+      stops: [
+        LatLng(2.4480, -76.6080), // Villa Del Viento
+        LatLng(2.4560, -76.6065), // Piscinas Comfa (aprox)
+        LatLng(2.4445, -76.6145), // Carrera 6 - Centro
+        LatLng(2.4520, -76.6065), // Calle 13 (aprox)
+        LatLng(2.4540, -76.6130), // Lomas de Granada
+      ],
+      neighborhoods: [
+        'Villa Del Viento',
+        'Piscinas Comfa',
+        'Carrera 6',
+        'Calle 13',
+        'Lomas de Granada'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#1F77B4',
+      description:
+          'Conecta Villa Del Viento con el corredor de Carrera 6, sube por Calle 13 y finaliza en Lomas de Granada.',
+      services: ['Frecuencia 10-15 min'],
+      distance: 9.0,
+      estimatedTime: 30,
+    ),
+
+    // TRANSTAMBO - RUTA 2: Las Guacas/Sena N/Centro/Lomas G
+    BusRoute(
+      id: 'transtambo_ruta_2',
+      name: 'Transtambo Ruta 2 - Las Guacas/SENA Norte/Centro/Lomas G.',
+      company: 'TRANSTAMBO',
+      stops: [
+        LatLng(2.4405, -76.6270), // Las Guacas (aprox)
+        LatLng(2.4590, -76.6035), // SENA Norte (aprox)
+        LatLng(2.4448, -76.6147), // Centro - Parque Caldas
+        LatLng(2.4540, -76.6130), // Lomas de Granada
+      ],
+      neighborhoods: ['Las Guacas', 'SENA Norte', 'Centro', 'Lomas de Granada'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#FF5733',
+      description:
+          'Une el sector de Las Guacas con SENA Norte y el Centro, terminando en Lomas de Granada.',
+      services: ['Frecuencia 10-15 min'],
+      distance: 10.2,
+      estimatedTime: 34,
+    ),
+
+    // TRANSTAMBO - RUTA 3: Lomas G/Tomas C/Chirimía/Cra3/Morinda
+    BusRoute(
+      id: 'transtambo_ruta_3',
+      name: 'Transtambo Ruta 3 - Lomas G./Tomás C./Chirimía/Cra 3/Morinda',
+      company: 'TRANSTAMBO',
+      stops: [
+        LatLng(2.4540, -76.6130), // Lomas de Granada
+        LatLng(2.4400, -76.6080), // Tomás Cipriano de Mosquera
+        LatLng(2.4410, -76.6180), // Chirimía
+        LatLng(2.4440, -76.6115), // Carrera 3 (aprox centro-este)
+        LatLng(2.4470, -76.6110), // Morinda
+      ],
+      neighborhoods: [
+        'Lomas de Granada',
+        'Tomás Cipriano',
+        'Chirimía',
+        'Carrera 3',
+        'Morinda'
+      ],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#8E44AD',
+      description:
+          'Baja de Lomas a Tomás Cipriano, cruza por Chirimía y el eje de Carrera 3 hasta Morinda.',
+      services: ['Frecuencia 10-15 min'],
+      distance: 8.6,
+      estimatedTime: 28,
+    ),
+
+    // TRANSTAMBO - RUTA 4: Los Llanos/La Paz/Lácteos Puracé/Centro/Las Palmas
+    BusRoute(
+      id: 'transtambo_ruta_4',
+      name: 'Transtambo Ruta 4 - Los Llanos/La Paz/Lácteos Puracé/Centro/Las Palmas',
+      company: 'TRANSTAMBO',
+      stops: [
+        LatLng(2.4350, -76.6220), // Los Llanos (aprox)
+        LatLng(2.4490, -76.6080), // La Paz
+        LatLng(2.4460, -76.6200), // Lácteos Puracé (aprox)
+        LatLng(2.4448, -76.6147), // Centro - Parque Caldas
+        LatLng(2.4380, -76.6050), // Las Palmas
+      ],
+      neighborhoods: ['Los Llanos', 'La Paz', 'Lácteos Puracé', 'Centro', 'Las Palmas'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#2E86C1',
+      description:
+          'Conecta el suroccidente (Los Llanos) con La Paz y Centro, finalizando en Las Palmas.',
+      services: ['Frecuencia 12-18 min'],
+      distance: 11.4,
+      estimatedTime: 37,
+    ),
+
+    // TRANSTAMBO - RUTA 5: Morinda/Lácteos Puracé/Centro/Lomas G.
+    BusRoute(
+      id: 'transtambo_ruta_5',
+      name: 'Transtambo Ruta 5 - Morinda/Lácteos Puracé/Centro/Lomas G.',
+      company: 'TRANSTAMBO',
+      stops: [
+        LatLng(2.4470, -76.6110), // Morinda
+        LatLng(2.4460, -76.6200), // Lácteos Puracé (aprox)
+        LatLng(2.4448, -76.6147), // Centro - Parque Caldas
+        LatLng(2.4540, -76.6130), // Lomas de Granada
+      ],
+      neighborhoods: ['Morinda', 'Lácteos Puracé', 'Centro', 'Lomas de Granada'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#17A589',
+      description:
+          'Ruta directa desde Morinda hacia el Centro y subida a Lomas de Granada.',
+      services: ['Frecuencia 10-15 min'],
+      distance: 7.9,
+      estimatedTime: 27,
+    ),
+
+    // TRANSTAMBO - RUTA 6: Los Llanos/La Paz/La Esmeralda/Cajete
+    BusRoute(
+      id: 'transtambo_ruta_6',
+      name: 'Transtambo Ruta 6 - Los Llanos/La Paz/La Esmeralda/Cajete',
+      company: 'TRANSTAMBO',
+      stops: [
+        LatLng(2.4350, -76.6220), // Los Llanos (aprox)
+        LatLng(2.4490, -76.6080), // La Paz
+        LatLng(2.4515, -76.6065), // La Esmeralda (aprox)
+        LatLng(2.4550, -76.6400), // Cajete (aprox rural occidente)
+      ],
+      neighborhoods: ['Los Llanos', 'La Paz', 'La Esmeralda', 'Cajete'],
+      schedule: '5:00 AM - 10:00 PM',
+      fare: '\$2.800',
+      color: '#CA6F1E',
+      description:
+          'Conecta Los Llanos y La Paz con La Esmeralda y servicio hacia Cajete.',
+      services: ['Frecuencia 15-20 min'],
+      distance: 14.8,
+      estimatedTime: 45,
+    ),
+
   ];
 
   /// Obtiene todas las rutas disponibles

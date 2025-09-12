@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'principal_pagina.dart';
-import 'widgets/welcome_animation_widget.dart';
+import 'widgets/welcome_animation_pro_widget.dart';
 
 class BienvenidaPagina extends StatefulWidget {
   const BienvenidaPagina({super.key});
@@ -126,14 +126,17 @@ class _BienvenidaPaginaState extends State<BienvenidaPagina> {
                 AnimatedOpacity(
                   opacity: _showContent ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 800),
-                  child: WelcomeAnimationWidget(
-                    onAnimationComplete: _onAnimationComplete,
-                    title: 'RouWhite',
-                    subtitle: 'Rutas de Popayán',
-                    message: '¡Bienvenido a tu app de transporte!',
+                  child: WelcomeAnimationProWidget(
+                    onFinish: _onAnimationComplete,
+                    appName: 'RouWhite',
+                    primary: const Color(0xFFFF6A00),
+                    secondary: const Color(0xFFFF8C42),
+                    coolMessages: const [
+                      'Rutas inteligentes en tiempo real',
+                      'Paradas cercanas al alcance de un toque',
+                      'Explora Popayán con estilo',
+                    ],
                     lottieAssetPath: 'assets/animaciones/bus.json',
-                    primaryColor: const Color(0xFFFF6A00),
-                    secondaryColor: const Color(0xFFFF8C42),
                   ),
                 ),
 

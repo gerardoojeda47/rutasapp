@@ -20,12 +20,10 @@ class Miapp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
           brightness: Brightness.light,
-          primary: AppColors.primary,
-          secondary: AppColors.secondary,
-          surface: AppColors.surface,
-          error: AppColors.error,
         ),
         useMaterial3: true,
+        // Avoid missing shader asset for InkSparkle on some setups
+        splashFactory: InkRipple.splashFactory,
         // Configuración del AppBar
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.primary,
@@ -102,9 +100,20 @@ class Miapp extends StatelessWidget {
         // Configuración de iconos
         iconTheme: const IconThemeData(
           color: AppColors.primary,
+          size: 24,
+        ),
+        // Configuración de iconos para el AppBar
+        primaryIconTheme: const IconThemeData(
+          color: Colors.white,
+          size: 24,
+        ),
+        // Configuración de botones flotantes
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
         ),
         // Configuración de sombras
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 4,
           shadowColor: AppColors.shadowMedium,
           shape: RoundedRectangleBorder(

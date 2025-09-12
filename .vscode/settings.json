@@ -1,3 +1,5 @@
 {
-    "cmake.sourceDirectory": "D:/proyecto del grupo/rutasapp/linux"
+    "cmake.sourceDirectory": "D:/proyecto del grupo/rutasapp/linux",
+    "CodeGPT.apiKey": "Anthropic",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
