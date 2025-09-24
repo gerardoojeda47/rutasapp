@@ -14,6 +14,7 @@ class IconHelper {
   static const IconData navigation = Icons.navigation;
   static const IconData clear = Icons.clear;
   static const IconData bugReport = Icons.bug_report;
+  static const IconData pqr = Icons.support_agent;
 
   /// Iconos de categorías
   static const IconData restaurant = Icons.restaurant;
@@ -165,6 +166,8 @@ class IconHelper {
         return clear;
       case 'bug_report':
         return bugReport;
+      case 'pqr':
+        return pqr;
       case 'restaurant':
         return restaurant;
       case 'hospital':

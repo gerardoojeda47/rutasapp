@@ -61,6 +61,20 @@ class _HomepageState extends State<Homepage> {
                   builder: (context) => const IconTestWidget(),
                 ),
               );
+            } else if (value == 'pqr') {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('PQR'),
+                  content: const Text('Peticiones, Quejas y Reclamos'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cerrar'),
+                    ),
+                  ],
+                ),
+              );
             }
           },
           itemBuilder: (context) => [
@@ -76,6 +90,13 @@ class _HomepageState extends State<Homepage> {
               child: ListTile(
                 leading: Icon(IconHelper.bugReport),
                 title: Text('Probar Iconos'),
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'pqr',
+              child: ListTile(
+                leading: Icon(IconHelper.pqr),
+                title: Text('PQR'),
               ),
             ),
           ],
