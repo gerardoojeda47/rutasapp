@@ -5,6 +5,7 @@ import '../data/popayan_places_data.dart';
 import '../data/popayan_bus_routes.dart';
 import '../core/utils/icon_helper.dart';
 import '../core/services/bus_tracking_service.dart';
+import '../core/services/smart_route_assistant.dart';
 import 'navegacion_detallada_pagina.dart';
 
 class SmartSearchPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
   List<String> _suggestions = [];
   bool _isSearching = false;
   bool _showSuggestions = false;
+  bool _urgentMode = false;
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -153,6 +155,11 @@ class _SmartSearchPageState extends State<SmartSearchPage>
       return;
     }
 
+    // Mostrar asistente inteligente de rutas
+    _showSmartRouteAssistant(place);
+  }
+
+  void _navigateToPlace(PopayanPlace place) {
     final origin =
         LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
 
@@ -177,6 +184,17 @@ class _SmartSearchPageState extends State<SmartSearchPage>
 
   /// Búsqueda directa por categoría desde los iconos (plurales → singulares)
   void _searchByCategory(String categoryPlural) {
+    // Manejar categorías especiales de barrios
+    if (categoryPlural == 'Barrios por Comuna') {
+      _showComunasSelection();
+      return;
+    }
+
+    if (categoryPlural == 'Sector Rural') {
+      _searchByNeighborhoodCategory('Sector Rural');
+      return;
+    }
+
     final Map<String, String> pluralToSingular = {
       'Restaurantes': 'Restaurante',
       'Hospitales': 'Hospital',
@@ -222,7 +240,8 @@ class _SmartSearchPageState extends State<SmartSearchPage>
               ),
               ListTile(
                 leading: const Icon(IconHelper.navigation),
-                title: Text('Ir al ${categorySingular.toLowerCase()} más cercano'),
+                title:
+                    Text('Ir al ${categorySingular.toLowerCase()} más cercano'),
                 onTap: () {
                   Navigator.pop(context);
                   _openNearestPlaceForCategory(categorySingular);
@@ -253,7 +272,8 @@ class _SmartSearchPageState extends State<SmartSearchPage>
     for (final place in places) {
       final dx = origin.latitude - place.coordinates.latitude;
       final dy = origin.longitude - place.coordinates.longitude;
-      final d2 = dx * dx + dy * dy; // distancia aproximada suficiente para elegir
+      final d2 =
+          dx * dx + dy * dy; // distancia aproximada suficiente para elegir
       if (d2 < bestDistance) {
         bestDistance = d2;
         bestPlace = place;
@@ -263,6 +283,539 @@ class _SmartSearchPageState extends State<SmartSearchPage>
     if (bestPlace != null) {
       _selectPlace(bestPlace);
     }
+  }
+
+  /// Muestra la selección de comunas
+  void _showComunasSelection() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          maxChildSize: 0.9,
+          minChildSize: 0.5,
+          builder: (context, scrollController) {
+            final comunas = PopayanPlacesDatabase.getComunas();
+
+            return Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Selecciona una Comuna',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2C3E50),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.builder(
+                      controller: scrollController,
+                      itemCount: comunas.length,
+                      itemBuilder: (context, index) {
+                        final comuna = comunas[index];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: ListTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: comuna == 'Sector Rural'
+                                    ? Colors.brown.withValues(alpha: 0.1)
+                                    : Colors.teal.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                comuna == 'Sector Rural'
+                                    ? Icons.nature
+                                    : Icons.location_city,
+                                color: comuna == 'Sector Rural'
+                                    ? Colors.brown
+                                    : Colors.teal,
+                              ),
+                            ),
+                            title: Text(
+                              comuna,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                            subtitle: Text(
+                              comuna == 'Sector Rural'
+                                  ? 'Corregimientos y veredas'
+                                  : 'Barrios urbanos',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Color(0xFFFF6A00),
+                            ),
+                            onTap: () {
+                              Navigator.pop(context);
+                              _searchByNeighborhoodCategory(comuna);
+                            },
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            tileColor: Colors.grey[50],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Busca barrios por comuna o sector rural
+  void _searchByNeighborhoodCategory(String comuna) {
+    List<PopayanPlace> results;
+
+    if (comuna == 'Sector Rural') {
+      results = PopayanPlacesDatabase.getRuralAreas();
+    } else {
+      results = PopayanPlacesDatabase.getNeighborhoodsByComuna(comuna);
+    }
+
+    setState(() {
+      _searchController.text = comuna;
+      _isSearching = false;
+      _showSuggestions = false;
+      _searchResults = results;
+    });
+
+    // Mostrar acciones específicas para barrios
+    _showNeighborhoodActions(comuna, results.length);
+  }
+
+  /// Muestra acciones específicas para barrios
+  void _showNeighborhoodActions(String comuna, int count) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(
+                  comuna == 'Sector Rural' ? Icons.nature : Icons.location_city,
+                  color: const Color(0xFFFF6A00),
+                ),
+                title: Text('$count ubicaciones en $comuna'),
+                subtitle: Text(
+                  comuna == 'Sector Rural'
+                      ? 'Corregimientos y veredas disponibles'
+                      : 'Barrios disponibles para navegación',
+                ),
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.search,
+                  color: Color(0xFFFF6A00),
+                ),
+                title: Text('Explorar $comuna'),
+                onTap: () => Navigator.pop(context),
+              ),
+              if (_locationPermissionGranted && _currentPosition != null)
+                ListTile(
+                  leading: const Icon(
+                    Icons.navigation,
+                    color: Color(0xFFFF6A00),
+                  ),
+                  title: Text('Ir al más cercano en $comuna'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _goToNearestNeighborhood(comuna);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Va al barrio más cercano de la comuna seleccionada
+  void _goToNearestNeighborhood(String comuna) {
+    if (!_locationPermissionGranted || _currentPosition == null) {
+      _showLocationRequiredDialog();
+      return;
+    }
+
+    List<PopayanPlace> neighborhoods;
+    if (comuna == 'Sector Rural') {
+      neighborhoods = PopayanPlacesDatabase.getRuralAreas();
+    } else {
+      neighborhoods = PopayanPlacesDatabase.getNeighborhoodsByComuna(comuna);
+    }
+
+    if (neighborhoods.isEmpty) return;
+
+    final origin =
+        LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
+
+    // Encontrar el barrio más cercano
+    double bestDistance = double.infinity;
+    PopayanPlace? bestNeighborhood;
+    for (final neighborhood in neighborhoods) {
+      final dx = origin.latitude - neighborhood.coordinates.latitude;
+      final dy = origin.longitude - neighborhood.coordinates.longitude;
+      final d2 = dx * dx + dy * dy;
+      if (d2 < bestDistance) {
+        bestDistance = d2;
+        bestNeighborhood = neighborhood;
+      }
+    }
+
+    if (bestNeighborhood != null) {
+      _selectPlace(bestNeighborhood);
+    }
+  }
+
+  /// Muestra el asistente inteligente de rutas
+  void _showSmartRouteAssistant(PopayanPlace place) {
+    final smartRoutes = SmartRouteAssistant.getSmartRouteInfo(place.coordinates,
+        urgentMode: _urgentMode);
+
+    // Los smartRoutes se usan directamente en el modal
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.95,
+          minChildSize: 0.6,
+          builder: (context, scrollController) {
+            return Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  // Handle bar
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Header con modo urgente
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Rutas a ${place.name}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2C3E50),
+                          ),
+                        ),
+                      ),
+                      Switch(
+                        value: _urgentMode,
+                        onChanged: (value) {
+                          setState(() {
+                            _urgentMode = value;
+                          });
+                          Navigator.pop(context);
+                          _showSmartRouteAssistant(place);
+                        },
+                        activeTrackColor: Colors.red,
+                      ),
+                      Text(
+                        _urgentMode ? '🚨 URGENTE' : '😌 Normal',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: _urgentMode ? Colors.red : Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Mensaje del asistente
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: _urgentMode
+                          ? Colors.red.withValues(alpha: 0.1)
+                          : Colors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _urgentMode
+                            ? Colors.red.withValues(alpha: 0.3)
+                            : Colors.blue.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Text(
+                      SmartRouteAssistant.generateAssistantMessage(
+                          smartRoutes, _urgentMode),
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.4,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Lista de rutas detalladas
+                  Expanded(
+                    child: ListView.builder(
+                      controller: scrollController,
+                      itemCount: smartRoutes.length,
+                      itemBuilder: (context, index) {
+                        final smartRoute = smartRoutes[index];
+                        return _buildSmartRouteCard(smartRoute, index);
+                      },
+                    ),
+                  ),
+
+                  // Consejos adicionales
+                  if (smartRoutes.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    ...SmartRouteAssistant.getAdditionalTips(smartRoutes).map(
+                      (tip) => Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.amber.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Text(
+                          tip,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  ],
+
+                  // Botones de acción
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _navigateToPlace(place);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF6A00),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: const Text(
+                            '🗺️ Ver Navegación Completa',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Construye una tarjeta de ruta inteligente
+  Widget _buildSmartRouteCard(SmartRouteInfo smartRoute, int index) {
+    final route = smartRoute.route;
+    final isFirst = index == 0;
+
+    Color cardColor;
+    Color borderColor;
+    String qualityText;
+
+    switch (smartRoute.quality) {
+      case RouteQuality.excellent:
+        cardColor = Colors.green.withValues(alpha: 0.1);
+        borderColor = Colors.green;
+        qualityText = "Excelente";
+        break;
+      case RouteQuality.good:
+        cardColor = Colors.blue.withValues(alpha: 0.1);
+        borderColor = Colors.blue;
+        qualityText = "Buena";
+        break;
+      case RouteQuality.average:
+        cardColor = Colors.orange.withValues(alpha: 0.1);
+        borderColor = Colors.orange;
+        qualityText = "Regular";
+        break;
+      case RouteQuality.poor:
+        cardColor = Colors.red.withValues(alpha: 0.1);
+        borderColor = Colors.red;
+        qualityText = "Limitada";
+        break;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isFirst ? borderColor : borderColor.withValues(alpha: 0.3),
+          width: isFirst ? 2 : 1,
+        ),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: borderColor.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Center(
+            child: Text(
+              isFirst
+                  ? "🥇"
+                  : index == 1
+                      ? "🥈"
+                      : "🥉",
+              style: const TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
+        title: Text(
+          route.name,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  '${smartRoute.arrivalMinutes} min',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                const SizedBox(width: 16),
+                Icon(Icons.directions_walk, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  '${smartRoute.walkingDistance.toInt()}m',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                const Spacer(),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: borderColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    qualityText,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: borderColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              smartRoute.reason,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[700],
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            if (smartRoute.isUrgent && smartRoute.urgentMessage != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                smartRoute.urgentMessage!,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ],
+        ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Color(0xFFFF6A00),
+        ),
+        onTap: () {
+          // Aquí podrías agregar navegación específica a esta ruta
+          Navigator.pop(context);
+          _navigateToPlace(PopayanPlace(
+            id: route.id,
+            name: route.name,
+            category: 'Ruta de Bus',
+            address: 'Ruta ${route.company}',
+            coordinates: route.stops.first,
+            description: route.description ?? '',
+            keywords: [],
+          ));
+        },
+      ),
+    );
   }
 
   void _showLocationRequiredDialog() {
@@ -292,6 +845,27 @@ class _SmartSearchPageState extends State<SmartSearchPage>
         ],
       ),
     );
+  }
+
+  /// Obtiene el color de la empresa
+  Color _getCompanyColor(String company) {
+    switch (company) {
+      case 'TRANSPUBENZA':
+        return const Color(0xFF2196F3); // Azul
+      case 'SOTRACAUCA':
+        return const Color(0xFF4CAF50); // Verde
+      case 'TRANSLIBERTAD':
+        return const Color(0xFFFF9800); // Naranja
+      case 'TRANSTAMBO':
+        return const Color(0xFF9C27B0); // Morado
+      default:
+        return const Color(0xFF607D8B); // Gris
+    }
+  }
+
+  /// Obtiene el nombre de la empresa para mostrar
+  String _getCompanyDisplayName(String company) {
+    return company;
   }
 
   @override
@@ -574,7 +1148,17 @@ class _SmartSearchPageState extends State<SmartSearchPage>
         'icon': IconHelper.supermarket,
         'color': Colors.green
       },
-      {'name': 'Universidades', 'icon': IconHelper.university, 'color': Colors.indigo},
+      {
+        'name': 'Universidades',
+        'icon': IconHelper.university,
+        'color': Colors.indigo
+      },
+      {
+        'name': 'Barrios por Comuna',
+        'icon': Icons.location_city,
+        'color': Colors.teal
+      },
+      {'name': 'Sector Rural', 'icon': Icons.nature, 'color': Colors.brown},
     ];
 
     return Container(
@@ -663,8 +1247,10 @@ class _SmartSearchPageState extends State<SmartSearchPage>
         final place = _searchResults[index];
         final nearbyRoutes =
             PopayanBusRoutes.findNearbyRoutes(place.coordinates, 2.0);
-        final busArrivals = BusTrackingService.getBusArrivals(place.coordinates);
-        final routeInfos = BusTrackingService.getRoutesToDestination(place.coordinates);
+        final busArrivals =
+            BusTrackingService.getBusArrivals(place.coordinates);
+        final routeInfos =
+            BusTrackingService.getRoutesToDestination(place.coordinates);
         final trafficInfo = BusTrackingService.getTrafficInfo();
 
         return Container(
@@ -838,7 +1424,9 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                         ],
                       ),
                       const SizedBox(height: 8),
-                      ...busArrivals.take(3).map((arrival) => _buildBusArrivalCard(arrival)),
+                      ...busArrivals
+                          .take(3)
+                          .map((arrival) => _buildBusArrivalCard(arrival)),
                     ],
                   ),
                 ),
@@ -875,7 +1463,9 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                         ],
                       ),
                       const SizedBox(height: 8),
-                      ...routeInfos.take(3).map((routeInfo) => _buildRouteInfoCard(routeInfo)),
+                      ...routeInfos
+                          .take(3)
+                          .map((routeInfo) => _buildRouteInfoCard(routeInfo)),
                     ],
                   ),
                 ),
@@ -893,13 +1483,13 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                         color: Colors.grey[200],
                         margin: const EdgeInsets.only(bottom: 10),
                       ),
-                        Row(
-                          children: [
-                            Icon(
-                              IconHelper.bus,
-                              size: 16,
-                              color: Colors.grey[600],
-                            ),
+                      Row(
+                        children: [
+                          Icon(
+                            IconHelper.bus,
+                            size: 16,
+                            color: Colors.grey[600],
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             'Rutas de bus cercanas:',
@@ -1067,14 +1657,10 @@ class _SmartSearchPageState extends State<SmartSearchPage>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: arrival.isTranspubenza 
-            ? const Color(0xFF2196F3).withValues(alpha: 0.1)
-            : const Color(0xFF4CAF50).withValues(alpha: 0.1),
+        color: _getCompanyColor(arrival.company).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: arrival.isTranspubenza 
-              ? const Color(0xFF2196F3).withValues(alpha: 0.3)
-              : const Color(0xFF4CAF50).withValues(alpha: 0.3),
+          color: _getCompanyColor(arrival.company).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -1083,9 +1669,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: arrival.isTranspubenza 
-                  ? const Color(0xFF2196F3)
-                  : const Color(0xFF4CAF50),
+              color: _getCompanyColor(arrival.company),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -1113,24 +1697,24 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                         fontSize: 14,
                       ),
                     ),
-                    if (arrival.isTranspubenza) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2196F3),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          'TRANSPUBENZA',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    // Mostrar etiqueta de empresa
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: _getCompanyColor(arrival.company),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        _getCompanyDisplayName(arrival.company),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -1166,9 +1750,8 @@ class _SmartSearchPageState extends State<SmartSearchPage>
               Text(
                 arrival.status,
                 style: TextStyle(
-                  color: arrival.status == 'Retrasado' 
-                      ? Colors.red 
-                      : Colors.green,
+                  color:
+                      arrival.status == 'Retrasado' ? Colors.red : Colors.green,
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                 ),
@@ -1186,14 +1769,10 @@ class _SmartSearchPageState extends State<SmartSearchPage>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: routeInfo.isTranspubenza 
-            ? const Color(0xFF2196F3).withValues(alpha: 0.1)
-            : const Color(0xFF4CAF50).withValues(alpha: 0.1),
+        color: _getCompanyColor(routeInfo.company).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: routeInfo.isTranspubenza 
-              ? const Color(0xFF2196F3).withValues(alpha: 0.3)
-              : const Color(0xFF4CAF50).withValues(alpha: 0.3),
+          color: _getCompanyColor(routeInfo.company).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -1202,9 +1781,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: routeInfo.isTranspubenza 
-                  ? const Color(0xFF2196F3)
-                  : const Color(0xFF4CAF50),
+              color: _getCompanyColor(routeInfo.company),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -1232,24 +1809,24 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                         fontSize: 14,
                       ),
                     ),
-                    if (routeInfo.isTranspubenza) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2196F3),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          'TRANSPUBENZA',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    // Mostrar etiqueta de empresa
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: _getCompanyColor(routeInfo.company),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        _getCompanyDisplayName(routeInfo.company),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),

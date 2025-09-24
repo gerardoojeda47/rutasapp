@@ -158,7 +158,7 @@ class _RutasPaginaState extends State<RutasPagina> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Rutas de Popayán',
             style: TextStyle(fontWeight: FontWeight.bold)),
@@ -205,15 +205,16 @@ class _RutasPaginaState extends State<RutasPagina> {
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFFFF6A00),
+                                color: Colors.black,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               ruta.company,
                               style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.black54,
+                                fontSize: 14,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w600,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -235,14 +236,19 @@ class _RutasPaginaState extends State<RutasPagina> {
                   Text(
                     ruta.neighborhoods.join(' - '),
                     style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 10),
                   const Text(
                     'Paradas:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold, 
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   SingleChildScrollView(
@@ -254,7 +260,14 @@ class _RutasPaginaState extends State<RutasPagina> {
                                   const Icon(Icons.location_on,
                                       color: Color(0xFFFF6A00), size: 18),
                                   const SizedBox(width: 4),
-                                  Text(p, style: const TextStyle(fontSize: 15)),
+                                  Text(
+                                    p, 
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                   const SizedBox(width: 8),
                                 ],
                               ))

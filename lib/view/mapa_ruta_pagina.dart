@@ -8,7 +8,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../data/popayan_bus_routes.dart';
 import '../core/services/routing_service.dart';
-import '../domain/entities/ruta_detallada.dart';
 
 // Clase para representar puntos de interés en el mapa
 class PointOfInterest {
@@ -138,7 +137,6 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
 
   // Integración con OpenRouteService
   final RoutingService _routingService = RoutingService();
-  RutaDetallada? _rutaDetallada;
   
   // Lista de puntos de interés en Popayán
   final List<PointOfInterest> _pointsOfInterest = [
@@ -397,7 +395,6 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
           incluirInstrucciones: true,
         );
         setState(() {
-          _rutaDetallada = ruta;
           _routeStops.addAll(ruta.puntos);
         });
       } catch (e) {
@@ -549,39 +546,6 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     return resultado;
   }
 
-  /// Crea puntos siguiendo una carrera (calle vertical)
-  List<LatLng> _createCarreraPath(LatLng start, LatLng end, double t) {
-    List<LatLng> points = [];
-
-    double latDiff = end.latitude - start.latitude;
-    double lngDiff = end.longitude - start.longitude;
-
-    // Primero moverse en latitud (norte-sur por la carrera)
-    double midLat = start.latitude + (latDiff * t);
-    double midLng =
-        start.longitude + (lngDiff * 0.2 * t); // Pequeño ajuste en longitud
-
-    points.add(LatLng(midLat, midLng));
-
-    return points;
-  }
-
-  /// Crea puntos siguiendo una calle (calle horizontal)
-  List<LatLng> _createCallePath(LatLng start, LatLng end, double t) {
-    List<LatLng> points = [];
-
-    double latDiff = end.latitude - start.latitude;
-    double lngDiff = end.longitude - start.longitude;
-
-    // Primero moverse en longitud (este-oeste por la calle)
-    double midLat =
-        start.latitude + (latDiff * 0.2 * t); // Pequeño ajuste en latitud
-    double midLng = start.longitude + (lngDiff * t);
-
-    points.add(LatLng(midLat, midLng));
-
-    return points;
-  }
 
   /// Calcula la distancia entre dos puntos
   double _calculateDistance(LatLng point1, LatLng point2) {

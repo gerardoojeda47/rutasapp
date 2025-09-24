@@ -693,31 +693,27 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
+            RadioListTile<String>(
               title: const Text('Español'),
-              leading: Radio<String>(
-                value: 'Español',
-                groupValue: userProfile['preferences']['language'],
-                onChanged: (value) {
-                  setState(() {
-                    userProfile['preferences']['language'] = value!;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
+              value: 'Español',
+              groupValue: userProfile['preferences']['language'],
+              onChanged: (value) {
+                setState(() {
+                  userProfile['preferences']['language'] = value!;
+                });
+                Navigator.pop(context);
+              },
             ),
-            ListTile(
+            RadioListTile<String>(
               title: const Text('English'),
-              leading: Radio<String>(
-                value: 'English',
-                groupValue: userProfile['preferences']['language'],
-                onChanged: (value) {
-                  setState(() {
-                    userProfile['preferences']['language'] = value!;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
+              value: 'English',
+              groupValue: userProfile['preferences']['language'],
+              onChanged: (value) {
+                setState(() {
+                  userProfile['preferences']['language'] = value!;
+                });
+                Navigator.pop(context);
+              },
             ),
           ],
         ),

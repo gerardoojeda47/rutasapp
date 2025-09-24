@@ -40,7 +40,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 1: La Paz/Campanario/Pomona/Chirimía
     BusRoute(
       id: 'sotracauca_ruta_1',
-      name: 'Ruta 1 - La Paz/Campanario/Pomona/Chirimía',
+      name: 'SOTRACAUCA Ruta 1 - La Paz/Campanario/Pomona/Chirimía',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4490, -76.6080), // La Paz
@@ -76,7 +76,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 2: La Paz/Terminal/San Francisco/Lomas Granada
     BusRoute(
       id: 'sotracauca_ruta_2',
-      name: 'Ruta 2 - La Paz/Terminal/San Francisco/Lomas Granada',
+      name: 'SOTRACAUCA Ruta 2 - La Paz/Terminal/San Francisco/Lomas Granada',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4490, -76.6080), // La Paz
@@ -112,7 +112,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 3: Las Palmas/Tomas C./Chirimía/Cra 5/Cra 9
     BusRoute(
       id: 'sotracauca_ruta_3',
-      name: 'Ruta 3 - Las Palmas/Tomas C./Chirimía/Cra 5/Cra 9',
+      name: 'SOTRACAUCA Ruta 3 - Las Palmas/Tomas C./Chirimía/Cra 5/Cra 9',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4380, -76.6050), // Las Palmas
@@ -154,7 +154,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 4: Cll5/Alfonso López/Cra6/Aida Lucía
     BusRoute(
       id: 'sotracauca_ruta_4',
-      name: 'Ruta 4 - Cll5/Alfonso López/Cra6/Aida Lucía',
+      name: 'SOTRACAUCA Ruta 4 - Cll5/Alfonso López/Cra6/Aida Lucía',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4448, -76.6147), // Calle 5 - Centro
@@ -190,7 +190,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 5: La Paz/Morinda/Centro/Tomas C.
     BusRoute(
       id: 'sotracauca_ruta_5',
-      name: 'Ruta 5 - La Paz/Morinda/Centro/Tomas C.',
+      name: 'SOTRACAUCA Ruta 5 - La Paz/Morinda/Centro/Tomas C.',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4490, -76.6080), // La Paz
@@ -226,7 +226,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 6: La Paz/Cra6/Centro/Chirimía/Las Palmas
     BusRoute(
       id: 'sotracauca_ruta_6',
-      name: 'Ruta 6 - La Paz/Cra6/Centro/Chirimía/Las Palmas',
+      name: 'SOTRACAUCA Ruta 6 - La Paz/Cra6/Centro/Chirimía/Las Palmas',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4490, -76.6080), // La Paz
@@ -268,7 +268,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 7: Julumito/Cll5/Centro/Parque Industrial
     BusRoute(
       id: 'sotracauca_ruta_7',
-      name: 'Ruta 7 - Julumito/Cll5/Centro/Parque Industrial',
+      name: 'SOTRACAUCA Ruta 7 - Julumito/Cll5/Centro/Parque Industrial',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4300, -76.6300), // Julumito
@@ -304,7 +304,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 8: Las Palmas/Cll5/Centro/Villa Del Viento
     BusRoute(
       id: 'sotracauca_ruta_8',
-      name: 'Ruta 8 - Las Palmas/Cll5/Centro/Villa Del Viento',
+      name: 'SOTRACAUCA Ruta 8 - Las Palmas/Cll5/Centro/Villa Del Viento',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4380, -76.6050), // Las Palmas
@@ -340,7 +340,7 @@ class PopayanBusRoutes {
     // SOTRACAUCA - RUTA 9: Julumito/Tomas C/Morinda/La Paz
     BusRoute(
       id: 'sotracauca_ruta_9',
-      name: 'Ruta 9 - Julumito/Tomas C/Morinda/La Paz',
+      name: 'SOTRACAUCA Ruta 9 - Julumito/Tomas C/Morinda/La Paz',
       company: 'SOTRACAUCA',
       stops: [
         LatLng(2.4300, -76.6300), // Julumito
@@ -375,7 +375,7 @@ class PopayanBusRoutes {
     // TRANSPUBENZA - RUTA 1: La Paz/La Esmeralda/Tomás C./Los Naranjos
     BusRoute(
       id: 'transpubenza_ruta_1',
-      name: 'Transpubenza Ruta 1 - La Paz/La Esmeralda/Tomás C./Los Naranjos',
+      name: 'TRANSPUBENZA Ruta 1 - La Paz/La Esmeralda/Tomás C./Los Naranjos',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4490, -76.6080), // La Paz
@@ -404,7 +404,7 @@ class PopayanBusRoutes {
     BusRoute(
       id: 'transpubenza_ruta_2',
       name:
-          'Transpubenza Ruta 2 - Tomás C./Chirimía/Cra 6/Campanario/Jardines de Paz',
+          'TRANSPUBENZA Ruta 2 - Tomás C./Chirimía/Cra 6/Campanario/Jardines de Paz',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4400, -76.6080), // Tomás C.
@@ -434,7 +434,7 @@ class PopayanBusRoutes {
     // TRANSPUBENZA - RUTA 3: Los Naranjos/Centro/Terminal/La Aldea
     BusRoute(
       id: 'transpubenza_ruta_3',
-      name: 'Transpubenza Ruta 3 - Los Naranjos/Centro/Terminal/La Aldea',
+      name: 'TRANSPUBENZA Ruta 3 - Los Naranjos/Centro/Terminal/La Aldea',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4530, -76.6035), // Los Naranjos (aprox)
@@ -458,7 +458,7 @@ class PopayanBusRoutes {
     BusRoute(
       id: 'transpubenza_ruta_4',
       name:
-          'Transpubenza Ruta 4 - TP4BT Piscinas Comfa/Cra 5/Cll 13/Lomas Granada',
+          'TRANSPUBENZA Ruta 4 - TP4BT Piscinas Comfa/Cra 5/Cll 13/Lomas Granada',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4315, -76.6125), // Piscinas Comfa (aprox)
@@ -486,7 +486,7 @@ class PopayanBusRoutes {
     // TRANSPUBENZA - RUTA 5: Yambitará/Cra 6/Cll 13/Cementerio/Tomás C.
     BusRoute(
       id: 'transpubenza_ruta_5',
-      name: 'Transpubenza Ruta 5 - Yambitará/Cra 6/Cll 13/Cementerio/Tomás C.',
+      name: 'TRANSPUBENZA Ruta 5 - Yambitará/Cra 6/Cll 13/Cementerio/Tomás C.',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4565, -76.5955), // Yambitará (aprox)
@@ -515,7 +515,7 @@ class PopayanBusRoutes {
     // TRANSPUBENZA - RUTA 6: La Paz/Lácteos Puracé/Calle 13/Los Naranjos
     BusRoute(
       id: 'transpubenza_ruta_6',
-      name: 'Transpubenza Ruta 6 - La Paz/Lácteos Puracé/Calle 13/Los Naranjos',
+      name: 'TRANSPUBENZA Ruta 6 - La Paz/Lácteos Puracé/Calle 13/Los Naranjos',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4490, -76.6080), // La Paz
@@ -539,7 +539,7 @@ class PopayanBusRoutes {
     BusRoute(
       id: 'transpubenza_ruta_7',
       name:
-          'Transpubenza Ruta 7 - Piscinas Comfa/Campanario/Camilo Torres/Cll 13',
+          'TRANSPUBENZA Ruta 7 - Piscinas Comfa/Campanario/Camilo Torres/Cll 13',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4315, -76.6125), // Piscinas Comfa (aprox)
@@ -567,7 +567,7 @@ class PopayanBusRoutes {
     // TRANSPUBENZA - RUTA 8: Lomas Granada/La Esmeralda/Centro/La Villa
     BusRoute(
       id: 'transpubenza_ruta_8',
-      name: 'Transpubenza Ruta 8 - Lomas Granada/La Esmeralda/Centro/La Villa',
+      name: 'TRANSPUBENZA Ruta 8 - Lomas Granada/La Esmeralda/Centro/La Villa',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4540, -76.6130), // Lomas Granada
@@ -590,7 +590,7 @@ class PopayanBusRoutes {
     BusRoute(
       id: 'transpubenza_ruta_9',
       name:
-          'Transpubenza Ruta 9 - Los Naranjos/Tomás C./La Esmeralda/Cll 13/Morinda',
+          'TRANSPUBENZA Ruta 9 - Los Naranjos/Tomás C./La Esmeralda/Cll 13/Morinda',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4530, -76.6035), // Los Naranjos
@@ -620,7 +620,7 @@ class PopayanBusRoutes {
     BusRoute(
       id: 'transpubenza_ruta_10',
       name:
-          'Transpubenza Ruta 10 - Cra 10/Chirimía/La Esmeralda/Modelo/Morinda',
+          'TRANSPUBENZA Ruta 10 - Cra 10/Chirimía/La Esmeralda/Modelo/Morinda',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4460, -76.6100), // Cra 10 (aprox)
@@ -650,7 +650,7 @@ class PopayanBusRoutes {
     BusRoute(
       id: 'transpubenza_ruta_11',
       name:
-          'Transpubenza Ruta 11 - Los Naranjos/Tomás C./Cll 13/Centro/La Venta',
+          'TRANSPUBENZA Ruta 11 - Los Naranjos/Tomás C./Cll 13/Centro/La Venta',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4530, -76.6035), // Los Naranjos
@@ -680,7 +680,7 @@ class PopayanBusRoutes {
     BusRoute(
       id: 'transpubenza_ruta_12',
       name:
-          'Transpubenza Ruta 12 - Lomas Granada/La Esmeralda/Campanario/SENA Norte',
+          'TRANSPUBENZA Ruta 12 - Lomas Granada/La Esmeralda/Campanario/SENA Norte',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4540, -76.6130), // Lomas Granada
@@ -708,7 +708,7 @@ class PopayanBusRoutes {
     BusRoute(
       id: 'transpubenza_ruta_13',
       name:
-          'Transpubenza Ruta 13 - Puelenje/Centro/Cra 6/Lácteos Puracé/Calibío',
+          'TRANSPUBENZA Ruta 13 - Puelenje/Centro/Cra 6/Lácteos Puracé/Calibío',
       company: 'TRANSPUBENZA',
       stops: [
         LatLng(2.4250, -76.6400), // Puelenje (aprox SW)
@@ -738,7 +738,7 @@ class PopayanBusRoutes {
     // TRANSLIBERTAD - RUTA 1: Calle 5
     BusRoute(
       id: 'translibertad_ruta_1',
-      name: 'Translibertad Ruta 1 - Calle 5',
+      name: 'TRANSLIBERTAD Ruta 1 - Calle 5',
       company: 'TRANSLIBERTAD',
       stops: [
         LatLng(2.4510, -76.6200), // Calle 5 - Occidente
@@ -762,7 +762,7 @@ class PopayanBusRoutes {
     // TRANSLIBERTAD - RUTA 2: Transversal 9 Norte
     BusRoute(
       id: 'translibertad_ruta_2',
-      name: 'Translibertad Ruta 2 - Transversal 9 Norte',
+      name: 'TRANSLIBERTAD Ruta 2 - Transversal 9 Norte',
       company: 'TRANSLIBERTAD',
       stops: [
         LatLng(2.4540, -76.6130), // Lomas de Granada
@@ -793,7 +793,7 @@ class PopayanBusRoutes {
     // TRANSLIBERTAD - RUTA 3: Corredor Carrera 9 Norte
     BusRoute(
       id: 'translibertad_ruta_3',
-      name: 'Translibertad Ruta 3 - Carrera 9 Norte/Centro',
+      name: 'TRANSLIBERTAD Ruta 3 - Carrera 9 Norte/Centro',
       company: 'TRANSLIBERTAD',
       stops: [
         LatLng(2.4520, -76.6050), // Carrera 9 Norte (Anarkos)
@@ -823,7 +823,7 @@ class PopayanBusRoutes {
     // TRANSLIBERTAD - RUTA 4: TL2M Lomas de Granada → Calle 5
     BusRoute(
       id: 'translibertad_ruta_4',
-      name: 'Translibertad Ruta 4 - Lomas de Granada/Calle 5',
+      name: 'TRANSLIBERTAD Ruta 4 - Lomas de Granada/Calle 5',
       company: 'TRANSLIBERTAD',
       stops: [
         LatLng(2.4545, -76.6135), // Lomas de Granada
@@ -845,7 +845,7 @@ class PopayanBusRoutes {
     // TRANSLIBERTAD - RUTA 5: Oeste Calle 5 – Centro – Norte
     BusRoute(
       id: 'translibertad_ruta_5',
-      name: 'Translibertad Ruta 5 - Calle 5/Carreras 6-9/Transversal 7',
+      name: 'TRANSLIBERTAD Ruta 5 - Calle 5/Carreras 6-9/Transversal 7',
       company: 'TRANSLIBERTAD',
       stops: [
         LatLng(2.4390, -76.6200), // Calle 5 - occidente
@@ -874,7 +874,7 @@ class PopayanBusRoutes {
     // TRANSLIBERTAD - RUTA 6: Calle 73 Norte circular
     BusRoute(
       id: 'translibertad_ruta_6',
-      name: 'Translibertad Ruta 6 - Calle 73 Norte (circular)',
+      name: 'TRANSLIBERTAD Ruta 6 - Calle 73 Norte (circular)',
       company: 'TRANSLIBERTAD',
       stops: [
         LatLng(2.4680, -76.5950), // Calle 73 Norte - Oriente
@@ -895,7 +895,7 @@ class PopayanBusRoutes {
     // TRANSLIBERTAD - RUTA 7: Piendamó – Popayán
     BusRoute(
       id: 'translibertad_ruta_7',
-      name: 'Translibertad Ruta 7 - Piendamó/Popayán/Calle 5',
+      name: 'TRANSLIBERTAD Ruta 7 - Piendamó/Popayán/Calle 5',
       company: 'TRANSLIBERTAD',
       stops: [
         LatLng(2.6560, -76.5350), // Piendamó (aprox)
@@ -925,7 +925,7 @@ class PopayanBusRoutes {
     // TRANSLIBERTAD - RUTA 8: Corredor Carrera 45 y Calle 5
     BusRoute(
       id: 'translibertad_ruta_8',
-      name: 'Translibertad Ruta 8 - Carrera 45/Calle 5/Carrera 9',
+      name: 'TRANSLIBERTAD Ruta 8 - Carrera 45/Calle 5/Carrera 9',
       company: 'TRANSLIBERTAD',
       stops: [
         LatLng(2.4700, -76.5850), // Carrera 45 (aprox oriente/norte)
@@ -953,7 +953,8 @@ class PopayanBusRoutes {
     // TRANSTAMBO - RUTA 1: Villa Del Viento/Piscinas Comfa./Cra6/Cll13/Lomas G.
     BusRoute(
       id: 'transtambo_ruta_1',
-      name: 'Transtambo Ruta 1 - Villa Del Viento/Piscinas Comfa./Cra 6/Cll 13/Lomas G.',
+      name:
+          'TRANSTAMBO Ruta 1 - Villa Del Viento/Piscinas Comfa./Cra 6/Cll 13/Lomas G.',
       company: 'TRANSTAMBO',
       stops: [
         LatLng(2.4480, -76.6080), // Villa Del Viento
@@ -982,7 +983,7 @@ class PopayanBusRoutes {
     // TRANSTAMBO - RUTA 2: Las Guacas/Sena N/Centro/Lomas G
     BusRoute(
       id: 'transtambo_ruta_2',
-      name: 'Transtambo Ruta 2 - Las Guacas/SENA Norte/Centro/Lomas G.',
+      name: 'TRANSTAMBO Ruta 2 - Las Guacas/SENA Norte/Centro/Lomas G.',
       company: 'TRANSTAMBO',
       stops: [
         LatLng(2.4405, -76.6270), // Las Guacas (aprox)
@@ -1004,7 +1005,7 @@ class PopayanBusRoutes {
     // TRANSTAMBO - RUTA 3: Lomas G/Tomas C/Chirimía/Cra3/Morinda
     BusRoute(
       id: 'transtambo_ruta_3',
-      name: 'Transtambo Ruta 3 - Lomas G./Tomás C./Chirimía/Cra 3/Morinda',
+      name: 'TRANSTAMBO Ruta 3 - Lomas G./Tomás C./Chirimía/Cra 3/Morinda',
       company: 'TRANSTAMBO',
       stops: [
         LatLng(2.4540, -76.6130), // Lomas de Granada
@@ -1033,7 +1034,8 @@ class PopayanBusRoutes {
     // TRANSTAMBO - RUTA 4: Los Llanos/La Paz/Lácteos Puracé/Centro/Las Palmas
     BusRoute(
       id: 'transtambo_ruta_4',
-      name: 'Transtambo Ruta 4 - Los Llanos/La Paz/Lácteos Puracé/Centro/Las Palmas',
+      name:
+          'TRANSTAMBO Ruta 4 - Los Llanos/La Paz/Lácteos Puracé/Centro/Las Palmas',
       company: 'TRANSTAMBO',
       stops: [
         LatLng(2.4350, -76.6220), // Los Llanos (aprox)
@@ -1042,7 +1044,13 @@ class PopayanBusRoutes {
         LatLng(2.4448, -76.6147), // Centro - Parque Caldas
         LatLng(2.4380, -76.6050), // Las Palmas
       ],
-      neighborhoods: ['Los Llanos', 'La Paz', 'Lácteos Puracé', 'Centro', 'Las Palmas'],
+      neighborhoods: [
+        'Los Llanos',
+        'La Paz',
+        'Lácteos Puracé',
+        'Centro',
+        'Las Palmas'
+      ],
       schedule: '5:00 AM - 10:00 PM',
       fare: '\$2.800',
       color: '#2E86C1',
@@ -1056,7 +1064,7 @@ class PopayanBusRoutes {
     // TRANSTAMBO - RUTA 5: Morinda/Lácteos Puracé/Centro/Lomas G.
     BusRoute(
       id: 'transtambo_ruta_5',
-      name: 'Transtambo Ruta 5 - Morinda/Lácteos Puracé/Centro/Lomas G.',
+      name: 'TRANSTAMBO Ruta 5 - Morinda/Lácteos Puracé/Centro/Lomas G.',
       company: 'TRANSTAMBO',
       stops: [
         LatLng(2.4470, -76.6110), // Morinda
@@ -1064,7 +1072,12 @@ class PopayanBusRoutes {
         LatLng(2.4448, -76.6147), // Centro - Parque Caldas
         LatLng(2.4540, -76.6130), // Lomas de Granada
       ],
-      neighborhoods: ['Morinda', 'Lácteos Puracé', 'Centro', 'Lomas de Granada'],
+      neighborhoods: [
+        'Morinda',
+        'Lácteos Puracé',
+        'Centro',
+        'Lomas de Granada'
+      ],
       schedule: '5:00 AM - 10:00 PM',
       fare: '\$2.800',
       color: '#17A589',
@@ -1078,7 +1091,7 @@ class PopayanBusRoutes {
     // TRANSTAMBO - RUTA 6: Los Llanos/La Paz/La Esmeralda/Cajete
     BusRoute(
       id: 'transtambo_ruta_6',
-      name: 'Transtambo Ruta 6 - Los Llanos/La Paz/La Esmeralda/Cajete',
+      name: 'TRANSTAMBO Ruta 6 - Los Llanos/La Paz/La Esmeralda/Cajete',
       company: 'TRANSTAMBO',
       stops: [
         LatLng(2.4350, -76.6220), // Los Llanos (aprox)
@@ -1096,7 +1109,6 @@ class PopayanBusRoutes {
       distance: 14.8,
       estimatedTime: 45,
     ),
-
   ];
 
   /// Obtiene todas las rutas disponibles

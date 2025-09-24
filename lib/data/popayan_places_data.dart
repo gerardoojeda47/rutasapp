@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:latlong2/latlong.dart';
+import 'popayan_neighborhoods_data.dart';
 
 /// Datos reales de lugares en Popayán
 class PopayanPlace {
@@ -1167,8 +1168,14 @@ class PopayanPlacesDatabase {
       category: 'Barrio',
       address: 'Zona Universitaria Norte, Popayán, Cauca',
       coordinates: LatLng(2.4440, -76.6100),
-      description: 'Zona universitaria del norte con alta concentración estudiantil',
-      keywords: ['barrio', 'zona universitaria norte', 'universidad', 'estudiantes'],
+      description:
+          'Zona universitaria del norte con alta concentración estudiantil',
+      keywords: [
+        'barrio',
+        'zona universitaria norte',
+        'universidad',
+        'estudiantes'
+      ],
       rating: 4.4,
     ),
 
@@ -1179,7 +1186,12 @@ class PopayanPlacesDatabase {
       address: 'Zona Universitaria Sur, Popayán, Cauca',
       coordinates: LatLng(2.4420, -76.6120),
       description: 'Zona universitaria del sur con servicios educativos',
-      keywords: ['barrio', 'zona universitaria sur', 'universidad', 'educación'],
+      keywords: [
+        'barrio',
+        'zona universitaria sur',
+        'universidad',
+        'educación'
+      ],
       rating: 4.3,
     ),
 
@@ -1225,29 +1237,90 @@ class PopayanPlacesDatabase {
       address: 'Zona Residencial Sur, Popayán, Cauca',
       coordinates: LatLng(2.4380, -76.6220),
       description: 'Zona residencial del sur con desarrollo habitacional',
-      keywords: ['barrio', 'zona residencial sur', 'residencial', 'habitacional'],
+      keywords: [
+        'barrio',
+        'zona residencial sur',
+        'residencial',
+        'habitacional'
+      ],
       rating: 4.0,
     ),
   ];
 
-  /// Busca lugares por texto
+  /// Busca lugares por texto (incluye barrios)
   static List<PopayanPlace> searchPlaces(String query) {
     if (query.isEmpty) return [];
 
     final queryLower = query.toLowerCase();
 
-    return places.where((place) {
+    // Buscar en lugares existentes
+    final placeResults = places.where((place) {
       return place.name.toLowerCase().contains(queryLower) ||
           place.category.toLowerCase().contains(queryLower) ||
           place.address.toLowerCase().contains(queryLower) ||
           place.keywords
               .any((keyword) => keyword.toLowerCase().contains(queryLower));
     }).toList();
+
+    // Buscar en barrios y convertir a PopayanPlace
+    final neighborhoodResults =
+        PopayanNeighborhoodsDatabase.searchNeighborhoods(query)
+            .map((neighborhood) => _convertNeighborhoodToPlace(neighborhood))
+            .toList();
+
+    // Combinar resultados
+    return [...placeResults, ...neighborhoodResults];
   }
 
-  /// Obtiene lugares por categoría
+  /// Obtiene lugares por categoría (incluye barrios)
   static List<PopayanPlace> getPlacesByCategory(String category) {
-    return places.where((place) => place.category == category).toList();
+    final placeResults =
+        places.where((place) => place.category == category).toList();
+
+    // Si buscan por "Barrio", incluir todos los barrios urbanos
+    if (category == 'Barrio') {
+      final neighborhoodResults =
+          PopayanNeighborhoodsDatabase.getNeighborhoodsByType('Barrio')
+              .map((neighborhood) => _convertNeighborhoodToPlace(neighborhood))
+              .toList();
+      return [...placeResults, ...neighborhoodResults];
+    }
+
+    // Si buscan por "Corregimiento", incluir corregimientos
+    if (category == 'Corregimiento') {
+      final neighborhoodResults =
+          PopayanNeighborhoodsDatabase.getNeighborhoodsByType('Corregimiento')
+              .map((neighborhood) => _convertNeighborhoodToPlace(neighborhood))
+              .toList();
+      return [...placeResults, ...neighborhoodResults];
+    }
+
+    // Si buscan por "Vereda", incluir veredas
+    if (category == 'Vereda') {
+      final neighborhoodResults =
+          PopayanNeighborhoodsDatabase.getNeighborhoodsByType('Vereda')
+              .map((neighborhood) => _convertNeighborhoodToPlace(neighborhood))
+              .toList();
+      return [...placeResults, ...neighborhoodResults];
+    }
+
+    return placeResults;
+  }
+
+  /// Convierte un barrio a un lugar para mantener compatibilidad
+  static PopayanPlace _convertNeighborhoodToPlace(
+      PopayanNeighborhood neighborhood) {
+    return PopayanPlace(
+      id: neighborhood.id,
+      name: neighborhood.name,
+      category: neighborhood.type,
+      address: '${neighborhood.name}, ${neighborhood.comuna}, Popayán, Cauca',
+      coordinates: neighborhood.coordinates,
+      description: neighborhood.description ??
+          'Barrio en ${neighborhood.comuna} de Popayán',
+      keywords: neighborhood.keywords,
+      rating: 0.0,
+    );
   }
 
   /// Obtiene un lugar por ID
@@ -1282,12 +1355,33 @@ class PopayanPlacesDatabase {
     }).toList();
   }
 
-  /// Obtiene todas las categorías disponibles
+  /// Obtiene todas las categorías disponibles (incluye barrios)
   static List<String> getCategories() {
-    return places.map((place) => place.category).toSet().toList()..sort();
+    final placeCategories = places.map((place) => place.category).toSet();
+    final neighborhoodTypes = {'Barrio', 'Corregimiento', 'Vereda'};
+    return [...placeCategories, ...neighborhoodTypes].toList()..sort();
   }
 
-  /// Obtiene búsquedas populares
+  /// Obtiene barrios por comuna específica
+  static List<PopayanPlace> getNeighborhoodsByComuna(String comuna) {
+    return PopayanNeighborhoodsDatabase.getNeighborhoodsByComuna(comuna)
+        .map((neighborhood) => _convertNeighborhoodToPlace(neighborhood))
+        .toList();
+  }
+
+  /// Obtiene todas las comunas disponibles
+  static List<String> getComunas() {
+    return PopayanNeighborhoodsDatabase.getComunas();
+  }
+
+  /// Obtiene áreas rurales (corregimientos y veredas)
+  static List<PopayanPlace> getRuralAreas() {
+    return PopayanNeighborhoodsDatabase.getRuralAreas()
+        .map((neighborhood) => _convertNeighborhoodToPlace(neighborhood))
+        .toList();
+  }
+
+  /// Obtiene búsquedas populares (incluye barrios)
   static List<String> getPopularSearches() {
     return [
       'Centro Comercial',
@@ -1296,17 +1390,18 @@ class PopayanPlacesDatabase {
       'Restaurante',
       'Banco',
       'Hotel',
-      'Parque',
-      'Barrio Centro',
+      'Centro',
       'La Paz',
-      'Los Sauces',
+      'Villa Occidente',
       'La Esmeralda',
-      'Bello Horizonte',
-      'El Uvo',
+      'Lomas de Granada',
+      'Chirimía',
+      'Las Palmas',
+      'Pomona',
+      'La Maria',
       'Villa del Norte',
-      'Torres del Inca',
-      'La Primavera',
-      'El Prado',
+      'Los Alpes',
+      'El Popular',
       'Los Rosales',
       'Villa Olímpica',
       'El Porvenir',
