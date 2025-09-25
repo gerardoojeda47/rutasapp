@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class PerfilUsuarioPagina extends StatefulWidget {
   final String username;
   final VoidCallback onLogout;
-  const PerfilUsuarioPagina({super.key, required this.username, required this.onLogout});
+  const PerfilUsuarioPagina(
+      {super.key, required this.username, required this.onLogout});
 
   @override
   State<PerfilUsuarioPagina> createState() => _PerfilUsuarioPaginaState();
@@ -78,8 +79,10 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
       context: context,
       builder: (BuildContext context) {
         final nameController = TextEditingController(text: userProfile['name']);
-        final emailController = TextEditingController(text: userProfile['email']);
-        final phoneController = TextEditingController(text: userProfile['phone']);
+        final emailController =
+            TextEditingController(text: userProfile['email']);
+        final phoneController =
+            TextEditingController(text: userProfile['phone']);
 
         return AlertDialog(
           title: const Text('Editar Perfil'),
@@ -182,8 +185,11 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
                 final amount = int.tryParse(amountController.text);
                 if (amount != null && amount > 0) {
                   setState(() {
-                    final currentBalance = int.parse(userProfile['transportCard']['balance'].replaceAll('.', ''));
-                    userProfile['transportCard']['balance'] = (currentBalance + amount).toString();
+                    final currentBalance = int.parse(
+                        userProfile['transportCard']['balance']
+                            .replaceAll('.', ''));
+                    userProfile['transportCard']['balance'] =
+                        (currentBalance + amount).toString();
                   });
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -690,32 +696,44 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Seleccionar Idioma'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<String>(
-              title: const Text('Español'),
-              value: 'Español',
-              groupValue: userProfile['preferences']['language'],
-              onChanged: (value) {
-                setState(() {
-                  userProfile['preferences']['language'] = value!;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('English'),
-              value: 'English',
-              groupValue: userProfile['preferences']['language'],
-              onChanged: (value) {
-                setState(() {
-                  userProfile['preferences']['language'] = value!;
-                });
-                Navigator.pop(context);
-              },
-            ),
-          ],
+        content: StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('Español'),
+                  leading: Icon(
+                    userProfile['preferences']['language'] == 'Español'
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    color: const Color(0xFFFF6A00),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      userProfile['preferences']['language'] = 'Español';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('English'),
+                  leading: Icon(
+                    userProfile['preferences']['language'] == 'English'
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    color: const Color(0xFFFF6A00),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      userProfile['preferences']['language'] = 'English';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -731,29 +749,33 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
           children: [
             ListTile(
               title: const Text('Claro'),
-              leading: Radio<String>(
-                value: 'Claro',
-                groupValue: userProfile['preferences']['theme'],
-                onChanged: (value) {
-                  setState(() {
-                    userProfile['preferences']['theme'] = value!;
-                  });
-                  Navigator.pop(context);
-                },
+              leading: Icon(
+                userProfile['preferences']['theme'] == 'Claro'
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
+                color: const Color(0xFFFF6A00),
               ),
+              onTap: () {
+                setState(() {
+                  userProfile['preferences']['theme'] = 'Claro';
+                });
+                Navigator.pop(context);
+              },
             ),
             ListTile(
               title: const Text('Oscuro'),
-              leading: Radio<String>(
-                value: 'Oscuro',
-                groupValue: userProfile['preferences']['theme'],
-                onChanged: (value) {
-                  setState(() {
-                    userProfile['preferences']['theme'] = value!;
-                  });
-                  Navigator.pop(context);
-                },
+              leading: Icon(
+                userProfile['preferences']['theme'] == 'Oscuro'
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
+                color: const Color(0xFFFF6A00),
               ),
+              onTap: () {
+                setState(() {
+                  userProfile['preferences']['theme'] = 'Oscuro';
+                });
+                Navigator.pop(context);
+              },
             ),
           ],
         ),
@@ -787,4 +809,4 @@ class _PerfilUsuarioPaginaState extends State<PerfilUsuarioPagina> {
       ),
     );
   }
-} 
+}

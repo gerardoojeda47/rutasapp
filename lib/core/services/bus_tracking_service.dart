@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:latlong2/latlong.dart';
 import '../../data/popayan_bus_routes.dart';
+import 'intelligent_prediction_service.dart';
 
 /// Servicio para simular el seguimiento de buses en tiempo real
 class BusTrackingService {
@@ -16,10 +17,15 @@ class BusTrackingService {
       final busCount = _random.nextInt(2) + 1; // 1-2 buses por ruta
 
       for (int i = 0; i < busCount; i++) {
-        final arrivalTime = _random.nextInt(20) + 1; // 1-20 minutos
-        final busNumber = _random.nextInt(999) + 100; // Número de bus 100-1098
-        final capacity = _random.nextInt(20) + 5; // 5-25 pasajeros
-        final company = route.company;
+        // Usar predicción inteligente en lugar de tiempo aleatorio
+        final arrivalTime =
+            IntelligentPredictionService.predictBusArrival(route, location);
+        final busNumber = _random.nextInt(999) + 100;
+
+        // Calcular métricas para ocupación realista
+        final metrics = IntelligentPredictionService.calculateRouteMetrics(
+            route, location, DateTime.now());
+        final capacity = (metrics.crowdLevel * 25).round();
 
         arrivals.add(BusArrivalInfo(
           routeName: route.name,
@@ -27,9 +33,9 @@ class BusTrackingService {
           arrivalTimeMinutes: arrivalTime,
           currentPassengers: capacity,
           maxCapacity: 25,
-          company: company,
+          company: route.company,
           nextStop: _getRandomStop(route),
-          status: _getRandomStatus(),
+          status: _getIntelligentStatus(metrics),
         ));
       }
     }
@@ -69,17 +75,61 @@ class BusTrackingService {
     return routeInfos;
   }
 
-  /// Obtiene información de tráfico en tiempo real
-  static TrafficInfo getTrafficInfo() {
-    final trafficLevels = ['Fluido', 'Moderado', 'Congestionado'];
-    final level = trafficLevels[_random.nextInt(trafficLevels.length)];
-    final delay = _random.nextInt(10); // 0-10 minutos de retraso
+  /// Obtiene información de tráfico inteligente
+  static TrafficInfo getTrafficInfo([LatLng? location]) {
+    final now = DateTime.now();
+    final defaultLocation =
+        location ?? const LatLng(2.4448, -76.6147); // Centro Popayán
+
+    // Crear una ruta temporal para obtener métricas
+    final tempRoute = PopayanBusRoutes.routes.first;
+    final metrics = IntelligentPredictionService.calculateRouteMetrics(
+        tempRoute, defaultLocation, now);
+
+    final levelText = IntelligentPredictionService.getTrafficDescription(
+        metrics.trafficLevel);
+    final delay = _calculateTrafficDelayFromLevel(metrics.trafficLevel);
 
     return TrafficInfo(
-      level: level,
+      level: levelText,
       delayMinutes: delay,
-      description: _getTrafficDescription(level, delay),
+      description:
+          _getIntelligentTrafficDescription(metrics.trafficLevel, delay, now),
     );
+  }
+
+  /// Calcula delay basado en nivel de tráfico
+  static int _calculateTrafficDelayFromLevel(TrafficLevel level) {
+    switch (level) {
+      case TrafficLevel.low:
+        return 0;
+      case TrafficLevel.medium:
+        return 2;
+      case TrafficLevel.high:
+        return 5;
+      case TrafficLevel.veryHigh:
+        return 8;
+    }
+  }
+
+  /// Genera descripción inteligente del tráfico
+  static String _getIntelligentTrafficDescription(
+      TrafficLevel level, int delay, DateTime time) {
+    final hour = time.hour;
+    final isWeekend = time.weekday >= 6;
+
+    switch (level) {
+      case TrafficLevel.low:
+        return isWeekend ? 'Fin de semana tranquilo' : 'Vías despejadas';
+      case TrafficLevel.medium:
+        return 'Tráfico normal para esta hora';
+      case TrafficLevel.high:
+        if (hour >= 7 && hour <= 9) return 'Hora pico matutina';
+        if (hour >= 17 && hour <= 19) return 'Hora pico vespertina';
+        return 'Tráfico denso en el centro';
+      case TrafficLevel.veryHigh:
+        return 'Congestión severa - considera rutas alternas';
+    }
   }
 
   static String _getRandomStop(BusRoute route) {
@@ -88,9 +138,18 @@ class BusTrackingService {
     return 'Parada en (${stop.latitude.toStringAsFixed(4)}, ${stop.longitude.toStringAsFixed(4)})';
   }
 
-  static String _getRandomStatus() {
-    final statuses = ['En ruta', 'Llegando', 'En parada', 'Retrasado'];
-    return statuses[_random.nextInt(statuses.length)];
+  /// Genera estado inteligente basado en métricas
+  static String _getIntelligentStatus(RouteMetrics metrics) {
+    // Estado basado en confiabilidad y tráfico
+    if (metrics.reliability > 0.9 && metrics.trafficLevel == TrafficLevel.low) {
+      return 'Puntual';
+    } else if (metrics.trafficLevel == TrafficLevel.veryHigh) {
+      return 'Retrasado';
+    } else if (metrics.crowdLevel > 0.8) {
+      return 'En parada'; // Bus lleno, para más tiempo
+    } else {
+      return 'En ruta';
+    }
   }
 
   static String _getRandomFare() {
@@ -116,19 +175,6 @@ class BusTrackingService {
   static String _getNextBusTime() {
     final minutes = _random.nextInt(15) + 1;
     return 'En $minutes min';
-  }
-
-  static String _getTrafficDescription(String level, int delay) {
-    switch (level) {
-      case 'Fluido':
-        return 'Tráfico normal, sin retrasos';
-      case 'Moderado':
-        return delay > 0 ? 'Ligero retraso de $delay min' : 'Tráfico moderado';
-      case 'Congestionado':
-        return 'Tráfico pesado, retraso de $delay min';
-      default:
-        return 'Información no disponible';
-    }
   }
 }
 

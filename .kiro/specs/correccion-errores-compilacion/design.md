@@ -2,117 +2,157 @@
 
 ## Overview
 
-La aplicación RouWhite tiene errores críticos de compilación que se originan principalmente en el archivo `lib/data/popayan_places_data.dart`. Los errores incluyen sintaxis incorrecta de constructores, parámetros mal definidos, definiciones duplicadas, y problemas de tipos. El diseño se enfoca en corregir sistemáticamente estos problemas manteniendo la funcionalidad existente.
+La aplicación RouWhite tiene más de 100 errores críticos de compilación que se originan principalmente en el archivo `lib/view/paradas_pagina.dart` que contiene código corrupto y sintaxis mezclada. Los errores incluyen variables no definidas, definiciones duplicadas, sintaxis incorrecta, y problemas estructurales graves. También hay problemas menores en otros archivos como imports relativos, métodos deprecados, y uso de print. El diseño se enfoca en corregir sistemáticamente estos problemas manteniendo la funcionalidad existente.
 
 ## Architecture
 
-### Problema Principal Identificado
+### Problemas Principales Identificados
 
-Los errores de análisis muestran que hay problemas graves en la estructura de datos:
+Los errores de análisis muestran que hay problemas graves en múltiples archivos:
 
-1. **Sintaxis de constructores incorrecta**: Uso de `:` en lugar de `=` para valores por defecto
-2. **Parámetros nombrados mal definidos**: Falta de llaves `{}` para parámetros nombrados
-3. **Definiciones duplicadas**: Múltiples definiciones de la misma clase/función
-4. **Valores no constantes**: Uso de valores no constantes como valores por defecto
-5. **Estructura de archivo corrupta**: El archivo parece tener contenido duplicado o mal formateado
+1. **Código corrupto en paradas_pagina.dart**: Sintaxis mezclada, líneas 1326-1348 con código malformado
+2. **Variables no definidas**: \_fadeAnimation, \_isLoading, \_mapController, \_pulseAnimation no están declaradas
+3. **Definiciones duplicadas**: Múltiples definiciones de \_buildLeyendaItem, ParadaInfo, TipoParada
+4. **Sintaxis incorrecta**: Métodos const mal definidos, parámetros incorrectos, tokens inesperados
+5. **Variables final no inicializadas**: Campos marcados como final sin inicialización
+6. **Imports relativos**: Uso de imports relativos en lugar de imports de paquete
+7. **Métodos deprecados**: Uso de groupValue y onChanged en Radio widgets
+8. **Print en producción**: Uso extensivo de print() en lugar de logging apropiado
 
 ### Estrategia de Corrección
 
-1. **Análisis completo del archivo**: Identificar todas las secciones problemáticas
-2. **Reconstrucción limpia**: Crear una versión limpia del archivo de datos
-3. **Validación de sintaxis**: Asegurar que toda la sintaxis de Dart sea correcta
-4. **Pruebas de funcionalidad**: Verificar que todas las funciones trabajen correctamente
+1. **Análisis y backup**: Identificar secciones problemáticas y crear respaldos
+2. **Limpieza de código corrupto**: Remover código malformado en paradas_pagina.dart
+3. **Definición de variables faltantes**: Declarar todas las variables no definidas
+4. **Eliminación de duplicados**: Remover definiciones duplicadas manteniendo las correctas
+5. **Corrección de sintaxis**: Arreglar todos los errores de sintaxis de Dart
+6. **Actualización de imports**: Cambiar imports relativos por imports de paquete
+7. **Actualización de métodos deprecados**: Reemplazar métodos obsoletos
+8. **Limpieza de warnings**: Remover prints y aplicar mejores prácticas
 
 ## Components and Interfaces
 
-### 1. PopayanPlace Class
+### 1. ParadasPagina Class (lib/view/paradas_pagina.dart)
 
-**Estado Actual**: Correctamente definida en las primeras líneas del archivo
-**Acción**: Mantener la definición existente, es correcta
+**Estado Actual**: Código corrupto con sintaxis mezclada y variables no definidas
+**Acción**: Limpiar código corrupto y definir variables faltantes
+
+**Variables faltantes a definir**:
 
 ```dart
-class PopayanPlace {
-  final String id;
-  final String name;
-  final String category;
-  final String address;
-  final LatLng coordinates;
-  final String description;
-  final List<String> keywords;
-  final String? phone;
-  final String? website;
-  final double rating;
-  final List<String> photos;
-
-  const PopayanPlace({
-    required this.id,
-    required this.name,
-    required this.category,
-    required this.address,
-    required this.coordinates,
-    required this.description,
-    required this.keywords,
-    this.phone,
-    this.website,
-    this.rating = 0.0,
-    this.photos = const [],
-  });
-}
+late AnimationController _fadeAnimation;
+late AnimationController _pulseAnimation;
+MapController? _mapController;
+bool _isLoading = false;
+bool _showSatellite = false;
 ```
 
-### 2. PopayanPlacesDatabase Class
+**Métodos duplicados a limpiar**:
 
-**Estado Actual**: Definición correcta pero datos corruptos
-**Acción**: Limpiar y reconstruir la lista de lugares
+- \_buildLeyendaItem (múltiples definiciones incorrectas)
+- Definiciones corruptas en líneas 1326-1348
 
-### 3. Funciones de Utilidad
+### 2. ParadaInfo Class
 
-**Estado Actual**: Definiciones duplicadas y errores de sintaxis
-**Acción**: Mantener una sola definición limpia de cada función
+**Estado Actual**: Definición duplicada
+**Acción**: Mantener una sola definición correcta
+
+### 3. TipoParada Enum
+
+**Estado Actual**: Definición duplicada
+**Acción**: Mantener una sola definición correcta
+
+### 4. Archivos con Imports Relativos
+
+**Archivos afectados**:
+
+- example/intelligent_prediction_example.dart
+- test/core/services/bus_companies_test.dart
+- test/core/services/smart_route_assistant_test.dart
+- test/data/popayan_neighborhoods_data_test.dart
+- test/data/popayan_places_integration_test.dart
+- test/view/company_colors_test.dart
+- test/view/smart_search_neighborhoods_test.dart
+
+**Acción**: Cambiar imports relativos por imports de paquete
 
 ## Data Models
 
-### Estructura de Datos de Lugares
+### Estructura de Estado en ParadasPagina
 
-- **Lista principal**: `List<PopayanPlace> places` - debe ser estática y constante
-- **Categorías**: Mantener las categorías existentes (Barrio, Centro Comercial, etc.)
-- **Coordenadas**: Usar LatLng correctamente importado de latlong2
-- **Ratings**: Valores double entre 0.0 y 5.0
-- **Keywords**: Lista de strings para búsqueda
-
-### Funciones de Búsqueda y Filtrado
+**Variables de animación**:
 
 ```dart
-static List<PopayanPlace> searchPlaces(String query)
-static List<PopayanPlace> getPlacesByCategory(String category)
-static PopayanPlace? getPlaceById(String id)
-static List<PopayanPlace> getNearbyPlaces(LatLng location, double radiusKm)
-static List<String> getCategories()
-static List<String> getPopularSearches()
+late AnimationController _fadeAnimation;
+late AnimationController _pulseAnimation;
+```
+
+**Variables de control de mapa**:
+
+```dart
+MapController? _mapController;
+bool _showSatellite = false;
+```
+
+**Variables de estado**:
+
+```dart
+bool _isLoading = false;
+```
+
+### Clases de Datos
+
+**ParadaInfo** (una sola definición):
+
+```dart
+class ParadaInfo {
+  final String id;
+  final String nombre;
+  final LatLng coordenadas;
+  final TipoParada tipo;
+  // otros campos necesarios
+}
+```
+
+**TipoParada** (una sola definición):
+
+```dart
+enum TipoParada {
+  principal,
+  secundaria,
+  temporal
+}
 ```
 
 ## Error Handling
 
 ### Tipos de Errores a Corregir
 
-1. **Errores de Sintaxis**
+1. **Errores Críticos en paradas_pagina.dart**
 
-   - `named_parameter_outside_group`: Parámetros nombrados sin llaves
-   - `obsolete_colon_for_default_value`: Uso de `:` en lugar de `=`
-   - `non_constant_default_value`: Valores por defecto no constantes
-   - `missing_function_body`: Funciones sin cuerpo
+   - `assignment_to_final`: Asignación a variable final
+   - `expected_token`: Tokens faltantes (punto y coma)
+   - `missing_const_final_var_or_type`: Variables sin declaración de tipo
+   - `expected_class_member`: Código fuera de contexto de clase
+   - `final_not_initialized_constructor`: Variables final sin inicializar
+   - `missing_method_parameters`: Métodos sin parámetros
+   - `invalid_constructor_name`: Nombres de constructor incorrectos
+   - `undefined_identifier`: Variables no definidas
    - `duplicate_definition`: Definiciones duplicadas
 
-2. **Errores de Tipo**
+2. **Errores de Imports**
 
-   - `non_type_as_type_argument`: Uso incorrecto de tipos
-   - `not_a_type`: Referencias a tipos inexistentes
-   - `undefined_identifier`: Identificadores no definidos
+   - `avoid_relative_lib_imports`: Imports relativos en lugar de paquete
 
-3. **Errores de Estructura**
-   - `expected_executable`: Declaraciones mal formadas
-   - `unexpected_token`: Tokens inesperados
-   - `extraneous_modifier`: Modificadores incorrectos
+3. **Errores de Métodos Deprecados**
+
+   - `deprecated_member_use`: groupValue y onChanged en Radio
+   - `deprecated_member_use`: activeColor en Switch
+
+4. **Warnings de Calidad**
+   - `avoid_print`: Uso de print en producción
+   - `prefer_const_declarations`: Variables que pueden ser const
+   - `unused_element`: Elementos no utilizados
 
 ### Estrategia de Manejo
 

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-La aplicación RouWhite de rutas de Popayán tiene múltiples errores de compilación críticos que impiden su funcionamiento correcto. Los errores principales se encuentran en el archivo `lib/data/popayan_places_data.dart` donde hay problemas de sintaxis de Dart, parámetros mal definidos, y estructuras de datos corruptas. Estos errores deben ser corregidos para restaurar la funcionalidad completa de la aplicación.
+La aplicación RouWhite de rutas de Popayán tiene más de 100 errores de compilación críticos que impiden su funcionamiento correcto. Los errores principales se encuentran en el archivo `lib/view/paradas_pagina.dart` donde hay código corrupto, sintaxis mezclada, definiciones duplicadas, variables no definidas, y problemas graves de estructura. También hay problemas menores en otros archivos como imports relativos, métodos deprecados, y uso de print en producción. Estos errores deben ser corregidos sistemáticamente para restaurar la funcionalidad completa de la aplicación.
 
 ## Requirements
 
@@ -18,44 +18,44 @@ La aplicación RouWhite de rutas de Popayán tiene múltiples errores de compila
 
 ### Requirement 2
 
-**User Story:** Como desarrollador, quiero que la estructura de datos de lugares esté correctamente definida, para que la búsqueda y navegación funcionen apropiadamente.
+**User Story:** Como desarrollador, quiero que el archivo paradas_pagina.dart tenga una estructura válida de código Dart, para que la página de paradas funcione correctamente.
 
 #### Acceptance Criteria
 
-1. WHEN se define la clase PopayanPlace THEN debe tener una sintaxis válida de Dart
-2. WHEN se crean instancias de PopayanPlace THEN los parámetros deben estar correctamente encerrados en llaves
-3. WHEN se usan valores por defecto THEN deben usar la sintaxis correcta con `=` en lugar de `:`
-4. WHEN se definen parámetros opcionales THEN deben estar marcados como nullable o tener valores constantes por defecto
+1. WHEN se revisa el archivo paradas_pagina.dart THEN no debe tener código corrupto o sintaxis mezclada
+2. WHEN se definen variables THEN deben estar correctamente declaradas con tipos válidos
+3. WHEN se definen métodos THEN deben tener sintaxis correcta y parámetros válidos
+4. WHEN se usan variables THEN deben estar definidas previamente en el scope correcto
 
 ### Requirement 3
 
-**User Story:** Como desarrollador, quiero que las funciones de búsqueda y filtrado funcionen correctamente, para que los usuarios puedan encontrar lugares en Popayán.
+**User Story:** Como desarrollador, quiero que todas las variables y controladores estén correctamente definidos, para que la funcionalidad de la página de paradas funcione sin errores.
 
 #### Acceptance Criteria
 
-1. WHEN se llama a searchPlaces() THEN debe retornar resultados válidos sin errores
-2. WHEN se llama a getPlacesByCategory() THEN debe filtrar correctamente por categoría
-3. WHEN se llama a getNearbyPlaces() THEN debe calcular distancias correctamente
-4. WHEN se accede a la lista de lugares THEN debe estar disponible y ser accesible
+1. WHEN se usan variables como \_fadeAnimation THEN deben estar definidas como campos de la clase
+2. WHEN se usan controladores como \_mapController THEN deben estar inicializados correctamente
+3. WHEN se definen métodos como \_centrarMapa THEN deben tener implementación válida
+4. WHEN se usan variables de estado como \_isLoading THEN deben estar declaradas y manejadas correctamente
 
 ### Requirement 4
 
-**User Story:** Como usuario, quiero que la funcionalidad de búsqueda inteligente funcione sin errores, para poder encontrar lugares y rutas fácilmente.
+**User Story:** Como desarrollador, quiero que las clases y enums estén correctamente definidos sin duplicados, para evitar errores de compilación.
 
 #### Acceptance Criteria
 
-1. WHEN abro la página de búsqueda inteligente THEN no debe mostrar errores de tipo
-2. WHEN busco un lugar THEN debe mostrar resultados relevantes
-3. WHEN selecciono un lugar THEN debe navegar correctamente a los detalles
-4. WHEN uso filtros THEN deben aplicarse correctamente a los resultados
+1. WHEN se define la clase ParadaInfo THEN debe tener una sola definición válida
+2. WHEN se define el enum TipoParada THEN debe tener una sola definición válida
+3. WHEN se definen métodos como \_buildLeyendaItem THEN no deben tener definiciones duplicadas
+4. WHEN se usan tipos de datos THEN deben referenciar definiciones existentes y válidas
 
 ### Requirement 5
 
-**User Story:** Como desarrollador, quiero que el código siga las mejores prácticas de Dart, para mantener la calidad y legibilidad del código.
+**User Story:** Como desarrollador, quiero que el código siga las mejores prácticas de Dart y no tenga warnings menores, para mantener la calidad y legibilidad del código.
 
 #### Acceptance Criteria
 
-1. WHEN se revisa el código THEN debe seguir las convenciones de nomenclatura de Dart
-2. WHEN se definen constantes THEN deben ser marcadas como `const` cuando sea apropiado
-3. WHEN se usan métodos deprecados THEN deben ser reemplazados por las alternativas recomendadas
-4. WHEN se importan librerías THEN no debe haber imports no utilizados
+1. WHEN se usan imports relativos THEN deben ser reemplazados por imports de paquete
+2. WHEN se usan métodos deprecados como groupValue en Radio THEN deben ser actualizados
+3. WHEN se usa print() en código de producción THEN debe ser reemplazado por logging apropiado
+4. WHEN se definen constantes THEN deben ser marcadas como `const` cuando sea apropiado

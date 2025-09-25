@@ -32,36 +32,36 @@ dependencies:
     sdk: flutter
 
   # UI and Icons
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.8
   flutter_vector_icons: ^2.0.0
-  lottie: ^3.1.0
-  flutter_animate: ^4.5.0
+  lottie: ^3.3.2
+  flutter_animate: ^4.5.2
 
   # Maps and Location
-  flutter_map: ^6.0.0
-  latlong2: ^0.9.0
-  flutter_polyline_points: ^2.0.0
-  geolocator: ^11.0.0
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  flutter_polyline_points: ^3.1.0
+  geolocator: ^14.0.2
 
   # State Management
-  provider: ^6.1.1
+  provider: ^6.1.5
 
   # Data and Storage
-  shared_preferences: ^2.2.2
-  equatable: ^2.0.5
+  shared_preferences: ^2.5.3
+  equatable: ^2.0.7
 
   # Network and API
-  dio: ^5.4.0
-  connectivity_plus: ^5.0.2
-  geocoding: ^2.1.1
+  dio: ^5.9.0
+  connectivity_plus: ^7.0.0
+  geocoding: ^4.0.0
 
   # Utilities
   dartz: ^0.10.1
-  intl: ^0.19.0
+  intl: ^0.20.2
 
   # Voice and Audio
-  flutter_tts: ^4.0.2
-  permission_handler: ^11.3.0
+  flutter_tts: ^4.2.3
+  permission_handler: ^12.0.1
 
   # Development and Debugging
   logger: ^2.0.2
@@ -71,8 +71,8 @@ dev_dependencies:
     sdk: flutter
 
   # Linting and Code Quality
-  flutter_lints: ^3.0.1
-  very_good_analysis: ^5.1.0
+  flutter_lints: ^6.0.0
+  very_good_analysis: ^10.0.0
 
   # Testing
   mockito: ^5.4.4

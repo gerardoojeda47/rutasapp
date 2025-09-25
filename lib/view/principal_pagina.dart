@@ -182,7 +182,9 @@ class _HomeContentState extends State<HomeContent> {
 
       // Obtener ubicación actual
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       setState(() {

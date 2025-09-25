@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/data/popayan_places_data.dart';
+import 'package:rouwhite/data/popayan_places_data.dart';
 
 void main() {
   group('PopayanPlacesDatabase Integration Tests', () {

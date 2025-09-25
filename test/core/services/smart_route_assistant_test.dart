@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../lib/core/services/smart_route_assistant.dart';
+import 'package:rouwhite/core/services/smart_route_assistant.dart';
 
 void main() {
   group('SmartRouteAssistant Tests', () {

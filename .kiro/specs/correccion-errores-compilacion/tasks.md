@@ -1,107 +1,146 @@
 # Implementation Plan
 
-- [x] 1. Analizar y diagnosticar errores críticos
+- [x] 1. Analizar y respaldar archivos problemáticos
 
 
 
-  - Ejecutar análisis completo del código para identificar todos los errores
-  - Categorizar errores por tipo y prioridad
-  - Identificar secciones específicas del archivo que necesitan corrección
-  - _Requirements: 1.1, 1.2_
-
-- [x] 2. Corregir estructura corrupta del archivo de datos
+  - Crear backup de paradas_pagina.dart antes de modificaciones
+  - Identificar líneas específicas con código corrupto (1326-1348)
+  - Documentar variables no definidas que necesitan declaración
+  - _Requirements: 1.1, 2.1_
 
 
 
-  - [ ] 2.1 Respaldar archivo original y crear versión limpia
 
-    - Crear backup del archivo popayan_places_data.dart actual
-    - Identificar secciones válidas vs corruptas del archivo
-    - Extraer datos válidos de lugares para preservar información
-    - _Requirements: 2.1, 2.2_
 
-  - [ ] 2.2 Reconstruir lista de lugares con sintaxis correcta
 
-    - Recrear la lista de PopayanPlace con sintaxis válida de Dart
-    - Asegurar que todos los constructores usen parámetros nombrados correctamente
-    - Verificar que todos los valores por defecto sean constantes
-    - _Requirements: 2.2, 2.3, 2.4_
+- [ ] 2. Corregir código corrupto en paradas_pagina.dart
 
-  - [ ] 2.3 Eliminar definiciones duplicadas y código corrupto
-    - Remover todas las definiciones duplicadas de PopayanPlace
-    - Limpiar código mal formateado y tokens inesperados
-    - Asegurar una sola definición limpia de cada función
-    - _Requirements: 2.1, 2.2_
+  - [ ] 2.1 Limpiar código malformado en líneas 1326-1348
 
-- [ ] 3. Corregir funciones de utilidad y métodos de búsqueda
+    - Remover sintaxis mezclada y código corrupto
 
-  - [ ] 3.1 Implementar funciones de búsqueda sin duplicados
 
-    - Crear función searchPlaces() con una sola definición limpia
-    - Implementar getPlacesByCategory() sin errores de sintaxis
-    - Crear getNearbyPlaces() con cálculos de distancia correctos
-    - _Requirements: 3.1, 3.2, 3.3_
+    - Eliminar tokens inesperados y declaraciones mal formadas
+    - Limpiar definiciones duplicadas de \_buildLeyendaItem
+    - _Requirements: 2.1, 2.2, 2.3_
 
-  - [ ] 3.2 Corregir funciones de acceso a datos
-    - Implementar getPlaceById() con manejo correcto de tipos
-    - Crear getCategories() que acceda correctamente a la lista de lugares
-    - Implementar getPopularSearches() con datos válidos
-    - _Requirements: 3.1, 3.4_
+  - [ ] 2.2 Definir variables faltantes en la clase
 
-- [ ] 4. Validar y corregir tipos de datos
+    - Declarar \_fadeAnimation como AnimationController
 
-  - [ ] 4.1 Corregir referencias de tipos en smart_search_page
+    - Declarar \_pulseAnimation como AnimationController
+    - Declarar \_mapController como MapController nullable
+    - Declarar \_isLoading como bool con valor inicial false
 
-    - Actualizar importaciones para usar PopayanPlace correctamente
-    - Corregir declaraciones de variables que usan PopayanPlace como tipo
-    - Asegurar que todas las referencias de tipo sean válidas
-    - _Requirements: 4.1, 4.2_
 
-  - [ ] 4.2 Verificar consistencia de tipos en toda la aplicación
-    - Revisar todos los archivos que usan PopayanPlace
-    - Corregir cualquier uso incorrecto del tipo PopayanPlace
-    - Asegurar que las listas y funciones retornen tipos correctos
-    - _Requirements: 4.1, 4.3_
+    - Declarar \_showSatellite como bool con valor inicial false
 
-- [ ] 5. Limpiar warnings y mejorar calidad del código
+    - _Requirements: 3.1, 3.2, 3.4_
 
-  - [ ] 5.1 Corregir métodos deprecados y warnings
+  - [ ] 2.3 Implementar métodos faltantes
+    - Implementar método \_centrarMapa() con funcionalidad básica
+    - Implementar método \_toggleCapas() para cambio de capas
+    - Corregir asignaciones a variables final (proximoBus)
 
-    - Reemplazar withOpacity() por withValues() donde sea apropiado
-    - Actualizar fitBounds() por fitCamera() con CameraFit.bounds()
-    - Remover imports no utilizados como navegacion_detallada_pagina.dart
-    - _Requirements: 5.1, 5.2, 5.3_
+    - _Requirements: 3.3, 2.3_
 
-  - [ ] 5.2 Aplicar mejores prácticas de Dart
-    - Agregar const a literales donde sea apropiado
+- [ ] 3. Eliminar definiciones duplicadas
+
+
+
+
+  - [x] 3.1 Corregir definiciones duplicadas de clases
+
+
+
+    - Mantener una sola definición válida de ParadaInfo
+    - Mantener una sola definición válida de TipoParada enum
+    - Remover definiciones duplicadas al final del archivo
+    - _Requirements: 4.1, 4.2, 4.3_
+
+
+
+  - [x] 3.2 Limpiar métodos duplicados
+
+
+    - Mantener una sola definición correcta de \_buildLeyendaItem
+
+
+    - Remover definiciones malformadas de métodos
+    - Asegurar que todos los métodos tengan sintaxis válida
+    - _Requirements: 4.4, 2.2_
+
+- [x] 4. Corregir imports relativos
+
+
+
+  - [ ] 4.1 Actualizar imports en archivos de ejemplo
+
+
+
+    - Cambiar imports relativos en example/intelligent_prediction_example.dart
+
+
+    - Usar imports de paquete en lugar de rutas relativas
+    - Verificar que todos los imports funcionen correctamente
+    - _Requirements: 5.1_
+
+  - [x] 4.2 Actualizar imports en archivos de test
+
+    - Corregir imports relativos en todos los archivos de test
+    - Cambiar imports relativos por imports de paquete
+    - Verificar que las pruebas sigan funcionando
+    - _Requirements: 5.1_
+
+
+
+
+
+
+- [ ] 5. Corregir métodos deprecados
+
+  - [ ] 5.1 Actualizar Radio widgets deprecados
+
+    - Reemplazar groupValue y onChanged en Radio por RadioGroup
+
+
+    - Actualizar todos los Radio widgets en perfil_usuario_pagina.dart
+    - Verificar que la funcionalidad se mantenga
+    - _Requirements: 5.2_
+
+  - [ ] 5.2 Actualizar otros métodos deprecados
+    - Cambiar activeColor por activeThumbColor en Switch widgets
+    - Actualizar cualquier otro método deprecado encontrado
+    - Verificar compatibilidad con la versión actual de Flutter
+    - _Requirements: 5.2_
+
+- [ ] 6. Limpiar warnings de calidad de código
+
+  - [ ] 6.1 Remover uso de print en producción
+
+    - Reemplazar print() por logging apropiado en archivos de ejemplo
+    - Remover print() de archivos de test o usar debugPrint
+    - Configurar logging apropiado para la aplicación
+    - _Requirements: 5.3_
+
+  - [ ] 6.2 Aplicar mejores prácticas de Dart
+    - Agregar const a variables que pueden ser constantes
     - Corregir convenciones de nomenclatura si es necesario
-    - Asegurar que el código siga el estilo de Dart
-    - _Requirements: 5.1, 5.2, 5.4_
+    - Remover elementos no utilizados marcados como unused_element
+    - _Requirements: 5.4_
 
+- [ ] 7. Ejecutar pruebas y validación final
 
+  - [ ] 7.1 Verificar compilación sin errores críticos
 
-- [ ] 6. Ejecutar pruebas y validación final
-
-  - [ ] 6.1 Verificar compilación sin errores
-
-    - Ejecutar flutter analyze y confirmar 0 errores críticos
+    - Ejecutar flutter analyze y confirmar reducción significativa de errores
     - Ejecutar flutter build para verificar compilación exitosa
-    - Corregir cualquier error restante que aparezca
+    - Corregir cualquier error crítico restante
     - _Requirements: 1.1, 1.2_
 
-  - [ ] 6.2 Probar funcionalidad de búsqueda y navegación
-
-
-
-
-
-    - Verificar que la búsqueda de lugares funcione correctamente
-    - Probar filtrado por categorías sin errores
-    - Confirmar que la navegación a detalles funcione
-    - _Requirements: 3.1, 3.2, 4.1, 4.2_
-
-  - [ ] 6.3 Ejecutar pruebas de integración completas
-    - Iniciar aplicación con flutter run y verificar funcionamiento
-    - Probar todas las páginas principales sin crashes
-    - Verificar que todas las funcionalidades estén operativas
-    - _Requirements: 1.2, 1.3, 4.3_
+  - [ ] 7.2 Probar funcionalidad de la aplicación
+    - Iniciar aplicación con flutter run y verificar que no crashee
+    - Probar navegación a página de paradas sin errores
+    - Verificar que las funcionalidades básicas funcionen
+    - _Requirements: 1.2, 1.3_

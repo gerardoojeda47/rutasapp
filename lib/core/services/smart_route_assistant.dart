@@ -133,18 +133,22 @@ class SmartRouteAssistant {
     int score = 0;
 
     // Puntuación por tiempo de llegada
-    if (arrivalMinutes <= 5)
+    if (arrivalMinutes <= 5) {
       score += 3;
-    else if (arrivalMinutes <= 10)
+    } else if (arrivalMinutes <= 10) {
       score += 2;
-    else if (arrivalMinutes <= 15) score += 1;
+    } else if (arrivalMinutes <= 15) {
+      score += 1;
+    }
 
     // Puntuación por distancia de caminata
-    if (walkingDistance <= 200)
+    if (walkingDistance <= 200) {
       score += 3;
-    else if (walkingDistance <= 400)
+    } else if (walkingDistance <= 400) {
       score += 2;
-    else if (walkingDistance <= 600) score += 1;
+    } else if (walkingDistance <= 600) {
+      score += 1;
+    }
 
     // Puntuación por empresa (todas son confiables con diferentes características)
     switch (route.company) {

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RouWhite - Paradas de Popayán</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+        color: white;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        position: relative;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .location-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .city-name {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .location-status {
+        font-size: 11px;
+        opacity: 0.9;
+      }
+
+      .location-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.2s;
+      }
+
+      #map {
+        height: calc(100vh - 56px);
+        width: 100%;
+      }
+
+      /* Estilos personalizados para los marcadores */
+      .custom-marker {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        border: 3px solid white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s;
+        position: relative;
+      }
+
+      .custom-marker::before {
+        content: "";
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+        animation: pulse-marker 3s infinite;
+      }
+
+      @keyframes pulse-marker {
+        0%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.6;
+        }
+        50% {
+          transform: scale(1.3);
+          opacity: 0.2;
+        }
+      }
+
+      /* Tipos de marcadores */
+      .marker-terminal {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+      }
+      .marker-hospital {
+        background: linear-gradient(135deg, #059669, #047857);
+      }
+      .marker-universidad {
+        background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      }
+      .marker-centro {
+        background: linear-gradient(135deg, #d97706, #b45309);
+      }
+      .marker-barrio {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      }
+      .marker-comercial {
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+      }
+
+      /* Controles de mapa */
+      .map-controls {
+        position: absolute;
+        bottom: 20px;
+        right: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 1000;
+      }
+
+      .control-btn {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+        color: #374151;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: all 0.2s;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Estilos para popups */
+      .leaflet-popup-content-wrapper {
+        background: linear-gradient(135deg, #0f0f23, #1a1a2e);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .leaflet-popup-content {
+        margin: 0;
+        padding: 0;
+        line-height: 1.4;
+        color: white;
+      }
+
+      .leaflet-popup-tip {
+        background: linear-gradient(135deg, #0f0f23, #1a1a2e);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+      }
+
+      .route-badge {
+        background: linear-gradient(135deg, #4f46e5, #3730a3);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 600;
+        margin: 2px;
+        display: inline-block;
+      }
+
+      .route-sotracauca {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+      }
+      .route-transpubenza {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      }
+      .route-translibertad {
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+      }
+      .route-transtambo {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-left">
+        <div class="location-info">
+          <div class="city-name">POPAYÁN</div>
+          <div class="location-status">Paradas de buses en tiempo real</div>
+        </div>
+      </div>
+      <button class="location-btn" onclick="centerOnLocation()">📍</button>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="map-controls">
+      <button class="control-btn" onclick="zoomIn()">+</button>
+      <button class="control-btn" onclick="zoomOut()">−</button>
+      <button class="control-btn" onclick="toggleLayer()">🗺️</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+      // Coordenadas de Popayán
+      const popayanCoords = [2.4448, -76.6147];
+
+      // Inicializar mapa
+      const map = L.map("map").setView(popayanCoords, 14);
+
+      // Capa de OpenStreetMap
+      const osmLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution: "© OpenStreetMap contributors",
+        }
+      ).addTo(map);
+
+      // Capa satelital alternativa
+      const satelliteLayer = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution: "© Esri",
+        }
+      );
+
+      let currentLayer = "osm";
+
+      // Datos de paraderos basados en las rutas reales de las empresas
+      const paraderos = [
+        // SOTRACAUCA - Rutas principales
+        {
+          coords: [2.4448, -76.6147],
+          name: "Terminal de Transporte",
+          shortName: "TERMINAL",
+          code: "SOT-001",
+          address: "Calle 5 # 8-08, Centro",
+          type: "terminal",
+          icon: "🚌",
+          routes: ["SOTRACAUCA R1", "SOTRACAUCA R2", "SOTRACAUCA R3"],
+          nextBus: "2 min",
+          company: "SOTRACAUCA",
+        },
+        {
+          coords: [2.458, -76.618],
+          name: "La Esmeralda",
+          shortName: "LA ESMERALDA",
+          code: "SOT-002",
+          address: "Barrio La Esmeralda",
+          type: "barrio",
+          icon: "🏠",
+          routes: ["SOTRACAUCA R1"],
+          nextBus: "5 min",
+          company: "SOTRACAUCA",
+        },
+        {
+          coords: [2.452, -76.622],
+          name: "Campanario",
+          shortName: "CAMPANARIO",
+          code: "SOT-003",
+          address: "Barrio Campanario",
+          type: "barrio",
+          icon: "🔔",
+          routes: ["SOTRACAUCA R1", "SOTRACAUCA R2"],
+          nextBus: "3 min",
+          company: "SOTRACAUCA",
+        },
+        {
+          coords: [2.428, -76.628],
+          name: "Pomona",
+          shortName: "POMONA",
+          code: "SOT-004",
+          address: "Barrio Pomona",
+          type: "barrio",
+          icon: "🌳",
+          routes: ["SOTRACAUCA R1"],
+          nextBus: "8 min",
+          company: "SOTRACAUCA",
+        },
+        {
+          coords: [2.418, -76.61],
+          name: "Chirimía",
+          shortName: "CHIRIMÍA",
+          code: "SOT-005",
+          address: "Barrio Chirimía",
+          type: "barrio",
+          icon: "🏡",
+          routes: ["SOTRACAUCA R1", "SOTRACAUCA R3"],
+          nextBus: "12 min",
+          company: "SOTRACAUCA",
+        },
+
+        // TRANSPUBENZA - Rutas principales
+        {
+          coords: [2.432, -76.598],
+          name: "Lomas de Granada",
+          shortName: "LOMAS GRANADA",
+          code: "TPB-001",
+          address: "Lomas de Granada",
+          type: "barrio",
+          icon: "🏘️",
+          routes: ["TRANSPUBENZA R4", "TRANSPUBENZA R8", "TRANSPUBENZA R12"],
+          nextBus: "4 min",
+          company: "TRANSPUBENZA",
+        },
+        {
+          coords: [2.44, -76.61],
+          name: "Los Naranjos",
+          shortName: "LOS NARANJOS",
+          code: "TPB-002",
+          address: "Barrio Los Naranjos",
+          type: "barrio",
+          icon: "🍊",
+          routes: ["TRANSPUBENZA R1", "TRANSPUBENZA R3", "TRANSPUBENZA R9"],
+          nextBus: "6 min",
+          company: "TRANSPUBENZA",
+        },
+        {
+          coords: [2.445, -76.6],
+          name: "Tomás Cipriano",
+          shortName: "TOMÁS C.",
+          code: "TPB-003",
+          address: "Barrio Tomás Cipriano",
+          type: "barrio",
+          icon: "🏠",
+          routes: ["TRANSPUBENZA R1", "TRANSPUBENZA R2", "TRANSPUBENZA R5"],
+          nextBus: "7 min",
+          company: "TRANSPUBENZA",
+        },
+        {
+          coords: [2.448, -76.592],
+          name: "Piscinas Comfa",
+          shortName: "PISCINAS COMFA",
+          code: "TPB-004",
+          address: "Sector Piscinas Comfa",
+          type: "comercial",
+          icon: "🏊",
+          routes: ["TRANSPUBENZA R4", "TRANSPUBENZA R7"],
+          nextBus: "9 min",
+          company: "TRANSPUBENZA",
+        },
+
+        // TRANSLIBERTAD - Rutas principales
+        {
+          coords: [2.4419, -76.6066],
+          name: "Parque Caldas",
+          shortName: "PARQUE CALDAS",
+          code: "TRL-001",
+          address: "Centro Histórico",
+          type: "centro",
+          icon: "⛪",
+          routes: ["TRANSLIBERTAD R1", "TRANSLIBERTAD R3"],
+          nextBus: "3 min",
+          company: "TRANSLIBERTAD",
+        },
+        {
+          coords: [2.4385, -76.6055],
+          name: "Universidad del Cauca",
+          shortName: "UNICAUCA",
+          code: "TRL-002",
+          address: "Calle 5 # 4-70, Sector Tulcán",
+          type: "universidad",
+          icon: "🎓",
+          routes: ["TRANSLIBERTAD R2", "TRANSLIBERTAD R4"],
+          nextBus: "5 min",
+          company: "TRANSLIBERTAD",
+        },
+        {
+          coords: [2.435, -76.612],
+          name: "Carrera 9 Norte",
+          shortName: "CARRERA 9 N",
+          code: "TRL-003",
+          address: "Carrera 9 Norte",
+          type: "centro",
+          icon: "🛣️",
+          routes: ["TRANSLIBERTAD R2", "TRANSLIBERTAD R3"],
+          nextBus: "8 min",
+          company: "TRANSLIBERTAD",
+        },
+
+        // TRANSTAMBO - Rutas principales
+        {
+          coords: [2.449, -76.602],
+          name: "Hospital Universitario",
+          shortName: "HOSPITAL",
+          code: "TTB-001",
+          address: "Carrera 6 # 9N-45",
+          type: "hospital",
+          icon: "🏥",
+          routes: ["TRANSTAMBO R2"],
+          nextBus: "6 min",
+          company: "TRANSTAMBO",
+        },
+        {
+          coords: [2.438, -76.612],
+          name: "Villa Del Viento",
+          shortName: "VILLA VIENTO",
+          code: "TTB-002",
+          address: "Barrio Villa Del Viento",
+          type: "barrio",
+          icon: "🌪️",
+          routes: ["TRANSTAMBO R1"],
+          nextBus: "10 min",
+          company: "TRANSTAMBO",
+        },
+        {
+          coords: [2.455, -76.595],
+          name: "Las Guacas",
+          shortName: "LAS GUACAS",
+          code: "TTB-003",
+          address: "Barrio Las Guacas",
+          type: "barrio",
+          icon: "🏠",
+          routes: ["TRANSTAMBO R2"],
+          nextBus: "12 min",
+          company: "TRANSTAMBO",
+        },
+        {
+          coords: [2.42, -76.62],
+          name: "Los Llanos",
+          shortName: "LOS LLANOS",
+          code: "TTB-004",
+          address: "Barrio Los Llanos",
+          type: "barrio",
+          icon: "🌾",
+          routes: ["TRANSTAMBO R4", "TRANSTAMBO R6"],
+          nextBus: "15 min",
+          company: "TRANSTAMBO",
+        },
+
+        // Paradas adicionales importantes
+        {
+          coords: [2.448, -76.592],
+          name: "C.C. Campanario",
+          shortName: "CC CAMPANARIO",
+          code: "COM-001",
+          address: "Calle 5 # 38-95",
+          type: "comercial",
+          icon: "🏬",
+          routes: ["SOTRACAUCA R2", "TRANSPUBENZA R12"],
+          nextBus: "4 min",
+          company: "MULTIPLE",
+        },
+        {
+          coords: [2.44, -76.608],
+          name: "Catedral Basílica",
+          shortName: "CATEDRAL",
+          code: "CTR-001",
+          address: "Calle 5 # 4-08",
+          type: "centro",
+          icon: "⛪",
+          routes: ["SOTRACAUCA R4", "TRANSLIBERTAD R1"],
+          nextBus: "3 min",
+          company: "MULTIPLE",
+        },
+      ];
+
+      // Función para obtener color por empresa
+      function getCompanyColor(company) {
+        switch (company) {
+          case "SOTRACAUCA":
+            return "#22c55e";
+          case "TRANSPUBENZA":
+            return "#3b82f6";
+          case "TRANSLIBERTAD":
+            return "#ff6b35";
+          case "TRANSTAMBO":
+            return "#8b5cf6";
+          default:
+            return "#6b7280";
+        }
+      }
+
+      // Agregar marcadores
+      paraderos.forEach((paradero, index) => {
+        const markerElement = document.createElement("div");
+        markerElement.className = `custom-marker marker-${paradero.type}`;
+        markerElement.innerHTML = paradero.icon;
+        markerElement.style.borderColor = getCompanyColor(paradero.company);
+
+        const marker = L.marker(paradero.coords, {
+          icon: L.divIcon({
+            html: markerElement.outerHTML,
+            className: "futuristic-marker-container",
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+          }),
+        }).addTo(map);
+
+        // Popup con información
+        const routeBadges = paradero.routes
+          .map((route) => {
+            const company = route.split(" ")[0].toLowerCase();
+            return `<span class="route-badge route-${company}">${route}</span>`;
+          })
+          .join("");
+
+        const statusColor =
+          paradero.nextBus.includes("1 min") ||
+          paradero.nextBus.includes("2 min")
+            ? "#00ff88"
+            : paradero.nextBus.includes("3 min") ||
+              paradero.nextBus.includes("4 min")
+            ? "#00d4ff"
+            : "#ffd60a";
+
+        marker.bindPopup(
+          `
+                <div style="text-align: center; background: linear-gradient(135deg, #0f0f23, #1a1a2e); color: white; padding: 20px; border-radius: 16px; min-width: 250px;">
+                    <div style="font-size: 32px; margin-bottom: 12px;">${paradero.icon}</div>
+                    <div style="background: rgba(0,212,255,0.2); padding: 8px; border-radius: 8px; margin-bottom: 12px;">
+                        <h3 style="margin-bottom: 4px; font-size: 16px; color: #00d4ff; font-weight: 700;">${paradero.shortName}</h3>
+                        <div style="font-size: 10px; color: #00ff88; font-family: monospace; font-weight: 700;">${paradero.code}</div>
+                    </div>
+                    <p style="color: #ccc; font-size: 12px; margin-bottom: 12px;">${paradero.address}</p>
+                    <div style="margin-bottom: 12px;">${routeBadges}</div>
+                    <div style="background: rgba(0,212,255,0.1); border: 2px solid ${statusColor}; color: ${statusColor}; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700;">
+                        🚌 Próximo: ${paradero.nextBus}
+                    </div>
+                </div>
+            `,
+          {
+            maxWidth: 300,
+            className: "futuristic-popup",
+          }
+        );
+      });
+
+      // Marcador de ubicación actual
+      const currentLocationMarker = L.circleMarker(popayanCoords, {
+        color: "#3b82f6",
+        fillColor: "#3b82f6",
+        fillOpacity: 0.8,
+        radius: 8,
+        weight: 3,
+      }).addTo(map);
+
+      // Funciones de control
+      function centerOnLocation() {
+        map.setView(popayanCoords, 15);
+        currentLocationMarker.setLatLng(popayanCoords);
+      }
+
+      function zoomIn() {
+        map.zoomIn();
+      }
+
+      function zoomOut() {
+        map.zoomOut();
+      }
+
+      function toggleLayer() {
+        if (currentLayer === "osm") {
+          map.removeLayer(osmLayer);
+          map.addLayer(satelliteLayer);
+          currentLayer = "satellite";
+        } else {
+          map.removeLayer(satelliteLayer);
+          map.addLayer(osmLayer);
+          currentLayer = "osm";
+        }
+      }
+
+      // Simulación de actualización de tiempos
+      setInterval(() => {
+        paraderos.forEach((paradero) => {
+          const tiempo = parseInt(paradero.nextBus);
+          if (tiempo > 1) {
+            paradero.nextBus = tiempo - 1 + " min";
+          } else {
+            paradero.nextBus = Math.floor(Math.random() * 15 + 2) + " min";
+          }
+        });
+      }, 60000);
+    </script>
+  </body>
+</html>

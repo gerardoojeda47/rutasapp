@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import '../../lib/data/popayan_neighborhoods_data.dart';
+import 'package:rouwhite/data/popayan_neighborhoods_data.dart';
 
 void main() {
   group('PopayanNeighborhoodsDatabase Tests', () {

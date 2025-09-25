@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/view/smart_search_page.dart';
+import 'package:rouwhite/view/smart_search_page.dart';
 
 void main() {
   group('SmartSearchPage Neighborhoods UI Tests', () {

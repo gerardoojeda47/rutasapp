@@ -1,14 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../lib/core/services/smart_route_assistant.dart';
-import '../../../lib/data/popayan_bus_routes.dart';
+import 'package:rouwhite/core/services/smart_route_assistant.dart';
+import 'package:rouwhite/data/popayan_bus_routes.dart';
 
 void main() {
   group('Bus Companies Integration Tests', () {
     const testDestination = LatLng(2.4448, -76.6147); // Centro de Popayán
 
     test('should recognize all bus companies', () {
-      final allRoutes = PopayanBusRoutes.routes;
+      const allRoutes = PopayanBusRoutes.routes;
       final companies = allRoutes.map((route) => route.company).toSet();
 
       // Verificar que todas las empresas esperadas están presentes
@@ -17,8 +18,8 @@ void main() {
       expect(companies.contains('TRANSLIBERTAD'), true);
       expect(companies.contains('TRANSTAMBO'), true);
 
-      print('Empresas encontradas: ${companies.toList()}');
-      print('Total de rutas: ${allRoutes.length}');
+      debugPrint('Empresas encontradas: ${companies.toList()}');
+      debugPrint('Total de rutas: ${allRoutes.length}');
     });
 
     test('should generate appropriate recommendations for each company', () {
@@ -30,7 +31,7 @@ void main() {
       expect(smartRoutes.isNotEmpty, true);
 
       final companies = smartRoutes.map((r) => r.route.company).toSet();
-      print('Empresas en resultados inteligentes: ${companies.toList()}');
+      debugPrint('Empresas en resultados inteligentes: ${companies.toList()}');
 
       for (final smartRoute in smartRoutes) {
         final company = smartRoute.route.company;
@@ -57,9 +58,9 @@ void main() {
             break;
         }
 
-        print('${company}: ${smartRoute.recommendation}');
-        print('  Razón: ${reason}');
-        print('  Calidad: ${smartRoute.quality}');
+        debugPrint('${company}: ${smartRoute.recommendation}');
+        debugPrint('  Razón: ${reason}');
+        debugPrint('  Calidad: ${smartRoute.quality}');
       }
     });
 
@@ -83,8 +84,8 @@ void main() {
           message.contains('TRANSTAMBO');
 
       expect(hasCompanyName, true);
-      print('Mensaje del asistente:');
-      print(message);
+      debugPrint('Mensaje del asistente:');
+      debugPrint(message);
     });
 
     test('should handle urgent mode for all companies', () {
@@ -110,8 +111,8 @@ void main() {
           urgentMessage.contains('TRANSTAMBO');
 
       expect(hasCompanyName, true);
-      print('Mensaje urgente:');
-      print(urgentMessage);
+      debugPrint('Mensaje urgente:');
+      debugPrint(urgentMessage);
     });
 
     test('should distribute quality ratings fairly among companies', () {
@@ -129,9 +130,9 @@ void main() {
           qualityByCompany[company]!.add(route.quality);
         }
 
-        print('Calidad por empresa:');
+        debugPrint('Calidad por empresa:');
         qualityByCompany.forEach((company, qualities) {
-          print(
+          debugPrint(
               '$company: ${qualities.map((q) => q.toString().split('.').last).join(', ')}');
         });
 
@@ -149,9 +150,9 @@ void main() {
 
       final tips = SmartRouteAssistant.getAdditionalTips(smartRoutes);
 
-      print('Tips generados: ${tips.length}');
+      debugPrint('Tips generados: ${tips.length}');
       for (final tip in tips) {
-        print('- $tip');
+        debugPrint('- $tip');
         expect(tip.isNotEmpty, true);
       }
     });
@@ -159,7 +160,7 @@ void main() {
 
   group('Company Route Coverage Tests', () {
     test('should have routes for each company', () {
-      final allRoutes = PopayanBusRoutes.routes;
+      const allRoutes = PopayanBusRoutes.routes;
 
       final sotracaucaRoutes =
           allRoutes.where((r) => r.company == 'SOTRACAUCA').length;
@@ -170,11 +171,11 @@ void main() {
       final transtamboRoutes =
           allRoutes.where((r) => r.company == 'TRANSTAMBO').length;
 
-      print('Rutas por empresa:');
-      print('SOTRACAUCA: $sotracaucaRoutes rutas');
-      print('TRANSPUBENZA: $transpubenzaRoutes rutas');
-      print('TRANSLIBERTAD: $translibertadRoutes rutas');
-      print('TRANSTAMBO: $transtamboRoutes rutas');
+      debugPrint('Rutas por empresa:');
+      debugPrint('SOTRACAUCA: $sotracaucaRoutes rutas');
+      debugPrint('TRANSPUBENZA: $transpubenzaRoutes rutas');
+      debugPrint('TRANSLIBERTAD: $translibertadRoutes rutas');
+      debugPrint('TRANSTAMBO: $transtamboRoutes rutas');
 
       expect(sotracaucaRoutes, greaterThan(0));
       expect(transpubenzaRoutes, greaterThan(0));
@@ -183,7 +184,7 @@ void main() {
     });
 
     test('should have proper route naming for each company', () {
-      final allRoutes = PopayanBusRoutes.routes;
+      const allRoutes = PopayanBusRoutes.routes;
 
       for (final route in allRoutes) {
         // Verificar que el nombre incluye la empresa o es descriptivo
@@ -193,8 +194,8 @@ void main() {
         // Verificar que tiene información de barrios/destinos
         expect(route.neighborhoods.isNotEmpty, true);
 
-        print('${route.company}: ${route.name}');
-        print(
+        debugPrint('${route.company}: ${route.name}');
+        debugPrint(
             '  Barrios: ${route.neighborhoods.take(3).join(', ')}${route.neighborhoods.length > 3 ? '...' : ''}');
       }
     });
