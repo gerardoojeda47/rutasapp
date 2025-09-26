@@ -7,10 +7,10 @@ import 'rutas_pagina.dart';
 import 'paradas_pagina.dart';
 import 'smart_search_page.dart';
 import 'widgets/animated_markers.dart';
-import 'widgets/icon_test_widget.dart';
 import '../model/favoritos.dart';
 import '../view/driver/driver.dart';
 import '../core/utils/icon_helper.dart';
+import 'pqr_pagina.dart';
 
 class Homepage extends StatefulWidget {
   final String username;
@@ -54,25 +54,11 @@ class _HomepageState extends State<Homepage> {
                   builder: (context) => const Driver(),
                 ),
               );
-            } else if (value == 'test_icons') {
+            } else if (value == 'pqr') {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const IconTestWidget(),
-                ),
-              );
-            } else if (value == 'pqr') {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('PQR'),
-                  content: const Text('Peticiones, Quejas y Reclamos'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cerrar'),
-                    ),
-                  ],
+                  builder: (context) => const PqrPagina(),
                 ),
               );
             }
@@ -85,14 +71,7 @@ class _HomepageState extends State<Homepage> {
                 title: Text('Conductor'),
               ),
             ),
-            const PopupMenuItem(
-              value: 'test_icons',
-              child: ListTile(
-                leading: Icon(IconHelper.bugReport),
-                title: Text('Probar Iconos'),
-              ),
-            ),
-            const PopupMenuItem(
+                        const PopupMenuItem(
               value: 'pqr',
               child: ListTile(
                 leading: Icon(IconHelper.pqr),

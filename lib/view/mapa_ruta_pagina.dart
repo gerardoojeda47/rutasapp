@@ -352,16 +352,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     return const Color(0xFFFF6A00);
   }
 
-  // Convierte un string HEX a Color de Flutter
-  Color _colorFromHex(String hex) {
-    String cleaned = hex.replaceAll('#', '').toUpperCase();
-    if (cleaned.length == 6) {
-      cleaned = 'FF$cleaned'; // Alpha por defecto
-    }
-    final intColor = int.parse(cleaned, radix: 16);
-    return Color(intColor);
-  }
-
+  
   void getCurrentLocation() async {
     try {
       Position position = await determinePosition();
