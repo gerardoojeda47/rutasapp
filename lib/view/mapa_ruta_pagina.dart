@@ -348,12 +348,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
   }
 
   Color _parseRouteColor() {
-    // Usar el color definido en la ruta (hex ej. "#FF6A00"). Fallback a azul.
-    try {
-      return _colorFromHex(widget.route.color);
-    } catch (_) {
-      return Colors.blue;
-    }
+    // Color unificado para todas las rutas: naranja institucional
+    return const Color(0xFFFF6A00);
   }
 
   // Convierte un string HEX a Color de Flutter
@@ -570,8 +566,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
 
   void _initializeBusAnimation() {
     _busAnimationController = AnimationController(
-      duration:
-          const Duration(seconds: 30), // 30 segundos para recorrer toda la ruta
+      // Animación más lenta y constante para recorrer toda la ruta
+      duration: const Duration(seconds: 90),
       vsync: this,
     );
 
@@ -585,7 +581,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _busAnimationController,
-      curve: Curves.easeInOut, // Curva más suave
+      // Movimiento lineal para que la velocidad sea constante
+      curve: Curves.linear,
     ));
 
     _busAnimation.addListener(() {
@@ -596,11 +593,11 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
 
     _busAnimation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        // Reiniciar la animación después de una pausa
-        Future.delayed(const Duration(seconds: 3), () {
+        // Reiniciar la animación con una breve pausa
+        Future.delayed(const Duration(seconds: 1), () {
           if (mounted) {
             _busAnimationController.reset();
-            _busAnimationController.forward();
+            if (_isAnimating) _busAnimationController.forward();
           }
         });
       }
@@ -752,9 +749,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
           IconButton(
             icon: Icon(_isAnimating ? Icons.pause : Icons.play_arrow),
             onPressed: () {
-              debugPrint('🚌 Botón presionado - Animando: $_isAnimating');
-              debugPrint('🚌 Posición actual del bus: $_currentBusPosition');
-              debugPrint('🚌 Puntos de ruta: ${_routeStops.length}');
+              // Evitar dobles toques rápidos cuando el estado no cambió aún
+              if (_routeStops.isEmpty) return;
               if (_isAnimating) {
                 _stopBusAnimation();
               } else {
