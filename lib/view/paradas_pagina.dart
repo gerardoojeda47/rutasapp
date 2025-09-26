@@ -13,6 +13,9 @@ class ParadasPagina extends StatefulWidget {
 
 class _ParadasPaginaState extends State<ParadasPagina>
     with TickerProviderStateMixin {
+  // API keys opcionales para mejorar calidad (MapTiler)
+  // Crea una cuenta gratuita en maptiler.com y pega tu key aquí
+  static const String _mapTilerKey = '';
   final fm.MapController _mapController = fm.MapController();
   bool _isLoading = true;
   bool _showSatellite = false;
@@ -575,6 +578,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
   void _toggleCapas() {
     setState(() {
       _showSatellite = !_showSatellite;
+      // Al cambiar de capa, ajustar límites de zoom para la nueva fuente
+      final currentCenter = _mapController.camera.center;
+      final currentZoom = _mapController.camera.zoom;
+      final clampedZoom = _showSatellite
+          ? currentZoom.clamp(10.0, 17.5)
+          : currentZoom.clamp(10.0, 20.0);
+      _mapController.move(currentCenter, clampedZoom);
     });
   }
 
@@ -625,18 +635,51 @@ class _ParadasPaginaState extends State<ParadasPagina>
             options: fm.MapOptions(
               initialCenter: _popayanCenter,
               initialZoom: 14.0,
+              // Limitar el zoom máximo para evitar tiles en blanco
+              minZoom: 10.0,
+              maxZoom: 17.0,
+              onMapEvent: (event) {
+                // Forzar límites de zoom para evitar tiles en blanco
+                final double maxZ = 17.0;
+                final double minZ = 10.0;
+                final double z = event.camera.zoom;
+                if (z > maxZ || z < minZ) {
+                  final clamped = z.clamp(minZ, maxZ);
+                  if (clamped != z) {
+                    _mapController.move(event.camera.center, clamped);
+                  }
+                }
+              },
               interactionOptions: const fm.InteractionOptions(
                 flags: fm.InteractiveFlag.all,
               ),
             ),
             children: [
-              // Capa de tiles
+              // Capa de tiles (MapTiler si hay API key; fallback OSM/ESRI)
               fm.TileLayer(
                 urlTemplate: _showSatellite
-                    ? "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                    : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: _showSatellite ? const [] : const ['a', 'b', 'c'],
+                    ? (_mapTilerKey.isNotEmpty
+                        ? "https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=${_mapTilerKey}"
+                        : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}")
+                    : (_mapTilerKey.isNotEmpty
+                        ? "https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=${_mapTilerKey}"
+                        : "https://tile.openstreetmap.org/{z}/{x}/{y}.png"),
+                subdomains: const [],
                 userAgentPackageName: 'com.example.rouwhite',
+                // Límites de zoom conservadores para evitar tiles en blanco
+                maxNativeZoom: 17,
+                maxZoom: 17.0,
+                minZoom: 10.0,
+                // Mejor nitidez en pantallas HiDPI
+                retinaMode: true,
+                // Mantener más tiles en memoria durante zoom para evitar parpadeo
+                keepBuffer: 4,
+                // Callback de error para depurar en consola (alternativa a builder)
+                errorTileCallback: (tile, error, stackTrace) {
+                  // ignore: avoid_print
+                  print(
+                      'Tile error z:${tile.coordinates.z} x:${tile.coordinates.x} y:${tile.coordinates.y} -> $error');
+                },
               ),
 
               // Marcadores de paradas animados
@@ -868,7 +911,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
       animation: _fadeAnimation,
       builder: (context, child) {
         return AnimatedOpacity(
-          opacity: _isLoading ? 0.0 : _fadeAnimation.value,
+          opacity: (_isLoading ? 0.0 : _fadeAnimation.value).clamp(0.0, 1.0),
           duration: const Duration(milliseconds: 800),
           child: Transform.translate(
             offset: Offset(0, _isLoading ? 50 : 0),
@@ -968,7 +1011,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
       animation: _fadeAnimation,
       builder: (context, child) {
         return AnimatedOpacity(
-          opacity: _isLoading ? 0.0 : _fadeAnimation.value,
+          opacity: (_isLoading ? 0.0 : _fadeAnimation.value).clamp(0.0, 1.0),
           duration: const Duration(milliseconds: 800),
           child: Transform.translate(
             offset: Offset(_isLoading ? 50 : 0, 0),
@@ -976,20 +1019,24 @@ class _ParadasPaginaState extends State<ParadasPagina>
               children: [
                 _buildAnimatedControlButton(
                   icon: Icons.add,
-                  onPressed: () => _mapController.move(
-                    _mapController.camera.center,
-                    _mapController.camera.zoom + 1,
-                  ),
+                  onPressed: () {
+                    final maxZ = _showSatellite ? 17.5 : 20.0;
+                    final target =
+                        (_mapController.camera.zoom + 1).clamp(10.0, maxZ);
+                    _mapController.move(_mapController.camera.center, target);
+                  },
                   heroTag: "zoom_in",
                   delay: 0,
                 ),
                 const SizedBox(height: 8),
                 _buildAnimatedControlButton(
                   icon: Icons.remove,
-                  onPressed: () => _mapController.move(
-                    _mapController.camera.center,
-                    _mapController.camera.zoom - 1,
-                  ),
+                  onPressed: () {
+                    final minZ = 10.0;
+                    final target = (_mapController.camera.zoom - 1)
+                        .clamp(minZ, _showSatellite ? 17.5 : 20.0);
+                    _mapController.move(_mapController.camera.center, target);
+                  },
                   heroTag: "zoom_out",
                   delay: 100,
                 ),
@@ -1057,7 +1104,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
         return Transform.translate(
           offset: Offset(-20 * (1 - value), 0),
           child: Opacity(
-            opacity: value,
+            opacity: value.clamp(0.0, 1.0),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: Row(

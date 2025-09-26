@@ -2,12 +2,14 @@
 // Página del mapa de rutas de buses en Popayán, Colombia
 import 'dart:async';
 import 'dart:math';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../data/popayan_bus_routes.dart';
 import '../core/services/routing_service.dart';
+import '../core/config/map_configuration.dart';
 
 // Clase para representar puntos de interés en el mapa
 class PointOfInterest {
@@ -137,7 +139,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
 
   // Integración con OpenRouteService
   final RoutingService _routingService = RoutingService();
-  
+
   // Lista de puntos de interés en Popayán
   final List<PointOfInterest> _pointsOfInterest = [
     // Hospitales
@@ -159,7 +161,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.hospital,
       description: 'Hospital público',
     ),
-    
+
     // Universidades y colegios
     PointOfInterest(
       name: 'Universidad del Cauca',
@@ -185,7 +187,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.school,
       description: 'Colegio privado',
     ),
-    
+
     // Parques
     PointOfInterest(
       name: 'Parque Caldas',
@@ -199,7 +201,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.park,
       description: 'Parque recreativo',
     ),
-    
+
     // Iglesias
     PointOfInterest(
       name: 'Catedral Basílica Nuestra Señora de la Asunción',
@@ -213,7 +215,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.church,
       description: 'Iglesia colonial',
     ),
-    
+
     // Centros comerciales
     PointOfInterest(
       name: 'Centro Comercial Campanario',
@@ -227,7 +229,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.mall,
       description: 'Centro comercial en el centro histórico',
     ),
-    
+
     // Restaurantes
     PointOfInterest(
       name: 'La Cosecha',
@@ -241,7 +243,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.restaurant,
       description: 'Restaurante italiano',
     ),
-    
+
     // Bancos
     PointOfInterest(
       name: 'Banco de la República',
@@ -249,7 +251,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.bank,
       description: 'Banco central',
     ),
-    
+
     // Estaciones de gasolina
     PointOfInterest(
       name: 'Estación Terpel',
@@ -257,7 +259,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.gasStation,
       description: 'Estación de servicio',
     ),
-    
+
     // Policía
     PointOfInterest(
       name: 'Comando de Policía Cauca',
@@ -265,7 +267,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.police,
       description: 'Comando departamental',
     ),
-    
+
     // Hoteles
     PointOfInterest(
       name: 'Hotel Monasterio',
@@ -273,7 +275,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.hotel,
       description: 'Hotel colonial',
     ),
-    
+
     // Museos
     PointOfInterest(
       name: 'Museo Arquidiocesano de Arte Religioso',
@@ -281,7 +283,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.museum,
       description: 'Museo de arte religioso',
     ),
-    
+
     // Bibliotecas
     PointOfInterest(
       name: 'Biblioteca del Banco de la República',
@@ -289,7 +291,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.library,
       description: 'Biblioteca pública',
     ),
-    
+
     // Farmacias
     PointOfInterest(
       name: 'Droguería La Rebaja',
@@ -297,7 +299,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.pharmacy,
       description: 'Cadena de farmacias',
     ),
-    
+
     // Supermercados
     PointOfInterest(
       name: 'Éxito',
@@ -350,16 +352,6 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
   Color _parseRouteColor() {
     // Color unificado para todas las rutas: naranja institucional
     return const Color(0xFFFF6A00);
-  }
-
-  // Convierte un string HEX a Color de Flutter
-  Color _colorFromHex(String hex) {
-    String cleaned = hex.replaceAll('#', '').toUpperCase();
-    if (cleaned.length == 6) {
-      cleaned = 'FF$cleaned'; // Alpha por defecto
-    }
-    final intColor = int.parse(cleaned, radix: 16);
-    return Color(intColor);
   }
 
   void getCurrentLocation() async {
@@ -542,12 +534,44 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     return resultado;
   }
 
-
   /// Calcula la distancia entre dos puntos
   double _calculateDistance(LatLng point1, LatLng point2) {
     double latDiff = point1.latitude - point2.latitude;
     double lngDiff = point1.longitude - point2.longitude;
     return sqrt(latDiff * latDiff + lngDiff * lngDiff);
+  }
+
+  /// Ajusta la vista del mapa para mostrar toda la ruta
+  void _fitBoundsToRoute() {
+    if (_routeStops.isEmpty) return;
+
+    // Calcular bounds de la ruta
+    double minLat = _routeStops.first.latitude;
+    double maxLat = _routeStops.first.latitude;
+    double minLng = _routeStops.first.longitude;
+    double maxLng = _routeStops.first.longitude;
+
+    for (final point in _routeStops) {
+      minLat = math.min(minLat, point.latitude);
+      maxLat = math.max(maxLat, point.latitude);
+      minLng = math.min(minLng, point.longitude);
+      maxLng = math.max(maxLng, point.longitude);
+    }
+
+    // Agregar padding
+    const padding = 0.005;
+    final bounds = LatLngBounds(
+      LatLng(minLat - padding, minLng - padding),
+      LatLng(maxLat + padding, maxLng + padding),
+    );
+
+    // Ajustar la vista del mapa
+    _mapController.fitCamera(
+      CameraFit.bounds(
+        bounds: bounds,
+        padding: const EdgeInsets.all(50),
+      ),
+    );
   }
 
   @override
@@ -556,7 +580,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     getCurrentLocation();
     _setupRouteStops();
     _initializeBusAnimation();
-    
+
     // Inicializar el controlador de pulso para los POIs
     _pulseController = AnimationController(
       duration: const Duration(seconds: 2),
@@ -921,8 +945,16 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                     options: MapOptions(
                       initialCenter: myPosition!,
                       initialZoom: 15,
-                      minZoom: 10,
-                      maxZoom: 20,
+                      minZoom: MapConfiguration.minZoomPopayan,
+                      maxZoom: MapConfiguration.maxZoomPopayan,
+                      cameraConstraint: CameraConstraint.contain(
+                        bounds: MapConfiguration.popayanBounds,
+                      ),
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                        enableMultiFingerGestureRace: true,
+                        scrollWheelVelocity: 0.005,
+                      ),
                       onMapReady: () {
                         // Ajustar vista para mostrar toda la ruta
                         if (_routeStops.isNotEmpty) {
@@ -931,10 +963,23 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                       },
                     ),
                     children: [
+                      // Capa de tiles optimizada con fallback
                       TileLayer(
                         urlTemplate:
                             'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName: 'com.example.rutasapp',
+                        userAgentPackageName: 'com.popayan.rutasapp',
+                        maxZoom: 17,
+                        minZoom: 10,
+                        // Configuración para evitar tiles en blanco
+                        tileDimension: 256,
+                        maxNativeZoom: 17,
+                        // Headers optimizados
+                        additionalOptions: const {
+                          'Accept': 'image/png,image/jpeg,image/*;q=0.8',
+                        },
+                        // Fallback cuando no se puede cargar un tile
+                        fallbackUrl:
+                            'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
                       ),
 
                       // Marcador de mi ubicación
@@ -1123,7 +1168,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                           );
                         }).toList(),
                       ),
-                      
+
                       // Marcadores de puntos de interés (hospitales, colegios, etc.)
                       MarkerLayer(
                         markers: _pointsOfInterest.map((poi) {
@@ -1139,10 +1184,13 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                                     animation: _pulseController,
                                     builder: (context, child) {
                                       return Container(
-                                        width: 35 + (5 * _pulseController.value),
-                                        height: 35 + (5 * _pulseController.value),
+                                        width:
+                                            35 + (5 * _pulseController.value),
+                                        height:
+                                            35 + (5 * _pulseController.value),
                                         decoration: BoxDecoration(
-                                          color: poi.type.color.withValues(alpha: 0.2),
+                                          color: poi.type.color
+                                              .withValues(alpha: 0.2),
                                           shape: BoxShape.circle,
                                         ),
                                       );
@@ -1161,7 +1209,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: poi.type.color.withValues(alpha: 0.3),
+                                          color: poi.type.color
+                                              .withValues(alpha: 0.3),
                                           blurRadius: 8,
                                           offset: const Offset(0, 2),
                                         ),
@@ -1464,38 +1513,6 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     );
   }
 
-  void _fitBoundsToRoute() {
-    if (_routeStops.isEmpty) return;
-
-    double minLat =
-        _routeStops.map((p) => p.latitude).reduce((a, b) => a < b ? a : b);
-    double maxLat =
-        _routeStops.map((p) => p.latitude).reduce((a, b) => a > b ? a : b);
-    double minLng =
-        _routeStops.map((p) => p.longitude).reduce((a, b) => a < b ? a : b);
-    double maxLng =
-        _routeStops.map((p) => p.longitude).reduce((a, b) => a > b ? a : b);
-
-    // Agregar margen
-    double latMargin = (maxLat - minLat) * 0.1;
-    double lngMargin = (maxLng - minLng) * 0.1;
-
-    LatLngBounds bounds = LatLngBounds(
-      LatLng(minLat - latMargin, minLng - lngMargin),
-      LatLng(maxLat + latMargin, maxLng + lngMargin),
-    );
-
-    _mapController.fitCamera(CameraFit.bounds(bounds: bounds));
-
-    // Iniciar la animación automáticamente después de ajustar la vista
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted && !_isAnimating) {
-        debugPrint('🚌 Iniciando animación automática...');
-        _startBusAnimation();
-      }
-    });
-  }
-
   /// Obtiene la parte de la ruta que ya ha sido recorrida por el bus
   List<LatLng> _getProgressRoute() {
     if (_routeStops.isEmpty || _currentBusPosition == null) {
@@ -1656,8 +1673,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     if (_routeStops.isEmpty) return [];
 
     // Centro para generar partículas: posición actual del bus o centro de la ruta
-    final LatLng center = _currentBusPosition ??
-        _routeStops[_routeStops.length ~/ 2];
+    final LatLng center =
+        _currentBusPosition ?? _routeStops[_routeStops.length ~/ 2];
 
     // Radio pequeño en grados para mantener coordenadas válidas cerca del centro
     // ~0.0007 grados ≈ 78 m (aprox.)
@@ -1685,7 +1702,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       );
     });
   }
-  
+
   // Método para mostrar información de un punto de interés
   void _showPOIInfo(PointOfInterest poi) {
     showModalBottomSheet(
@@ -1777,10 +1794,10 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
               ),
               const SizedBox(height: 16),
             ],
-            
+
             // Información específica según el tipo de POI
             _buildSpecificPOIInfo(poi),
-            
+
             const SizedBox(height: 20),
             Row(
               children: [
@@ -1797,7 +1814,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    icon: const Icon(Icons.center_focus_strong, color: Colors.white),
+                    icon: const Icon(Icons.center_focus_strong,
+                        color: Colors.white),
                     label: const Text(
                       'Centrar en mapa',
                       style: TextStyle(
@@ -1836,7 +1854,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       ),
     );
   }
-  
+
   // Método para obtener el texto del tipo de POI
   String _getPoiTypeText(POIType type) {
     switch (type) {
@@ -1872,7 +1890,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
         return 'Supermercado';
     }
   }
-  
+
   // Método para construir información específica según el tipo de POI
   Widget _buildSpecificPOIInfo(PointOfInterest poi) {
     switch (poi.type) {
@@ -1882,7 +1900,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
           children: [
             _infoItem(Icons.access_time, 'Horario', '24 horas', Colors.blue),
             const SizedBox(height: 8),
-            _infoItem(Icons.local_phone, 'Teléfono', '(+57) 602-123-4567', Colors.green),
+            _infoItem(Icons.local_phone, 'Teléfono', '(+57) 602-123-4567',
+                Colors.green),
           ],
         );
       case POIType.school:
@@ -1890,7 +1909,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoItem(Icons.access_time, 'Horario', '7:00 AM - 5:00 PM', Colors.blue),
+            _infoItem(
+                Icons.access_time, 'Horario', '7:00 AM - 5:00 PM', Colors.blue),
             const SizedBox(height: 8),
             _infoItem(Icons.event, 'Período', 'En clases', Colors.orange),
           ],
@@ -1899,7 +1919,8 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoItem(Icons.access_time, 'Horario', '11:00 AM - 10:00 PM', Colors.blue),
+            _infoItem(Icons.access_time, 'Horario', '11:00 AM - 10:00 PM',
+                Colors.blue),
             const SizedBox(height: 8),
             _infoItem(Icons.star, 'Calificación', '4.5/5', Colors.amber),
           ],
@@ -1908,16 +1929,18 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoItem(Icons.access_time, 'Horario', '10:00 AM - 8:00 PM', Colors.blue),
+            _infoItem(Icons.access_time, 'Horario', '10:00 AM - 8:00 PM',
+                Colors.blue),
             const SizedBox(height: 8),
-            _infoItem(Icons.local_parking, 'Estacionamiento', 'Disponible', Colors.green),
+            _infoItem(Icons.local_parking, 'Estacionamiento', 'Disponible',
+                Colors.green),
           ],
         );
       default:
         return const SizedBox.shrink();
     }
   }
-  
+
   // Widget para mostrar un elemento de información
   Widget _infoItem(IconData icon, String title, String value, Color color) {
     return Row(

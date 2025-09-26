@@ -233,22 +233,29 @@
       // Coordenadas de Popayán
       const popayanCoords = [2.4448, -76.6147];
 
-      // Inicializar mapa
-      const map = L.map("map").setView(popayanCoords, 14);
+      // Inicializar mapa con límites de zoom
+      const map = L.map("map", {
+        minZoom: 10,
+        maxZoom: 17,
+      }).setView(popayanCoords, 14);
 
-      // Capa de OpenStreetMap
+      // Capa de OpenStreetMap con límites de zoom
       const osmLayer = L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
           attribution: "© OpenStreetMap contributors",
+          minZoom: 10,
+          maxZoom: 17,
         }
       ).addTo(map);
 
-      // Capa satelital alternativa
+      // Capa satelital alternativa con límites de zoom
       const satelliteLayer = L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         {
           attribution: "© Esri",
+          minZoom: 10,
+          maxZoom: 17,
         }
       );
 
