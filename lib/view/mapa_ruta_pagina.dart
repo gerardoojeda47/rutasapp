@@ -354,8 +354,6 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     return const Color(0xFFFF6A00);
   }
 
-<<<<<<< HEAD
-=======
   
 
   void getCurrentLocation() async {
