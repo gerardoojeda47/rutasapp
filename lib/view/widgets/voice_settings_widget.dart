@@ -290,7 +290,7 @@ class _VoiceSettingsWidgetState extends State<VoiceSettingsWidget> {
         Switch(
           value: value,
           onChanged: onChanged,
-          activeThumbColor: const Color(0xFFFF6A00),
+          activeColor: const Color(0xFFFF6A00),
         ),
       ],
     );
