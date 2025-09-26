@@ -1657,17 +1657,33 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
 
   /// Crea partículas de energía flotantes
   List<Polyline> _createEnergyParticles() {
+    if (_routeStops.isEmpty) return [];
+
+    // Centro para generar partículas: posición actual del bus o centro de la ruta
+    final LatLng center = _currentBusPosition ??
+        _routeStops[_routeStops.length ~/ 2];
+
+    // Radio pequeño en grados para mantener coordenadas válidas cerca del centro
+    // ~0.0007 grados ≈ 78 m (aprox.)
+    const double baseRadius = 0.0007;
+
     return List.generate(8, (index) {
-      final progress = _particleAnimation.value;
-      final offset = (index * 0.125) + progress;
-      final x = 200 + (100 * (offset % 1.0));
-      final y = 150 + (50 * (offset % 1.0));
+      final double phase = (_particleAnimation.value + index * 0.12) % 1.0;
+      final double angle = 2 * pi * phase;
+
+      // Trayectoria circular/ondulante alrededor del centro
+      final double radius = baseRadius * (0.6 + 0.4 * sin(2 * pi * phase));
+      final double dx = radius * cos(angle);
+      final double dy = radius * sin(angle);
+
+      final LatLng start = LatLng(center.latitude + dy, center.longitude + dx);
+      final LatLng end = LatLng(
+        center.latitude + dy * 1.02,
+        center.longitude + dx * 1.02,
+      );
 
       return Polyline(
-        points: [
-          LatLng(x, y),
-          LatLng(x + 2, y + 2),
-        ],
+        points: [start, end],
         color: Colors.blue.withValues(alpha: 0.6),
         strokeWidth: 2,
       );
