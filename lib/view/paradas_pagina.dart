@@ -794,31 +794,39 @@ class _ParadasPaginaState extends State<ParadasPagina>
                     },
                   ),
 
-                  // Marcador principal
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: empresaColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: empresaColor.withValues(alpha: 0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
+                  // Marcador principal con forma de pin y bus
+                  SizedBox(
+                    width: 44,
+                    height: 52,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          color: empresaColor,
+                          size: 44,
                         ),
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                        Positioned(
+                          top: 8,
+                          child: Container(
+                            width: 22,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.directions_bus_filled,
+                              color: empresaColor,
+                              size: 16,
+                            ),
+                          ),
                         ),
                       ],
-                    ),
-                    child: Icon(
-                      _getTipoIcon(parada.tipo),
-                      color: Colors.white,
-                      size: 20,
                     ),
                   ),
 
