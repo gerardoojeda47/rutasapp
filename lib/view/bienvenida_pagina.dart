@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'principal_pagina.dart';
 import 'widgets/welcome_animation_pro_widget.dart';
+import '../core/services/navigation_service.dart';
 
 class BienvenidaPagina extends StatefulWidget {
   const BienvenidaPagina({super.key});
@@ -24,12 +25,12 @@ class _BienvenidaPaginaState extends State<BienvenidaPagina> {
   Future<void> _initializeWelcome() async {
     // Simular tiempo de carga para mostrar animaciones
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     if (mounted) {
       setState(() {
         _isLoading = false;
       });
-      
+
       // Mostrar contenido
       await Future.delayed(const Duration(milliseconds: 300));
       if (mounted) {
@@ -44,7 +45,7 @@ class _BienvenidaPaginaState extends State<BienvenidaPagina> {
     setState(() {
       _animationComplete = true;
     });
-    
+
     // Esperar un poco más y navegar directamente a la página principal
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
@@ -54,30 +55,11 @@ class _BienvenidaPaginaState extends State<BienvenidaPagina> {
   }
 
   void _navigateToMainApp() {
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const Homepage(
-          username: 'Usuario',
-        ),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.easeInOutCubic;
-
-          var tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: curve),
-          );
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 800),
-      ),
+    NavigationService.pushReplacementWithSafeTransition(
+      context,
+      const Homepage(username: 'Usuario'),
+      type: TransitionType.fade,
+      duration: const Duration(milliseconds: 800),
     );
   }
 
@@ -161,7 +143,8 @@ class _BienvenidaPaginaState extends State<BienvenidaPagina> {
                           child: const Padding(
                             padding: EdgeInsets.all(12.0),
                             child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
                               strokeWidth: 3,
                             ),
                           ),

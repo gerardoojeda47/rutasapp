@@ -4,6 +4,113 @@ import 'package:latlong2/latlong.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
+// Clase para representar puntos de interés en el mapa
+class PointOfInterest {
+  final String name;
+  final LatLng position;
+  final POIType type;
+  final String? description;
+
+  PointOfInterest({
+    required this.name,
+    required this.position,
+    required this.type,
+    this.description,
+  });
+}
+
+// Tipos de puntos de interés
+enum POIType {
+  hospital,
+  school,
+  university,
+  park,
+  church,
+  mall,
+  restaurant,
+  bank,
+  gasStation,
+  police,
+  hotel,
+  museum,
+  library,
+  pharmacy,
+  supermarket,
+}
+
+// Extensión para obtener el icono según el tipo de POI
+extension POITypeExtension on POIType {
+  IconData get icon {
+    switch (this) {
+      case POIType.hospital:
+        return Icons.local_hospital;
+      case POIType.school:
+        return Icons.school;
+      case POIType.university:
+        return Icons.account_balance;
+      case POIType.park:
+        return Icons.park;
+      case POIType.church:
+        return Icons.church;
+      case POIType.mall:
+        return Icons.shopping_bag;
+      case POIType.restaurant:
+        return Icons.restaurant;
+      case POIType.bank:
+        return Icons.account_balance;
+      case POIType.gasStation:
+        return Icons.local_gas_station;
+      case POIType.police:
+        return Icons.local_police;
+      case POIType.hotel:
+        return Icons.hotel;
+      case POIType.museum:
+        return Icons.museum;
+      case POIType.library:
+        return Icons.local_library;
+      case POIType.pharmacy:
+        return Icons.local_pharmacy;
+      case POIType.supermarket:
+        return Icons.shopping_cart;
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case POIType.hospital:
+        return Colors.red;
+      case POIType.school:
+        return Colors.orange;
+      case POIType.university:
+        return Colors.deepPurple;
+      case POIType.park:
+        return Colors.green;
+      case POIType.church:
+        return Colors.indigo;
+      case POIType.mall:
+        return Colors.pink;
+      case POIType.restaurant:
+        return Colors.amber;
+      case POIType.bank:
+        return Colors.blue;
+      case POIType.gasStation:
+        return Colors.red.shade800;
+      case POIType.police:
+        return Colors.blue.shade900;
+      case POIType.hotel:
+        return Colors.teal;
+      case POIType.museum:
+        return Colors.brown;
+      case POIType.library:
+        return Colors.deepOrange;
+      case POIType.pharmacy:
+        return Colors.lightGreen;
+      case POIType.supermarket:
+        return Colors.cyan;
+    }
+  }
+}
+
 class ParadasPagina extends StatefulWidget {
   const ParadasPagina({super.key});
 
@@ -36,6 +143,371 @@ class _ParadasPaginaState extends State<ParadasPagina>
 
   // Coordenadas de Popayán
   static const LatLng _popayanCenter = LatLng(2.4448, -76.6147);
+
+  // Lista de puntos de interés principales en Popayán
+  final List<PointOfInterest> _pointsOfInterest = [
+    // HOSPITALES
+    PointOfInterest(
+      name: 'Hospital Universitario San José',
+      position: const LatLng(2.4427, -76.6064),
+      type: POIType.hospital,
+      description: 'Hospital principal',
+    ),
+    PointOfInterest(
+      name: 'Clínica La Estancia',
+      position: const LatLng(2.4489, -76.5972),
+      type: POIType.hospital,
+      description: 'Clínica privada',
+    ),
+
+    // UNIVERSIDADES
+    PointOfInterest(
+      name: 'Universidad del Cauca',
+      position: const LatLng(2.4448, -76.6060),
+      type: POIType.university,
+      description: 'Universidad pública',
+    ),
+    PointOfInterest(
+      name: 'SENA Popayán',
+      position: const LatLng(2.4380, -76.6000),
+      type: POIType.university,
+      description: 'Formación técnica',
+    ),
+
+    // COLEGIOS
+    PointOfInterest(
+      name: 'Colegio INEM',
+      position: const LatLng(2.4550, -76.5950),
+      type: POIType.school,
+      description: 'Colegio público',
+    ),
+    PointOfInterest(
+      name: 'Colegio Champagnat',
+      position: const LatLng(2.4380, -76.6120),
+      type: POIType.school,
+      description: 'Colegio privado',
+    ),
+
+    // PARQUES
+    PointOfInterest(
+      name: 'Parque Caldas',
+      position: const LatLng(2.4418, -76.6060),
+      type: POIType.park,
+      description: 'Parque principal',
+    ),
+    PointOfInterest(
+      name: 'Parque de la Salud',
+      position: const LatLng(2.4520, -76.5980),
+      type: POIType.park,
+      description: 'Parque recreativo',
+    ),
+
+    // IGLESIAS
+    PointOfInterest(
+      name: 'Catedral Basílica',
+      position: const LatLng(2.4415, -76.6063),
+      type: POIType.church,
+      description: 'Catedral principal',
+    ),
+    PointOfInterest(
+      name: 'Iglesia San Francisco',
+      position: const LatLng(2.4425, -76.6075),
+      type: POIType.church,
+      description: 'Iglesia colonial',
+    ),
+
+    // CENTROS COMERCIALES
+    PointOfInterest(
+      name: 'C.C. Campanario',
+      position: const LatLng(2.4550, -76.5920),
+      type: POIType.mall,
+      description: 'Centro comercial',
+    ),
+    PointOfInterest(
+      name: 'C.C. Anarkos',
+      position: const LatLng(2.4420, -76.6055),
+      type: POIType.mall,
+      description: 'Centro del histórico',
+    ),
+
+    // BANCOS
+    PointOfInterest(
+      name: 'Banco de la República',
+      position: const LatLng(2.4415, -76.6050),
+      type: POIType.bank,
+      description: 'Banco central',
+    ),
+    PointOfInterest(
+      name: 'Bancolombia',
+      position: const LatLng(2.4425, -76.6055),
+      type: POIType.bank,
+      description: 'Banco comercial',
+    ),
+
+    // RESTAURANTES
+    PointOfInterest(
+      name: 'La Cosecha',
+      position: const LatLng(2.4410, -76.6050),
+      type: POIType.restaurant,
+      description: 'Comida típica',
+    ),
+    PointOfInterest(
+      name: 'Café Macondo',
+      position: const LatLng(2.4440, -76.6060),
+      type: POIType.restaurant,
+      description: 'Café cultural',
+    ),
+
+    // FARMACIAS
+    PointOfInterest(
+      name: 'Droguería La Rebaja',
+      position: const LatLng(2.4420, -76.6055),
+      type: POIType.pharmacy,
+      description: 'Farmacia',
+    ),
+    PointOfInterest(
+      name: 'Cruz Verde',
+      position: const LatLng(2.4410, -76.6065),
+      type: POIType.pharmacy,
+      description: 'Farmacia',
+    ),
+
+    // SUPERMERCADOS
+    PointOfInterest(
+      name: 'Éxito',
+      position: const LatLng(2.4550, -76.5925),
+      type: POIType.supermarket,
+      description: 'Supermercado',
+    ),
+    PointOfInterest(
+      name: 'Olímpica',
+      position: const LatLng(2.4430, -76.6030),
+      type: POIType.supermarket,
+      description: 'Supermercado',
+    ),
+
+    // ========== MÁS BANCOS POR TODA LA CIUDAD ==========
+    PointOfInterest(
+      name: 'Banco de Bogotá Norte',
+      position: const LatLng(2.4520, -76.5960),
+      type: POIType.bank,
+      description: 'Sucursal norte',
+    ),
+    PointOfInterest(
+      name: 'BBVA Centro',
+      position: const LatLng(2.4440, -76.6035),
+      type: POIType.bank,
+      description: 'Banco internacional',
+    ),
+    PointOfInterest(
+      name: 'Davivienda Sur',
+      position: const LatLng(2.4300, -76.6110),
+      type: POIType.bank,
+      description: 'Banco comercial sur',
+    ),
+    PointOfInterest(
+      name: 'Banco Agrario',
+      position: const LatLng(2.4380, -76.5980),
+      type: POIType.bank,
+      description: 'Banco rural',
+    ),
+    PointOfInterest(
+      name: 'Banco Popular Norte',
+      position: const LatLng(2.4480, -76.5970),
+      type: POIType.bank,
+      description: 'Sucursal norte',
+    ),
+
+    // ========== MÁS RESTAURANTES ==========
+    PointOfInterest(
+      name: 'McDonald\'s Campanario',
+      position: const LatLng(2.4545, -76.5915),
+      type: POIType.restaurant,
+      description: 'Comida rápida',
+    ),
+    PointOfInterest(
+      name: 'KFC Norte',
+      position: const LatLng(2.4540, -76.5930),
+      type: POIType.restaurant,
+      description: 'Pollo frito',
+    ),
+    PointOfInterest(
+      name: 'Subway',
+      position: const LatLng(2.4535, -76.5925),
+      type: POIType.restaurant,
+      description: 'Sándwiches',
+    ),
+    PointOfInterest(
+      name: 'Frisby Centro',
+      position: const LatLng(2.4420, -76.6045),
+      type: POIType.restaurant,
+      description: 'Pollo broaster',
+    ),
+    PointOfInterest(
+      name: 'El Corral',
+      position: const LatLng(2.4460, -76.6020),
+      type: POIType.restaurant,
+      description: 'Hamburguesas gourmet',
+    ),
+    PointOfInterest(
+      name: 'Presto',
+      position: const LatLng(2.4380, -76.6040),
+      type: POIType.restaurant,
+      description: 'Comida rápida',
+    ),
+    PointOfInterest(
+      name: 'Pollo Campero',
+      position: const LatLng(2.4350, -76.6080),
+      type: POIType.restaurant,
+      description: 'Pollo a la brasa',
+    ),
+    PointOfInterest(
+      name: 'Domino\'s Pizza',
+      position: const LatLng(2.4470, -76.6010),
+      type: POIType.restaurant,
+      description: 'Pizza a domicilio',
+    ),
+    PointOfInterest(
+      name: 'Papa John\'s',
+      position: const LatLng(2.4490, -76.5990),
+      type: POIType.restaurant,
+      description: 'Pizza artesanal',
+    ),
+    PointOfInterest(
+      name: 'Crepes & Waffles',
+      position: const LatLng(2.4450, -76.6000),
+      type: POIType.restaurant,
+      description: 'Postres y café',
+    ),
+
+    // ========== MÁS FARMACIAS ==========
+    PointOfInterest(
+      name: 'Locatel Norte',
+      position: const LatLng(2.4500, -76.5950),
+      type: POIType.pharmacy,
+      description: 'Farmacia 24 horas',
+    ),
+    PointOfInterest(
+      name: 'Farmatodo',
+      position: const LatLng(2.4460, -76.5980),
+      type: POIType.pharmacy,
+      description: 'Cadena farmacéutica',
+    ),
+    PointOfInterest(
+      name: 'Cruz Verde Norte',
+      position: const LatLng(2.4520, -76.5940),
+      type: POIType.pharmacy,
+      description: 'Farmacia norte',
+    ),
+    PointOfInterest(
+      name: 'La Rebaja Sur',
+      position: const LatLng(2.4320, -76.6090),
+      type: POIType.pharmacy,
+      description: 'Farmacia sur',
+    ),
+    PointOfInterest(
+      name: 'Copidrogas',
+      position: const LatLng(2.4390, -76.6020),
+      type: POIType.pharmacy,
+      description: 'Farmacia cooperativa',
+    ),
+    PointOfInterest(
+      name: 'Farmacia San Jorge Norte',
+      position: const LatLng(2.4480, -76.5960),
+      type: POIType.pharmacy,
+      description: 'Farmacia local',
+    ),
+
+    // ========== MÁS SUPERMERCADOS ==========
+    PointOfInterest(
+      name: 'Carulla Norte',
+      position: const LatLng(2.4460, -76.5980),
+      type: POIType.supermarket,
+      description: 'Supermercado premium',
+    ),
+    PointOfInterest(
+      name: 'D1 Norte',
+      position: const LatLng(2.4480, -76.5990),
+      type: POIType.supermarket,
+      description: 'Tienda de descuento',
+    ),
+    PointOfInterest(
+      name: 'Justo & Bueno Centro',
+      position: const LatLng(2.4400, -76.6040),
+      type: POIType.supermarket,
+      description: 'Conveniencia',
+    ),
+    PointOfInterest(
+      name: 'Ara Sur',
+      position: const LatLng(2.4300, -76.6100),
+      type: POIType.supermarket,
+      description: 'Supermercado económico',
+    ),
+    PointOfInterest(
+      name: 'Surtimax',
+      position: const LatLng(2.4350, -76.6070),
+      type: POIType.supermarket,
+      description: 'Cadena regional',
+    ),
+    PointOfInterest(
+      name: 'Tiendas Ara Este',
+      position: const LatLng(2.4450, -76.5940),
+      type: POIType.supermarket,
+      description: 'Descuentos',
+    ),
+    PointOfInterest(
+      name: 'Merquefácil',
+      position: const LatLng(2.4380, -76.6120),
+      type: POIType.supermarket,
+      description: 'Supermercado local',
+    ),
+
+    // ========== ESTACIONES DE GASOLINA ==========
+    PointOfInterest(
+      name: 'Terpel Norte',
+      position: const LatLng(2.4500, -76.5950),
+      type: POIType.gasStation,
+      description: 'Estación norte',
+    ),
+    PointOfInterest(
+      name: 'Mobil Centro',
+      position: const LatLng(2.4420, -76.6080),
+      type: POIType.gasStation,
+      description: 'Combustibles centro',
+    ),
+    PointOfInterest(
+      name: 'Esso Sur',
+      position: const LatLng(2.4300, -76.6120),
+      type: POIType.gasStation,
+      description: 'Estación sur',
+    ),
+    PointOfInterest(
+      name: 'Petrobras Este',
+      position: const LatLng(2.4450, -76.5930),
+      type: POIType.gasStation,
+      description: 'Combustibles este',
+    ),
+
+    // ========== MÁS HOTELES ==========
+    PointOfInterest(
+      name: 'Hotel Los Balcones',
+      position: const LatLng(2.4415, -76.6055),
+      type: POIType.hotel,
+      description: 'Hotel tradicional',
+    ),
+    PointOfInterest(
+      name: 'Hotel Casa Familiar',
+      position: const LatLng(2.4435, -76.6070),
+      type: POIType.hotel,
+      description: 'Hotel económico',
+    ),
+    PointOfInterest(
+      name: 'Hotel Camino Real',
+      position: const LatLng(2.4390, -76.6060),
+      type: POIType.hotel,
+      description: 'Hotel de negocios',
+    ),
+  ];
 
   @override
   void initState() {
@@ -131,6 +603,83 @@ class _ParadasPaginaState extends State<ParadasPagina>
         });
       }
     });
+  }
+
+  // Método para mostrar información de un punto de interés
+  void _showPOIInfo(PointOfInterest poi) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Icono y título
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: poi.type.color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    poi.type.icon,
+                    color: poi.type.color,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        poi.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (poi.description != null)
+                        Text(
+                          poi.description!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Botón para cerrar
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF6A00),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text('Cerrar'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -705,6 +1254,64 @@ class _ParadasPaginaState extends State<ParadasPagina>
                   ),
                 ],
               ),
+
+              // Marcadores de puntos de interés
+              fm.MarkerLayer(
+                markers: _pointsOfInterest.map((poi) {
+                  return fm.Marker(
+                    point: poi.position,
+                    child: GestureDetector(
+                      onTap: () => _showPOIInfo(poi),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Círculo de fondo con efecto de pulso
+                          AnimatedBuilder(
+                            animation: _pulseController,
+                            builder: (context, child) {
+                              return Container(
+                                width: 30 + (5 * _pulseController.value),
+                                height: 30 + (5 * _pulseController.value),
+                                decoration: BoxDecoration(
+                                  color: poi.type.color.withValues(alpha: 0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                              );
+                            },
+                          ),
+                          // Marcador principal
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: poi.type.color,
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: poi.type.color.withValues(alpha: 0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                poi.type.icon,
+                                color: poi.type.color,
+                                size: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ],
           ),
 
@@ -837,31 +1444,39 @@ class _ParadasPaginaState extends State<ParadasPagina>
                     },
                   ),
 
-                  // Marcador principal
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: empresaColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: empresaColor.withValues(alpha: 0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
+                  // Marcador principal con forma de pin y bus
+                  SizedBox(
+                    width: 44,
+                    height: 52,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          color: empresaColor,
+                          size: 44,
                         ),
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                        Positioned(
+                          top: 8,
+                          child: Container(
+                            width: 22,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.directions_bus_filled,
+                              color: empresaColor,
+                              size: 16,
+                            ),
+                          ),
                         ),
                       ],
-                    ),
-                    child: Icon(
-                      _getTipoIcon(parada.tipo),
-                      color: Colors.white,
-                      size: 20,
                     ),
                   ),
 

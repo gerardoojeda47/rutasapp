@@ -1,5 +1,6 @@
 {
   "cmake.sourceDirectory": "D:/proyecto del grupo/rutasapp/linux",
   "CodeGPT.apiKey": "Anthropic",
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "kiroAgent.configureMCP": "Disabled"
 }

@@ -6,7 +6,10 @@ import '../data/popayan_bus_routes.dart';
 import '../core/utils/icon_helper.dart';
 import '../core/services/bus_tracking_service.dart';
 import '../core/services/smart_route_assistant.dart';
+import '../core/services/navigation_service.dart';
+import '../core/services/location_service_shared.dart';
 import 'navegacion_detallada_pagina.dart';
+import 'google_maps_style_navigation.dart';
 
 class SmartSearchPage extends StatefulWidget {
   const SmartSearchPage({super.key});
@@ -19,6 +22,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
     with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  final LocationServiceShared _locationService = LocationServiceShared();
 
   Position? _currentPosition;
   bool _isLoadingLocation = true;
@@ -39,7 +43,7 @@ class _SmartSearchPageState extends State<SmartSearchPage>
   void initState() {
     super.initState();
     _initializeAnimations();
-    _getCurrentLocation();
+    _initializeLocation();
     _loadInitialSuggestions();
 
     _searchController.addListener(_onSearchChanged);
@@ -77,33 +81,71 @@ class _SmartSearchPageState extends State<SmartSearchPage>
     _slideController.forward();
   }
 
-  Future<void> _getCurrentLocation() async {
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
+  void _initializeLocation() {
+    // Verificar si ya tenemos ubicación del servicio compartido
+    final existingPosition = _locationService.currentPosition;
+    if (existingPosition != null) {
+      debugPrint('🎯 Usando ubicación existente del servicio compartido');
+      setState(() {
+        _currentPosition = existingPosition;
+        _locationPermissionGranted = true;
+        _isLoadingLocation = false;
+      });
+      return;
+    }
 
-      if (permission == LocationPermission.whileInUse ||
-          permission == LocationPermission.always) {
-        final position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-          ),
-        );
+    // Si no hay ubicación, intentar obtenerla
+    _getCurrentLocation();
 
+    // Escuchar cambios en la ubicación
+    _locationService.locationStream.listen((Position? position) {
+      if (mounted && position != null) {
         setState(() {
           _currentPosition = position;
           _locationPermissionGranted = true;
           _isLoadingLocation = false;
         });
-      } else {
+      }
+    });
+  }
+
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      _isLoadingLocation = true;
+    });
+
+    try {
+      debugPrint('🔄 Solicitando ubicación al servicio compartido...');
+      final position =
+          await _locationService.getCurrentLocation(forceRefresh: true);
+
+      if (position != null) {
         setState(() {
-          _locationPermissionGranted = false;
+          _currentPosition = position;
+          _locationPermissionGranted = true;
           _isLoadingLocation = false;
         });
+        debugPrint(
+            '✅ Ubicación obtenida del servicio compartido: ${position.latitude}, ${position.longitude}');
+      } else {
+        throw Exception('No se pudo obtener ubicación del servicio compartido');
       }
     } catch (e) {
+      debugPrint('💥 Error al obtener ubicación: $e');
+
+      // Mostrar diálogo apropiado según el error
+      if (e.toString().contains('Servicio de ubicación deshabilitado')) {
+        _showLocationServiceDialog();
+      } else if (e
+          .toString()
+          .contains('Permisos de ubicación denegados permanentemente')) {
+        _showPermissionDeniedForeverDialog();
+      } else if (e.toString().contains('Permisos de ubicación denegados')) {
+        _showPermissionDeniedDialog();
+      } else {
+        _showLocationErrorDialog(e.toString());
+      }
+
       setState(() {
         _locationPermissionGranted = false;
         _isLoadingLocation = false;
@@ -175,6 +217,25 @@ class _SmartSearchPageState extends State<SmartSearchPage>
           nombreDestino: place.name,
         ),
       ),
+    );
+  }
+
+  void _navigateToNearestBusStop(PopayanPlace place) {
+    if (!_locationPermissionGranted || _currentPosition == null) {
+      _showLocationRequiredDialog();
+      return;
+    }
+
+    final userLocation =
+        LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
+
+    NavigationService.pushWithSafeTransition(
+      context,
+      GoogleMapsStyleNavigation(
+        destination: place,
+        userLocation: userLocation,
+      ),
+      type: TransitionType.slideUp,
     );
   }
 
@@ -842,7 +903,126 @@ class _SmartSearchPageState extends State<SmartSearchPage>
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFF6A00),
             ),
-            child: const Text('Activar Ubicación'),
+            child: const Text('Reintentar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLocationServiceDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('GPS Desactivado'),
+        content: const Text(
+          'El servicio de ubicación (GPS) está desactivado. '
+          'Por favor, actívalo en la configuración de tu dispositivo.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Geolocator.openLocationSettings();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF6A00),
+            ),
+            child: const Text('Abrir Configuración'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Permisos Denegados'),
+        content: const Text(
+          'Los permisos de ubicación fueron denegados. '
+          'Por favor, concede los permisos para usar la navegación.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _getCurrentLocation();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF6A00),
+            ),
+            child: const Text('Reintentar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPermissionDeniedForeverDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Permisos Permanentemente Denegados'),
+        content: const Text(
+          'Los permisos de ubicación fueron denegados permanentemente. '
+          'Por favor, ve a la configuración de la app y activa los permisos de ubicación.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Geolocator.openAppSettings();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF6A00),
+            ),
+            child: const Text('Abrir Configuración'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLocationErrorDialog(String error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error de Ubicación'),
+        content: Text(
+          'No se pudo obtener tu ubicación. Error: $error\n\n'
+          'Asegúrate de que:\n'
+          '• El GPS esté activado\n'
+          '• Tengas conexión a internet\n'
+          '• Estés en un lugar con buena señal GPS',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _getCurrentLocation();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF6A00),
+            ),
+            child: const Text('Reintentar'),
           ),
         ],
       ),
@@ -907,6 +1087,23 @@ class _SmartSearchPageState extends State<SmartSearchPage>
           ),
         ),
       ),
+      floatingActionButton: (!_locationPermissionGranted && !_isLoadingLocation)
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                debugPrint('🔄 Usuario presionó FAB para activar ubicación');
+                _getCurrentLocation();
+              },
+              backgroundColor: const Color(0xFFFF6A00),
+              icon: const Icon(Icons.my_location, color: Colors.white),
+              label: const Text(
+                'Activar Ubicación',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          : null,
     );
   }
 
@@ -930,55 +1127,78 @@ class _SmartSearchPageState extends State<SmartSearchPage>
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(15),
+          GestureDetector(
+            onTap: () {
+              if (!_locationPermissionGranted && !_isLoadingLocation) {
+                debugPrint('🔄 Usuario tocó para activar ubicación');
+                _getCurrentLocation();
+              }
+            },
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Icon(
+                    _isLoadingLocation
+                        ? Icons.location_searching
+                        : _locationPermissionGranted
+                            ? IconHelper.locationOn
+                            : IconHelper.locationOff,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
-                child: Icon(
-                  _locationPermissionGranted
-                      ? IconHelper.locationOn
-                      : IconHelper.locationOff,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _isLoadingLocation
-                          ? 'Obteniendo ubicación...'
-                          : _locationPermissionGranted
-                              ? 'Ubicación activada'
-                              : 'Ubicación desactivada',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _isLoadingLocation
+                            ? 'Obteniendo ubicación...'
+                            : _locationPermissionGranted
+                                ? 'Ubicación activada'
+                                : 'Ubicación desactivada',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _isLoadingLocation
-                          ? 'Esperando GPS...'
-                          : _locationPermissionGranted
-                              ? 'Listo para navegar en Popayán'
-                              : 'Toca para activar ubicación',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 14,
+                      const SizedBox(height: 4),
+                      Text(
+                        _isLoadingLocation
+                            ? 'Esperando GPS... (puede tomar unos segundos)'
+                            : _locationPermissionGranted
+                                ? 'Listo para navegar en Popayán'
+                                : 'Toca aquí para activar ubicación',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                if (!_locationPermissionGranted && !_isLoadingLocation)
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Icon(
+                      Icons.refresh,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+              ],
+            ),
           ),
           if (_isLoadingLocation)
             Container(
@@ -1348,19 +1568,52 @@ class _SmartSearchPageState extends State<SmartSearchPage>
                     ),
                   ],
                 ),
-                trailing: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF6A00),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    IconHelper.navigation,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  color: Color(0xFFFF6A00),
+                  size: 16,
                 ),
                 onTap: () => _selectPlace(place),
+              ),
+
+              // Botones de acción
+              Container(
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _navigateToNearestBusStop(place),
+                        icon: const Icon(Icons.directions_bus, size: 18),
+                        label: const Text('Escoger Ruta'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF6A00),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _selectPlace(place),
+                        icon: const Icon(Icons.info_outline, size: 18),
+                        label: const Text('Ver Rutas'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFFFF6A00),
+                          side: const BorderSide(color: Color(0xFFFF6A00)),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               // Información de tráfico en tiempo real

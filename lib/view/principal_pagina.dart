@@ -6,10 +6,12 @@ import 'package:geolocator/geolocator.dart';
 import 'rutas_pagina.dart';
 import 'paradas_pagina.dart';
 import 'smart_search_page.dart';
+import 'native_enhanced_homepage.dart';
 import 'widgets/animated_markers.dart';
 import '../model/favoritos.dart';
 import '../view/driver/driver.dart';
 import '../core/utils/icon_helper.dart';
+import '../core/services/navigation_service.dart';
 import 'pqr_pagina.dart';
 
 class Homepage extends StatefulWidget {
@@ -29,7 +31,7 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     super.initState();
     _pages = [
-      const HomeContent(),
+      NativeEnhancedHomepage(username: widget.username),
       const RutasPagina(),
       const ParadasPagina(),
       FavoritosPagina(
@@ -48,18 +50,16 @@ class _HomepageState extends State<Homepage> {
           icon: const Icon(IconHelper.menu),
           onSelected: (value) {
             if (value == 'conductor') {
-              Navigator.push(
+              NavigationService.pushWithSafeTransition(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const Driver(),
-                ),
+                const Driver(),
+                type: TransitionType.slideUp,
               );
             } else if (value == 'pqr') {
-              Navigator.push(
+              NavigationService.pushWithSafeTransition(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const PqrPagina(),
-                ),
+                const PqrPagina(),
+                type: TransitionType.slideUp,
               );
             }
           },
@@ -71,7 +71,7 @@ class _HomepageState extends State<Homepage> {
                 title: Text('Conductor'),
               ),
             ),
-                        const PopupMenuItem(
+            const PopupMenuItem(
               value: 'pqr',
               child: ListTile(
                 leading: Icon(IconHelper.pqr),
@@ -110,7 +110,8 @@ class _HomepageState extends State<Homepage> {
             icon: Icon(IconHelper.stops),
             label: 'Paradas',
           ),
-          BottomNavigationBarItem(icon: Icon(IconHelper.favorites), label: 'favoritos'),
+          BottomNavigationBarItem(
+              icon: Icon(IconHelper.favorites), label: 'favoritos'),
         ],
       ),
     );
@@ -193,11 +194,10 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   void _mostrarNavegacionDetallada() {
-    Navigator.push(
+    NavigationService.pushWithSafeTransition(
       context,
-      MaterialPageRoute(
-        builder: (context) => const SmartSearchPage(),
-      ),
+      const SmartSearchPage(),
+      type: TransitionType.scale,
     );
   }
 
@@ -512,7 +512,8 @@ class _HomeContentState extends State<HomeContent> {
           mapController: _mapController,
           options: fm.MapOptions(
             initialCenter: _currentPosition != null
-                ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+                ? LatLng(
+                    _currentPosition!.latitude, _currentPosition!.longitude)
                 : _popayanCenter,
             initialZoom: 14.0,
             interactionOptions: const fm.InteractionOptions(
@@ -521,7 +522,8 @@ class _HomeContentState extends State<HomeContent> {
             onMapReady: () {
               if (_currentPosition != null) {
                 _mapController.move(
-                  LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                  LatLng(
+                      _currentPosition!.latitude, _currentPosition!.longitude),
                   14.0,
                 );
               }
@@ -541,7 +543,8 @@ class _HomeContentState extends State<HomeContent> {
                   fm.Marker(
                     width: 60,
                     height: 60,
-                    point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                    point: LatLng(_currentPosition!.latitude,
+                        _currentPosition!.longitude),
                     child: const PulsingLocationMarker(
                       size: 50,
                       color: Color(0xFFFF6A00),
@@ -675,15 +678,15 @@ class _HomeContentState extends State<HomeContent> {
         Positioned(
           top: 120,
           right: 20,
-            child: FloatingActionButton(
-              heroTag: "centerLocation",
-              onPressed: _centerOnUserLocation,
-              backgroundColor: const Color(0xFFFF6A00).withValues(alpha: 0.9),
-              child: const Icon(
-                IconHelper.myLocation,
-                color: Colors.white,
-              ),
+          child: FloatingActionButton(
+            heroTag: "centerLocation",
+            onPressed: _centerOnUserLocation,
+            backgroundColor: const Color(0xFFFF6A00).withValues(alpha: 0.9),
+            child: const Icon(
+              IconHelper.myLocation,
+              color: Colors.white,
             ),
+          ),
         ),
 
         // Botón de búsqueda flotante
@@ -806,7 +809,7 @@ class InterestPointMarker extends StatelessWidget {
             content: Text('Información sobre $label'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => NavigationService.popSafely(context),
                 child: const Text('Cerrar'),
               ),
             ],

@@ -140,55 +140,9 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
   // Integración con OpenRouteService
   final RoutingService _routingService = RoutingService();
 
-  // Lista de puntos de interés en Popayán
+  // Lista de puntos de interés principales en Popayán (más visibles)
   final List<PointOfInterest> _pointsOfInterest = [
-    // Hospitales
-    PointOfInterest(
-      name: 'Hospital Universitario San José',
-      position: const LatLng(2.4427, -76.6064),
-      type: POIType.hospital,
-      description: 'Hospital principal de Popayán',
-    ),
-    PointOfInterest(
-      name: 'Clínica La Estancia',
-      position: const LatLng(2.4489, -76.5972),
-      type: POIType.hospital,
-      description: 'Clínica privada',
-    ),
-    PointOfInterest(
-      name: 'Hospital Susana López de Valencia',
-      position: const LatLng(2.4631, -76.5936),
-      type: POIType.hospital,
-      description: 'Hospital público',
-    ),
-
-    // Universidades y colegios
-    PointOfInterest(
-      name: 'Universidad del Cauca',
-      position: const LatLng(2.4448, -76.6060),
-      type: POIType.university,
-      description: 'Universidad pública',
-    ),
-    PointOfInterest(
-      name: 'Colegio Mayor del Cauca',
-      position: const LatLng(2.4417, -76.6068),
-      type: POIType.university,
-      description: 'Institución universitaria',
-    ),
-    PointOfInterest(
-      name: 'Colegio INEM Francisco José de Caldas',
-      position: const LatLng(2.4550, -76.5950),
-      type: POIType.school,
-      description: 'Colegio público',
-    ),
-    PointOfInterest(
-      name: 'Colegio Champagnat',
-      position: const LatLng(2.4380, -76.6120),
-      type: POIType.school,
-      description: 'Colegio privado',
-    ),
-
-    // Parques
+    // LUGARES PRINCIPALES DEL CENTRO DE POPAYÁN
     PointOfInterest(
       name: 'Parque Caldas',
       position: const LatLng(2.4418, -76.6060),
@@ -196,18 +150,34 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       description: 'Parque principal de Popayán',
     ),
     PointOfInterest(
-      name: 'Parque de la Salud',
-      position: const LatLng(2.4520, -76.5980),
-      type: POIType.park,
-      description: 'Parque recreativo',
-    ),
-
-    // Iglesias
-    PointOfInterest(
-      name: 'Catedral Basílica Nuestra Señora de la Asunción',
+      name: 'Catedral Basílica',
       position: const LatLng(2.4415, -76.6063),
       type: POIType.church,
       description: 'Catedral principal',
+    ),
+    PointOfInterest(
+      name: 'Universidad del Cauca',
+      position: const LatLng(2.4448, -76.6060),
+      type: POIType.university,
+      description: 'Universidad pública',
+    ),
+    PointOfInterest(
+      name: 'Hospital Universitario San José',
+      position: const LatLng(2.4427, -76.6064),
+      type: POIType.hospital,
+      description: 'Hospital principal',
+    ),
+    PointOfInterest(
+      name: 'Centro Comercial Campanario',
+      position: const LatLng(2.4550, -76.5920),
+      type: POIType.mall,
+      description: 'Centro comercial',
+    ),
+    PointOfInterest(
+      name: 'Banco de la República',
+      position: const LatLng(2.4415, -76.6050),
+      type: POIType.bank,
+      description: 'Banco central',
     ),
     PointOfInterest(
       name: 'Iglesia San Francisco',
@@ -215,103 +185,23 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
       type: POIType.church,
       description: 'Iglesia colonial',
     ),
-
-    // Centros comerciales
     PointOfInterest(
-      name: 'Centro Comercial Campanario',
-      position: const LatLng(2.4550, -76.5920),
-      type: POIType.mall,
-      description: 'Principal centro comercial',
-    ),
-    PointOfInterest(
-      name: 'Centro Comercial Anarkos',
+      name: 'Droguería La Rebaja',
       position: const LatLng(2.4420, -76.6055),
-      type: POIType.mall,
-      description: 'Centro comercial en el centro histórico',
+      type: POIType.pharmacy,
+      description: 'Farmacia',
     ),
-
-    // Restaurantes
     PointOfInterest(
-      name: 'La Cosecha',
+      name: 'Restaurante La Cosecha',
       position: const LatLng(2.4410, -76.6050),
       type: POIType.restaurant,
-      description: 'Restaurante de comida típica',
+      description: 'Comida típica',
     ),
-    PointOfInterest(
-      name: 'Italiano D\'Verona',
-      position: const LatLng(2.4430, -76.6040),
-      type: POIType.restaurant,
-      description: 'Restaurante italiano',
-    ),
-
-    // Bancos
-    PointOfInterest(
-      name: 'Banco de la República',
-      position: const LatLng(2.4415, -76.6050),
-      type: POIType.bank,
-      description: 'Banco central',
-    ),
-
-    // Estaciones de gasolina
-    PointOfInterest(
-      name: 'Estación Terpel',
-      position: const LatLng(2.4500, -76.5950),
-      type: POIType.gasStation,
-      description: 'Estación de servicio',
-    ),
-
-    // Policía
-    PointOfInterest(
-      name: 'Comando de Policía Cauca',
-      position: const LatLng(2.4440, -76.6020),
-      type: POIType.police,
-      description: 'Comando departamental',
-    ),
-
-    // Hoteles
     PointOfInterest(
       name: 'Hotel Monasterio',
       position: const LatLng(2.4410, -76.6070),
       type: POIType.hotel,
       description: 'Hotel colonial',
-    ),
-
-    // Museos
-    PointOfInterest(
-      name: 'Museo Arquidiocesano de Arte Religioso',
-      position: const LatLng(2.4415, -76.6065),
-      type: POIType.museum,
-      description: 'Museo de arte religioso',
-    ),
-
-    // Bibliotecas
-    PointOfInterest(
-      name: 'Biblioteca del Banco de la República',
-      position: const LatLng(2.4415, -76.6048),
-      type: POIType.library,
-      description: 'Biblioteca pública',
-    ),
-
-    // Farmacias
-    PointOfInterest(
-      name: 'Droguería La Rebaja',
-      position: const LatLng(2.4420, -76.6055),
-      type: POIType.pharmacy,
-      description: 'Cadena de farmacias',
-    ),
-
-    // Supermercados
-    PointOfInterest(
-      name: 'Éxito',
-      position: const LatLng(2.4550, -76.5925),
-      type: POIType.supermarket,
-      description: 'Supermercado',
-    ),
-    PointOfInterest(
-      name: 'Olímpica',
-      position: const LatLng(2.4430, -76.6030),
-      type: POIType.supermarket,
-      description: 'Supermercado',
     ),
   ];
 
@@ -353,8 +243,6 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     // Color unificado para todas las rutas: naranja institucional
     return const Color(0xFFFF6A00);
   }
-
-  
 
   void getCurrentLocation() async {
     try {
@@ -1181,33 +1069,33 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  // Círculo de fondo con efecto de pulso
+                                  // Círculo de fondo con efecto de pulso MÁS GRANDE
                                   AnimatedBuilder(
                                     animation: _pulseController,
                                     builder: (context, child) {
                                       return Container(
                                         width:
-                                            35 + (5 * _pulseController.value),
+                                            50 + (10 * _pulseController.value),
                                         height:
-                                            35 + (5 * _pulseController.value),
+                                            50 + (10 * _pulseController.value),
                                         decoration: BoxDecoration(
                                           color: poi.type.color
-                                              .withValues(alpha: 0.2),
+                                              .withValues(alpha: 0.3),
                                           shape: BoxShape.circle,
                                         ),
                                       );
                                     },
                                   ),
-                                  // Marcador principal
+                                  // Marcador principal MÁS GRANDE Y VISIBLE
                                   Container(
-                                    width: 32,
-                                    height: 32,
+                                    width: 44,
+                                    height: 44,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: poi.type.color,
-                                        width: 2,
+                                        width: 3,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
@@ -1222,7 +1110,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                                       child: Icon(
                                         poi.type.icon,
                                         color: poi.type.color,
-                                        size: 16,
+                                        size: 24,
                                       ),
                                     ),
                                   ),

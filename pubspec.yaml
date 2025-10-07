@@ -67,6 +67,9 @@ dependencies:
   # Development and Debugging
   logger: ^2.0.2
 
+  # WebView for HTML integration
+  webview_flutter: ^4.10.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
