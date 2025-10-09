@@ -30,10 +30,10 @@ echo   Deployment completado!
 echo ========================================
 echo.
 echo Tu app estará disponible en:
-echo - APK: https://gerardoojeda47.github.io/rutasapp/apk/app-release.apk
+echo - APK: https://gerardoojeda47.github.io/rutasapp/app-release.apk
 echo - Web: https://gerardoojeda47.github.io/rutasapp/
 echo.
-echo Los GitHub Actions generarán automáticamente la nueva APK.
+echo Un solo workflow generará APK y Web automáticamente.
 echo Revisa el progreso en: https://github.com/gerardoojeda47/rutasapp/actions
 echo.
 pause

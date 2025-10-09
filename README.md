@@ -4,7 +4,7 @@ App móvil para consultar rutas de buses en Popayán, Colombia.
 
 ## 📱 Descargar APK
 
-**Descarga la última versión:** [📱 Descargar APK](https://gerardoojeda47.github.io/rutasapp/apk/app-release.apk)
+**Descarga la última versión:** [📱 Descargar APK](https://gerardoojeda47.github.io/rutasapp/app-release.apk)
 
 ## 🌐 Versión Web
 
@@ -26,7 +26,7 @@ Esta app se despliega automáticamente usando GitHub Actions:
 ### Para APK:
 1. Cada push a `main` genera una nueva APK
 2. Se sube automáticamente a GitHub Pages
-3. Disponible en: `https://gerardoojeda47.github.io/rutasapp/apk/app-release.apk`
+3. Disponible en: `https://gerardoojeda47.github.io/rutasapp/app-release.apk`
 
 ### Para Web:
 1. Cada push a `main` construye la versión web

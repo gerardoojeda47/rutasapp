@@ -130,7 +130,7 @@
             <p>Descarga la última versión de la app. Cada vez que hagas cambios en el código, se generará automáticamente una nueva APK.</p>
         </div>
         
-        <a href="apk/app-release.apk" class="download-btn" download="RouWhite-v1.0.6.apk">
+        <a href="app-release.apk" class="download-btn" download="RouWhite-v1.0.6.apk">
             📱 Descargar APK
         </a>
         
@@ -168,7 +168,7 @@
         document.getElementById('lastUpdate').textContent = new Date().toLocaleDateString('es-CO');
         
         // Verificar si hay una nueva versión disponible
-        fetch('apk/app-release.apk', { method: 'HEAD' })
+        fetch('app-release.apk', { method: 'HEAD' })
             .then(response => {
                 if (response.ok) {
                     console.log('APK disponible para descarga');
