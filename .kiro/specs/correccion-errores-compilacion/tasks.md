@@ -14,7 +14,11 @@
 
 
 
-- [ ] 2. Corregir código corrupto en paradas_pagina.dart
+- [x] 2. Corregir código corrupto en paradas_pagina.dart
+
+
+
+
 
   - [ ] 2.1 Limpiar código malformado en líneas 1326-1348
 
@@ -24,6 +28,7 @@
     - Eliminar tokens inesperados y declaraciones mal formadas
     - Limpiar definiciones duplicadas de \_buildLeyendaItem
     - _Requirements: 2.1, 2.2, 2.3_
+
 
   - [ ] 2.2 Definir variables faltantes en la clase
 
@@ -35,6 +40,7 @@
 
 
     - Declarar \_showSatellite como bool con valor inicial false
+
 
     - _Requirements: 3.1, 3.2, 3.4_
 

@@ -8,23 +8,24 @@
   - Configurar Service Account para GitHub Actions
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2. Preparar aplicación Flutter para distribución
+- [x] 2. Preparar aplicación Flutter para distribución
 
-  - [ ] 2.1 Integrar Firebase en la aplicación Flutter
+  - [x] 2.1 Integrar Firebase en la aplicación Flutter
 
     - Agregar dependencias de Firebase al pubspec.yaml
     - Configurar google-services.json en android/app/
     - Inicializar Firebase en main.dart
     - _Requirements: 1.1, 5.1_
 
-  - [ ] 2.2 Configurar firma de APK para release
+  - [x] 2.2 Configurar firma de APK para release
 
     - Crear keystore para firma de aplicación
     - Configurar key.properties en android/
     - Actualizar build.gradle para usar keystore
     - _Requirements: 1.2_
 
-  - [ ] 2.3 Implementar servicio de verificación de actualizaciones
+  - [x] 2.3 Implementar servicio de verificación de actualizaciones
+
     - Crear UpdateService para verificar nuevas versiones
     - Implementar dialog de actualización con enlace de descarga
     - Agregar configuración de auto-update en SharedPreferences

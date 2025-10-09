@@ -1,149 +1,136 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 
 class UpdateService {
+  static const String _updateCheckUrl =
+      'https://api.github.com/repos/YOUR_USERNAME/rouwhite/releases/latest';
   static const String _lastVersionKey = 'last_version_check';
   static const String _autoUpdateKey = 'auto_update_enabled';
-  static const String _distributionUrl =
-      'https://YOUR_USERNAME.github.io/rouwhite/api/version.json';
 
   final Dio _dio = Dio();
   final Logger _logger = Logger();
 
   /// Verifica si hay una nueva versión disponible
-  Future<UpdateCheckResponse?> checkForUpdates() async {
+  Future<UpdateInfo?> checkForUpdates() async {
     try {
-      final response = await _dio.get(_distributionUrl);
-      final data = response.data;
+      final packageInfo = await PackageInfo.fromPlatform();
+      final currentVersion = packageInfo.version;
 
-      final latestVersion = data['version'] as String;
-      final downloadUrl = data['downloadUrl'] as String;
-      final releaseNotes = data['releaseNotes'] as String? ?? '';
-      final forceUpdate = data['forceUpdate'] as bool? ?? false;
+      final response = await _dio.get(_updateCheckUrl);
 
-      // Obtener versión actual de la app
-      const currentVersion = '1.0.0'; // TODO: Obtener de pubspec.yaml
+      if (response.statusCode == 200) {
+        final releaseData = response.data;
+        final latestVersion =
+            releaseData['tag_name']?.replaceAll('v', '') ?? '';
 
-      final hasUpdate = _isNewerVersion(currentVersion, latestVersion);
+        if (_isNewerVersion(currentVersion, latestVersion)) {
+          return UpdateInfo(
+            currentVersion: currentVersion,
+            latestVersion: latestVersion,
+            downloadUrl: _getApkDownloadUrl(releaseData),
+            releaseNotes: releaseData['body'] ?? '',
+            publishedAt: DateTime.parse(releaseData['published_at']),
+          );
+        }
+      }
 
-      return UpdateCheckResponse(
-        hasUpdate: hasUpdate,
-        latestVersion: latestVersion,
-        downloadUrl: downloadUrl,
-        releaseNotes: releaseNotes,
-        forceUpdate: forceUpdate,
-      );
+      return null;
     } catch (e) {
       _logger.e('Error checking for updates: $e');
       return null;
     }
   }
 
-  /// Muestra dialog de actualización si hay una nueva versión
-  Future<void> showUpdateDialogIfNeeded(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final autoUpdateEnabled = prefs.getBool(_autoUpdateKey) ?? true;
+  /// Obtiene la URL de descarga del APK desde los assets del release
+  String _getApkDownloadUrl(Map<String, dynamic> releaseData) {
+    final assets = releaseData['assets'] as List<dynamic>? ?? [];
 
-    if (!autoUpdateEnabled) return;
-
-    final updateInfo = await checkForUpdates();
-    if (updateInfo == null || !updateInfo.hasUpdate) return;
-
-    if (context.mounted) {
-      _showUpdateDialog(context, updateInfo);
+    for (final asset in assets) {
+      final name = asset['name'] as String? ?? '';
+      if (name.endsWith('.apk')) {
+        return asset['browser_download_url'] as String? ?? '';
+      }
     }
-  }
 
-  /// Muestra el dialog de actualización
-  void _showUpdateDialog(BuildContext context, UpdateCheckResponse updateInfo) {
-    showDialog(
-      context: context,
-      barrierDismissible: !updateInfo.forceUpdate,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Nueva versión disponible'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Versión ${updateInfo.latestVersion} está disponible.'),
-              if (updateInfo.releaseNotes.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                const Text('Novedades:',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Text(updateInfo.releaseNotes),
-              ],
-            ],
-          ),
-          actions: [
-            if (!updateInfo.forceUpdate)
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Más tarde'),
-              ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _openDownloadUrl(updateInfo.downloadUrl);
-              },
-              child: const Text('Actualizar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// Abre la URL de descarga
-  void _openDownloadUrl(String url) {
-    // TODO: Implementar apertura de URL
-    // Usar url_launcher package
+    // Fallback: usar la URL de Firebase App Distribution si está configurada
+    return 'https://appdistribution.firebase.dev/i/YOUR_APP_ID';
   }
 
   /// Compara versiones para determinar si hay una más nueva
   bool _isNewerVersion(String current, String latest) {
-    final currentParts = current.split('.').map(int.parse).toList();
-    final latestParts = latest.split('.').map(int.parse).toList();
+    final currentParts = current
+        .split('.')
+        .map(int.tryParse)
+        .where((v) => v != null)
+        .cast<int>()
+        .toList();
+    final latestParts = latest
+        .split('.')
+        .map(int.tryParse)
+        .where((v) => v != null)
+        .cast<int>()
+        .toList();
 
-    for (int i = 0; i < 3; i++) {
-      final currentPart = i < currentParts.length ? currentParts[i] : 0;
-      final latestPart = i < latestParts.length ? latestParts[i] : 0;
+    final maxLength = [currentParts.length, latestParts.length]
+        .reduce((a, b) => a > b ? a : b);
 
-      if (latestPart > currentPart) return true;
-      if (latestPart < currentPart) return false;
+    // Rellenar con ceros si es necesario
+    while (currentParts.length < maxLength) currentParts.add(0);
+    while (latestParts.length < maxLength) latestParts.add(0);
+
+    for (int i = 0; i < maxLength; i++) {
+      if (latestParts[i] > currentParts[i]) return true;
+      if (latestParts[i] < currentParts[i]) return false;
     }
 
     return false;
   }
 
-  /// Habilita o deshabilita las actualizaciones automáticas
+  /// Guarda la configuración de auto-actualización
   Future<void> setAutoUpdateEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_autoUpdateKey, enabled);
   }
 
-  /// Verifica si las actualizaciones automáticas están habilitadas
+  /// Obtiene la configuración de auto-actualización
   Future<bool> isAutoUpdateEnabled() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_autoUpdateKey) ?? true;
+    return prefs.getBool(_autoUpdateKey) ?? true; // Por defecto habilitado
+  }
+
+  /// Guarda la última versión verificada
+  Future<void> saveLastVersionCheck(String version) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_lastVersionKey, version);
+  }
+
+  /// Obtiene la última versión verificada
+  Future<String?> getLastVersionCheck() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_lastVersionKey);
   }
 }
 
-class UpdateCheckResponse {
-  final bool hasUpdate;
+class UpdateInfo {
+  final String currentVersion;
   final String latestVersion;
   final String downloadUrl;
   final String releaseNotes;
-  final bool forceUpdate;
+  final DateTime publishedAt;
 
-  UpdateCheckResponse({
-    required this.hasUpdate,
+  UpdateInfo({
+    required this.currentVersion,
     required this.latestVersion,
     required this.downloadUrl,
     required this.releaseNotes,
-    required this.forceUpdate,
+    required this.publishedAt,
   });
+
+  @override
+  String toString() {
+    return 'UpdateInfo(current: $currentVersion, latest: $latestVersion, url: $downloadUrl)';
+  }
 }
