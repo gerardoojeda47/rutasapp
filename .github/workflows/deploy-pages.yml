@@ -12,15 +12,8 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,14 +21,10 @@ jobs:
 
       - name: Update GitHub info in HTML
         run: |
-          # Obtener información del repositorio
           GITHUB_USER=$(echo ${{ github.repository }} | cut -d'/' -f1)
           GITHUB_REPO=$(echo ${{ github.repository }} | cut -d'/' -f2)
-
-          # Actualizar la página HTML con la información correcta
           sed -i "s/YOUR_USERNAME/$GITHUB_USER/g" docs/index.html
           sed -i "s/rouwhite/$GITHUB_REPO/g" docs/index.html
-
           echo "Updated GitHub info: $GITHUB_USER/$GITHUB_REPO"
 
       - name: Setup Pages
