@@ -41,20 +41,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDummy-web-key-for-development',
-    appId: '1:123456789:web:dummy-app-id',
+    apiKey: 'demo-web-key',
+    appId: '1:demo:web:demo',
     messagingSenderId: '123456789',
-    projectId: 'rouwhite-dev',
-    authDomain: 'rouwhite-dev.firebaseapp.com',
-    storageBucket: 'rouwhite-dev.appspot.com',
+    projectId: 'rouwhite-demo',
+    authDomain: 'rouwhite-demo.firebaseapp.com',
+    storageBucket: 'rouwhite-demo.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDummy-android-key-for-development',
-    appId: '1:123456789:android:dummy-app-id',
+    apiKey: 'demo-android-key',
+    appId: '1:demo:android:demo',
     messagingSenderId: '123456789',
-    projectId: 'rouwhite-dev',
-    storageBucket: 'rouwhite-dev.appspot.com',
+    projectId: 'rouwhite-demo',
+    storageBucket: 'rouwhite-demo.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
