@@ -1,0 +1,19 @@
+{
+  "project_info": {
+    "project_number": "1077932718791",
+    "project_id": "rouwhite-distribution",
+    "storage_bucket": "rouwhite-distribution.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1077932718791:android:14df76ac74c4beaec29ce2",
+        "android_client_info": { "package_name": "com.example.rouwhite" }
+      },
+      "oauth_client": [],
+      "api_key": [{ "current_key": "AIzaSyAy2ThT4vNUgJCZH4VF2TO9T18Q3HStXUs" }],
+      "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+    }
+  ],
+  "configuration_version": "1"
+}
