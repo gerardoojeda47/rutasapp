@@ -1,242 +1,111 @@
-# RouWhite - Aplicación de Rutas de Transporte Público
+# RouWhite - Rutas Popayán 🚌
 
-## 📱 Descripción
+App móvil para consultar rutas de buses en Popayán, Colombia.
 
-RouWhite es una aplicación móvil desarrollada en Flutter que proporciona información en tiempo real sobre las rutas de transporte público de Popayán, Colombia. La aplicación permite a los usuarios buscar rutas, rastrear buses, consultar paradas y gestionar su perfil de usuario.
+## 📱 Descargar APK
 
-## ✨ Características Principales
+**Descarga la última versión:** [📱 Descargar APK](https://gerardoojeda47.github.io/rutasapp/apk/app-release.apk)
 
-### 🏠 Página de Inicio
-- **Historial de rutas**: Muestra las rutas utilizadas recientemente
-- **Sección de turismo**: Información sobre lugares turísticos de Popayán
-- **Búsqueda rápida**: Acceso directo a la búsqueda de rutas
-- **Diseño moderno**: Interfaz atractiva con colores corporativos
+## 🌐 Versión Web
 
-### 🚌 Gestión de Rutas
-- **Lista completa de rutas**: Todas las rutas disponibles en Popayán
-- **Información detallada**: Horarios, costos, paradas y estado del tráfico
-- **Sistema de favoritos**: Marcar rutas como favoritas
-- **Rastreo de buses**: Seguimiento en tiempo real de buses específicos
-- **Mapas de referencia**: Visualización de rutas en mapas
+**Usar en el navegador:** [🌐 Abrir Web](https://gerardoojeda47.github.io/rutasapp/)
 
-### 🔍 Búsqueda de Rutas
-- **Búsqueda por origen y destino**: Encontrar la mejor ruta
-- **Filtros avanzados**: Por tiempo, preferencias y transbordos
-- **Información de ocupación**: Nivel de ocupación de los buses
-- **Tiempos estimados**: Duración y tiempo de llegada
+## ✨ Características
 
-### 🚏 Gestión de Paradas
-- **Organización por comunas**: Paradas organizadas por zonas
-- **Búsqueda de barrios**: Encontrar paradas específicas
-- **Información de rutas por parada**: Rutas que pasan por cada parada
-- **Detalles completos**: Horarios, frecuencias y servicios
+- 🗺️ **Mapas interactivos** con zoom de alta calidad
+- 🚌 **Animaciones de buses** en tiempo real
+- 📍 **Paradas y rutas** actualizadas de Popayán
+- 🔍 **Búsqueda inteligente** de destinos
+- ⭐ **Favoritos** y navegación personalizada
+- 🔄 **Actualizaciones automáticas** via GitHub Actions
 
-### 👤 Perfil de Usuario
-- **Información personal**: Datos del usuario editables
-- **Tarjeta de transporte**: Gestión de saldo y recargas
-- **Rutas favoritas**: Acceso rápido a rutas preferidas
-- **Historial de viajes**: Registro de viajes realizados
-- **Configuraciones**: Notificaciones, idioma y tema
+## 🚀 Deployment Automático
 
-### 📍 Rastreo de Buses
-- **Ubicación en tiempo real**: Seguimiento de buses específicos
-- **Información del bus**: Velocidad, ocupación y temperatura
-- **Próximas paradas**: Lista de paradas próximas
-- **Detalles del conductor**: Información del servicio
+Esta app se despliega automáticamente usando GitHub Actions:
 
-## 🛠 Tecnologías Utilizadas
+### Para APK:
+1. Cada push a `main` genera una nueva APK
+2. Se sube automáticamente a GitHub Pages
+3. Disponible en: `https://gerardoojeda47.github.io/rutasapp/apk/app-release.apk`
 
-- **Flutter**: Framework de desarrollo móvil
-- **Dart**: Lenguaje de programación
-- **Material Design**: Sistema de diseño
-- **Google Maps Flutter**: Integración de mapas
-- **Provider**: Gestión de estado
-- **Geolocator**: Servicios de ubicación
+### Para Web:
+1. Cada push a `main` construye la versión web
+2. Se despliega en GitHub Pages
+3. Disponible en: `https://gerardoojeda47.github.io/rutasapp/`
 
-## 📦 Instalación
+## 🛠️ Desarrollo
 
-### Prerrequisitos
-- Flutter SDK (versión 3.2.3 o superior)
-- Dart SDK
-- Android Studio / VS Code
-- Dispositivo Android/iOS o emulador
+### Requisitos
+- Flutter SDK 3.5.0+
+- Dart 3.5.0+
+- Android SDK
 
-### Pasos de instalación
+### Instalación
+```bash
+git clone https://github.com/gerardoojeda47/rutasapp.git
+cd rutasapp
+flutter pub get
+flutter run
+```
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone https://github.com/tu-usuario/rutasapp.git
-   cd rutasapp
-   ```
-
-2. **Instalar dependencias**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Ejecutar la aplicación**
-   ```bash
-   flutter run
-   ```
-
-## 🏗 Estructura del Proyecto
-
+### Estructura del Proyecto
 ```
 lib/
-├── main.dart                 # Punto de entrada de la aplicación
-└── view/                     # Páginas de la aplicación
-    ├── HomePage.dart         # Página principal
-    ├── RoutesPage.dart       # Gestión de rutas
-    ├── RouteSearchPage.dart  # Búsqueda de rutas
-    ├── StopsPage.dart        # Gestión de paradas
-    ├── BusTrackingPage.dart  # Rastreo de buses
-    └── ProfilePage.dart      # Perfil de usuario
+├── core/           # Servicios y utilidades
+├── data/           # Modelos y repositorios
+├── domain/         # Entidades y casos de uso
+├── view/           # Pantallas y widgets
+└── main.dart       # Punto de entrada
 ```
 
-## 🎨 Diseño y UI/UX
+## 📊 Tecnologías
 
-### Paleta de Colores
-- **Color principal**: `#FF6A00` (Naranja)
-- **Color secundario**: `#FF8C00` (Naranjo claro)
-- **Colores de estado**:
-  - Verde: Tráfico fluido
-  - Naranja: Tráfico moderado
-  - Rojo: Tráfico congestionado
+- **Flutter** - Framework de desarrollo
+- **Firebase** - Backend y autenticación
+- **Flutter Map** - Mapas interactivos
+- **GitHub Actions** - CI/CD automático
+- **GitHub Pages** - Hosting gratuito
 
-### Características de Diseño
-- **Material Design 3**: Diseño moderno y consistente
-- **Responsive**: Adaptable a diferentes tamaños de pantalla
-- **Accesible**: Cumple con estándares de accesibilidad
-- **Intuitivo**: Navegación fácil y clara
+## 🔧 Configuración de Mapas
 
-## 📱 Funcionalidades por Página
+Para zoom de alta calidad, configura las API keys en `lib/view/paradas_pagina.dart`:
 
-### HomePage
-- Dashboard principal con información resumida
-- Acceso rápido a funcionalidades principales
-- Sección de turismo con información local
-- Búsqueda integrada
+```dart
+// Mapbox (recomendado)
+static const String _mapboxKey = 'TU_TOKEN_MAPBOX';
 
-### RoutesPage
-- Lista completa de rutas con información detallada
-- Sistema de favoritos
-- Visualización de mapas
-- Rastreo de buses en tiempo real
-
-### RouteSearchPage
-- Búsqueda por origen y destino
-- Filtros de tiempo y preferencias
-- Información de ocupación
-- Selección de rutas
-
-### StopsPage
-- Organización por comunas
-- Búsqueda de barrios
-- Información de rutas por parada
-- Detalles de servicios
-
-### BusTrackingPage
-- Seguimiento en tiempo real
-- Información del bus
-- Próximas paradas
-- Detalles del servicio
-
-### ProfilePage
-- Gestión de información personal
-- Tarjeta de transporte
-- Configuraciones de usuario
-- Historial de viajes
-
-## 🔧 Configuración
-
-### Variables de Entorno
-La aplicación utiliza las siguientes configuraciones:
-
-```yaml
-# pubspec.yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  google_maps_flutter: ^2.5.3
-  flutter_polyline_points: ^2.0.0
-  geolocator: ^11.0.0
-  flutter_animate: ^4.5.0
-  latlong2: ^0.9.0
-  provider: ^6.1.1
+// MapTiler (alternativa)
+static const String _mapTilerKey = 'TU_KEY_MAPTILER';
 ```
 
-### Permisos Requeridos
+### Obtener API Keys:
+- **Mapbox**: https://account.mapbox.com/access-tokens/ (50k requests/mes gratis)
+- **MapTiler**: https://cloud.maptiler.com/account/keys/ (100k tiles/mes gratis)
 
-#### Android (android/app/src/main/AndroidManifest.xml)
-```xml
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.INTERNET" />
-```
+## 📱 Instalación de APK
 
-#### iOS (ios/Runner/Info.plist)
-```xml
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>Esta aplicación necesita acceso a la ubicación para mostrar rutas cercanas.</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>Esta aplicación necesita acceso a la ubicación para el rastreo de buses.</string>
-```
+1. Descarga el APK desde el enlace arriba
+2. En Android, ve a Configuración > Seguridad > Fuentes desconocidas
+3. Permite instalación de apps de fuentes desconocidas
+4. Instala el APK descargado
 
-## 🚀 Despliegue
+## 🔄 Actualizaciones
 
-### Android
-```bash
-flutter build apk --release
-```
+- **Automáticas**: Cada cambio en el código genera una nueva APK
+- **Manual**: Descarga desde el enlace de arriba
+- **Web**: Se actualiza automáticamente en GitHub Pages
 
-### iOS
-```bash
-flutter build ios --release
-```
+## 📞 Soporte
 
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+Si encuentras algún problema:
+1. Abre un [Issue](https://github.com/gerardoojeda47/rutasapp/issues)
+2. Incluye detalles del error y dispositivo
+3. Adjunta capturas de pantalla si es necesario
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
-## 👥 Autores
-
-- **Tu Nombre** - *Desarrollo inicial* - [TuUsuario](https://github.com/TuUsuario)
-
-## 🙏 Agradecimientos
-
-- Equipo de desarrollo Flutter
-- Comunidad de Popayán
-- Usuarios beta de la aplicación
-
-## 📞 Contacto
-
-- **Email**: tu-email@ejemplo.com
-- **GitHub**: [@TuUsuario](https://github.com/TuUsuario)
-- **LinkedIn**: [Tu Perfil](https://linkedin.com/in/tu-perfil)
-
-## 🔄 Versiones
-
-### v1.0.0
-- Funcionalidades básicas implementadas
-- Interfaz de usuario completa
-- Sistema de navegación funcional
-- Gestión de rutas y paradas
-
-### Próximas Versiones
-- Integración con APIs reales
-- Notificaciones push
-- Modo offline
-- Integración con pagos digitales
-- Análisis de datos de uso
+Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 
 ---
 
-**RouWhite** - Haciendo el transporte público más accesible en Popayán 🚌✨
+**Desarrollado con ❤️ para Popayán, Colombia**

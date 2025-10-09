@@ -120,8 +120,10 @@ class ParadasPagina extends StatefulWidget {
 
 class _ParadasPaginaState extends State<ParadasPagina>
     with TickerProviderStateMixin {
-  // API keys opcionales para mejorar calidad (MapTiler)
-  // Crea una cuenta gratuita en maptiler.com y pega tu key aquí
+  // API keys para mapas de alta calidad
+  // Mapbox: https://account.mapbox.com/access-tokens/ (gratis hasta 50k requests/mes)
+  // MapTiler: https://cloud.maptiler.com/account/keys/ (gratis hasta 100k tiles/mes)
+  static const String _mapboxKey = '';
   static const String _mapTilerKey = '';
   final fm.MapController _mapController = fm.MapController();
   bool _isLoading = true;
@@ -1204,20 +1206,28 @@ class _ParadasPaginaState extends State<ParadasPagina>
               ),
             ),
             children: [
-              // Capa de tiles (MapTiler si hay API key; fallback OSM/ESRI)
+              // Capa de tiles (Mapbox/MapTiler si hay API key; fallback OSM sin subdominios)
               fm.TileLayer(
                 urlTemplate: _showSatellite
-                    ? (_mapTilerKey.isNotEmpty
-                        ? "https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=${_mapTilerKey}"
-                        : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}")
-                    : (_mapTilerKey.isNotEmpty
-                        ? "https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=${_mapTilerKey}"
-                        : "https://tile.openstreetmap.org/{z}/{x}/{y}.png"),
+                    ? (_mapboxKey.isNotEmpty
+                        ? "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}@2x?access_token=${_mapboxKey}"
+                        : (_mapTilerKey.isNotEmpty
+                            ? "https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=${_mapTilerKey}"
+                            : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"))
+                    : (_mapboxKey.isNotEmpty
+                        ? "https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${_mapboxKey}"
+                        : (_mapTilerKey.isNotEmpty
+                            ? "https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=${_mapTilerKey}"
+                            : "https://tile.openstreetmap.org/{z}/{x}/{y}.png")),
                 subdomains: const [],
                 userAgentPackageName: 'com.example.rouwhite',
-                // Límites de zoom conservadores para evitar tiles en blanco
-                maxNativeZoom: 17,
-                maxZoom: 17.0,
+                // Zoom nativo alto para proveedores premium
+                maxNativeZoom: _showSatellite
+                    ? (_mapboxKey.isNotEmpty ? 22 : (_mapTilerKey.isNotEmpty ? 20 : 17))
+                    : (_mapboxKey.isNotEmpty ? 22 : (_mapTilerKey.isNotEmpty ? 20 : 19)),
+                maxZoom: _showSatellite
+                    ? (_mapboxKey.isNotEmpty ? 22.0 : (_mapTilerKey.isNotEmpty ? 20.0 : 17.5))
+                    : (_mapboxKey.isNotEmpty ? 22.0 : (_mapTilerKey.isNotEmpty ? 20.0 : 20.0)),
                 minZoom: 10.0,
                 // Mejor nitidez en pantallas HiDPI
                 retinaMode: true,

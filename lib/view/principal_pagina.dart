@@ -531,9 +531,12 @@ class _HomeContentState extends State<HomeContent> {
           ),
           children: [
             fm.TileLayer(
-              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              subdomains: const ['a', 'b', 'c'],
+              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+              subdomains: const [],
               userAgentPackageName: 'com.example.rouwhite',
+              maxNativeZoom: 19,
+              maxZoom: 20.0,
+              retinaMode: true,
             ),
 
             // Marcador animado de la ubicación del usuario
