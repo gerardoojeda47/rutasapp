@@ -24,24 +24,12 @@ jobs:
         with:
           flutter-version: "3.27.0"
           channel: "stable"
-          channel: "stable"
 
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Decode keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/key.jks
-
-      - name: Create key.properties
-        run: |
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=../key.jks" >> android/key.properties
-
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build APK (Debug for now)
+        run: flutter build apk --debug
 
       - name: Get version info
         id: version
@@ -54,10 +42,9 @@ jobs:
 
       - name: Rename APK
         run: |
-          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/rouwhite-v${{ steps.version.outputs.version }}.apk
+          mv build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/rouwhite-v${{ steps.version.outputs.version }}.apk
 
       - name: Create Release
-        id: create_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -65,18 +52,13 @@ jobs:
           body: |
             ## 📱 RouWhite v${{ steps.version.outputs.version }}
 
-            ### 🔗 Descarga Rápida
-            **Escanea el QR:** https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+            ### 🔗 Descarga con QR
+            **Página:** https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
 
             ### 📋 Instalación
-            1. Descarga el APK desde abajo
+            1. Descarga el APK
             2. Habilita "Fuentes desconocidas" en Android
             3. Instala la aplicación
-
-            ### 🚀 Cambios
-            - Actualización automática desde commit
-            - Mejoras en estabilidad
-            - Correcciones de errores
 
             **Versión:** ${{ steps.version.outputs.version }} | **Build:** ${{ steps.version.outputs.build_number }}
           files: build/app/outputs/flutter-apk/rouwhite-v${{ steps.version.outputs.version }}.apk
@@ -84,19 +66,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    # Firebase App Distribution (opcional)
-    - name: Upload to Firebase App Distribution
-      if: ${{ secrets.FIREBASE_TOKEN != '' }}
-      uses: wzieba/Firebase-Distribution-Github-Action@v1
-      with:
-        appId: ${{ secrets.FIREBASE_APP_ID }}
-        serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        groups: testers
-        file: build/app/outputs/flutter-apk/rouwhite-v${{ steps.version.outputs.version }}.apk
-        releaseNotes: |
-          🚀 Nueva versión v${{ steps.version.outputs.version }}
-          
-          Actualización automática desde GitHub Actions
-          - Mejoras en estabilidad
-          - Correcciones de errores
-          - Sistema de distribución mejorado
