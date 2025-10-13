@@ -74,3 +74,10 @@ flutter:
 
   assets:
     - assets/animaciones/bus.json
+
+# Dependency overrides to resolve version conflicts
+dependency_overrides:
+  # Override geolocator_android to use a compatible version
+  geolocator_android: 5.0.1
+  # Override flutter_map to use exact compatible version
+  flutter_map: 8.1.0
