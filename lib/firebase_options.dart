@@ -41,20 +41,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'demo-web-key',
-    appId: '1:demo:web:demo',
-    messagingSenderId: '123456789',
-    projectId: 'rouwhite-demo',
-    authDomain: 'rouwhite-demo.firebaseapp.com',
-    storageBucket: 'rouwhite-demo.appspot.com',
+    apiKey: 'AIzaSyAy2ThT4vNUgJCZH4VF2TO9T18Q3HStXUs',
+    appId: '1:1077932718791:web:14df76ac74c4beaec29ce2',
+    messagingSenderId: '1077932718791',
+    projectId: 'rouwhite-distribution',
+    authDomain: 'rouwhite-distribution.firebaseapp.com',
+    storageBucket: 'rouwhite-distribution.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'demo-android-key',
-    appId: '1:demo:android:demo',
-    messagingSenderId: '123456789',
-    projectId: 'rouwhite-demo',
-    storageBucket: 'rouwhite-demo.appspot.com',
+    apiKey: 'AIzaSyAy2ThT4vNUgJCZH4VF2TO9T18Q3HStXUs',
+    appId: '1:1077932718791:android:14df76ac74c4beaec29ce2',
+    messagingSenderId: '1077932718791',
+    projectId: 'rouwhite-distribution',
+    storageBucket: 'rouwhite-distribution.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
