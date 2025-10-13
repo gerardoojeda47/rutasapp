@@ -81,3 +81,5 @@ dependency_overrides:
   geolocator_android: 5.0.1
   # Override flutter_map to use exact compatible version
   flutter_map: 8.1.0
+  # Override connectivity_plus to use stable version
+  connectivity_plus: 7.0.0
