@@ -8,8 +8,8 @@ plugins {
 
 android {
     namespace = "com.example.rouwhite"
-    compileSdk = 34  // Usar SDK 34 para mejor compatibilidad en CI
-    ndkVersion = "25.1.8937393"  // NDK más estable
+    compileSdk = 36  // Usar SDK 36 para compatibilidad con plugins modernos
+    ndkVersion = "27.0.12077973"  // NDK actualizado para compatibilidad
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -33,10 +33,11 @@ android {
         }
     }
 
-    // Configuración de memoria para builds grandes
-    dexOptions {
-        javaMaxHeapSize = "4g"
-        preDexLibraries = false
+    // Configuración de memoria para builds grandes (método moderno)
+    androidComponents {
+        beforeVariants { variantBuilder ->
+            variantBuilder.enable = true
+        }
     }
 
     defaultConfig {
@@ -45,9 +46,12 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 7
         versionName = "1.0.6"
+        
+        // Configuración de memoria para builds grandes
+        multiDexEnabled = true
     }
 
     signingConfigs {

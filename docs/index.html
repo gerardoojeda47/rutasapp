@@ -116,27 +116,54 @@
           console.log("Cargando información...");
 
           const response = await fetch(API_URL);
-          if (!response.ok) throw new Error("Error al obtener releases");
+          if (!response.ok) {
+            if (response.status === 404) {
+              throw new Error("No hay releases disponibles aún");
+            }
+            throw new Error(`Error al obtener releases: ${response.status}`);
+          }
 
           const release = await response.json();
           console.log("Release obtenido:", release);
 
           // Actualizar información
           document.getElementById("version").textContent =
-            release.tag_name || "Desconocida";
-          document.getElementById("date").textContent = new Date(
-            release.published_at
-          ).toLocaleDateString("es-ES");
+            release.tag_name || "v11";
+          document.getElementById("date").textContent = release.published_at 
+            ? new Date(release.published_at).toLocaleDateString("es-ES")
+            : new Date().toLocaleDateString("es-ES");
 
           // Buscar APK
           const apk = release.assets.find((asset) =>
             asset.name.endsWith(".apk")
           );
-          if (!apk) throw new Error("No se encontró APK");
+          
+          if (!apk) {
+            console.warn("No se encontró APK en assets, usando enlace alternativo");
+            // Usar enlace directo a GitHub Actions si no hay assets
+            const downloadUrl = `https://github.com/gerardoojeda47/rutasapp/actions`;
+            await generateQRAndShow(downloadUrl);
+            return;
+          }
 
+          // Generar QR y mostrar elementos
+          await generateQRAndShow(apk.browser_download_url);
+
+          console.log("✅ Todo cargado correctamente");
+        } catch (error) {
+          console.error("❌ Error:", error);
+          document.getElementById("qr-loading").style.display = "none";
+          document.getElementById("qr-error").style.display = "block";
+          document.getElementById("download-loading").innerHTML =
+            '<a href="https://github.com/gerardoojeda47/rutasapp/releases" target="_blank" class="download-btn">Ver Releases en GitHub</a>';
+        }
+      }
+
+      async function generateQRAndShow(downloadUrl) {
+        try {
           // Generar QR
           const canvas = document.getElementById("qr-canvas");
-          await QRCode.toCanvas(canvas, apk.browser_download_url, {
+          await QRCode.toCanvas(canvas, downloadUrl, {
             width: 256,
             margin: 2,
           });
@@ -148,17 +175,12 @@
 
           // Enlace directo
           const downloadLink = document.getElementById("download-link");
-          downloadLink.href = apk.browser_download_url;
+          downloadLink.href = downloadUrl;
           downloadLink.style.display = "inline-block";
           document.getElementById("download-loading").style.display = "none";
-
-          console.log("✅ Todo cargado correctamente");
-        } catch (error) {
-          console.error("❌ Error:", error);
-          document.getElementById("qr-loading").style.display = "none";
-          document.getElementById("qr-error").style.display = "block";
-          document.getElementById("download-loading").innerHTML =
-            '<a href="https://github.com/gerardoojeda47/rutasapp/releases" target="_blank" class="download-btn">Ver Releases en GitHub</a>';
+        } catch (qrError) {
+          console.error("Error generando QR:", qrError);
+          throw qrError;
         }
       }
 

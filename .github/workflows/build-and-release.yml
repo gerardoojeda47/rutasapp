@@ -12,41 +12,27 @@ jobs:
   build:
     name: Build and Release APK
     runs-on: ubuntu-latest
-    container:
-      image: cirrusci/flutter:3.24.3
-      options: --user root
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.3'
+          channel: 'stable'
+          cache: true
+
       - name: Setup Android SDK and Tools
-        run: |
-          apt-get update
-          apt-get install -y wget unzip
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+          ndk-version: 25.1.8937393
 
-          # Install Android SDK
-          export ANDROID_SDK_ROOT=/opt/android-sdk
-          mkdir -p $ANDROID_SDK_ROOT
-          cd $ANDROID_SDK_ROOT
-
-          # Download and install command line tools
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q commandlinetools-linux-11076708_latest.zip
-          mkdir -p cmdline-tools/latest
-          mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
-
-          # Set environment variables
-          export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
-          export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-
-          # Accept licenses and install required packages
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-          # Configure Flutter
-          flutter config --android-sdk $ANDROID_SDK_ROOT
-          flutter doctor --android-licenses
+      - name: Accept Android Licenses
+        run: flutter doctor --android-licenses
 
       - name: Cache Flutter dependencies
         uses: actions/cache@v4
@@ -84,40 +70,35 @@ jobs:
           ls -la android/app/build.gradle.kts
           cat android/app/build.gradle.kts | grep -E "(compileSdk|targetSdk|ndkVersion)"
 
-      - name: Execute Advanced Build Script
+      - name: Build APK Release
         run: |
-          chmod +x build_scripts/ci_build.sh
-          ./build_scripts/ci_build.sh
+          echo "🏗️ Building APK release..."
+          flutter build apk --release --verbose
+          echo "✅ APK built successfully!"
+          ls -la build/app/outputs/flutter-apk/
 
       - name: Alternative Build Strategy (if main fails)
         if: failure()
         run: |
           echo "🔄 Main build failed, trying alternative approach..."
-
-          # Use older, more stable Flutter version
-          flutter version 3.19.6
           flutter clean
           flutter pub get
-
-          # Try with different build configurations
-          flutter build apk --debug --split-per-abi || \
-          flutter build apk --debug --target-platform android-arm64 || \
-          flutter build apk --debug --no-tree-shake-icons --verbose
+          flutter build apk --release --no-tree-shake-icons --verbose
 
       - name: Advanced APK Verification and Health Check
         run: |
           echo "🔍 Performing comprehensive APK verification..."
 
           # Check if APK exists
-          if [ -f "build/app/outputs/flutter-apk/app-debug.apk" ]; then
+          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
             echo "✅ APK file found"
             
             # Get APK details
-            ls -lah build/app/outputs/flutter-apk/app-debug.apk
-            file build/app/outputs/flutter-apk/app-debug.apk
+            ls -lah build/app/outputs/flutter-apk/app-release.apk
+            file build/app/outputs/flutter-apk/app-release.apk
             
             # Check APK size (should be reasonable)
-            APK_SIZE=$(stat -c%s build/app/outputs/flutter-apk/app-debug.apk)
+            APK_SIZE=$(stat -c%s build/app/outputs/flutter-apk/app-release.apk)
             echo "📦 APK Size: $((APK_SIZE / 1024 / 1024)) MB"
             
             if [ $APK_SIZE -gt 10485760 ]; then  # > 10MB
@@ -127,7 +108,7 @@ jobs:
             fi
             
             # Verify APK structure
-            unzip -l build/app/outputs/flutter-apk/app-debug.apk | head -20
+            unzip -l build/app/outputs/flutter-apk/app-release.apk | head -20
             
           else
             echo "❌ APK file not found, listing directory contents:"
@@ -139,7 +120,7 @@ jobs:
       - name: Rename APK for release
         run: |
           mkdir -p release
-          cp build/app/outputs/flutter-apk/app-debug.apk release/RouWhite-v${{ github.run_number }}.apk
+          cp build/app/outputs/flutter-apk/app-release.apk release/RouWhite-v${{ github.run_number }}.apk
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

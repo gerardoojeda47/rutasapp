@@ -26,7 +26,7 @@ class _EnhancedHomepageState extends State<EnhancedHomepage> {
   final fm.MapController _mapController = fm.MapController();
 
   // Coordenadas de Popayán como fallback
-  static const LatLng _popayanCenter = LatLng(2.444814, -76.614739);
+  static final LatLng _popayanCenter = LatLng(2.444814, -76.614739);
 
   @override
   void initState() {

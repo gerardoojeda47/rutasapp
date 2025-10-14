@@ -18,8 +18,8 @@ dependencies:
   flutter_animate: ^4.5.2
 
   # Maps and Location - Stable CI/CD versions
-  flutter_map: 6.1.0 # Versión más estable para CI
-  latlong2: 0.8.1 # Compatible con flutter_map 6.x
+  flutter_map: ^8.1.0 # Versión más reciente sin problemas de const
+  latlong2: ^0.9.1 # Compatible con flutter_map 8.x
   flutter_polyline_points: ^2.0.0 # Versión más estable
   geolocator: 9.0.2 # Versión estable sin problemas de CI
 
@@ -79,7 +79,7 @@ flutter:
 dependency_overrides:
   # Stable versions that work in CI environments
   geolocator_android: 4.4.0 # Versión más estable para CI
-  flutter_map: 6.1.0
-  latlong2: 0.8.1
+  flutter_map: ^8.1.0
+  latlong2: ^0.9.1
   geolocator: 9.0.2
   geolocator_platform_interface: 4.0.6
