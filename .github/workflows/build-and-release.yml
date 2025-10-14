@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   build:
@@ -34,8 +32,12 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build APK (Debug first to test)
+      - name: Build APK (Debug - no keystore needed)
         run: flutter build apk --debug
+
+      - name: Rename APK for release
+        run: |
+          cp build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/RouWhite-v${{ github.run_number }}.apk
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -46,14 +48,21 @@ jobs:
             🚀 **Nueva versión de RouWhite disponible!**
 
             📱 **Descarga:** https://gerardoojeda47.github.io/rutasapp/
-            📅 **Fecha:** $(date)
+            📅 **Fecha:** $(date +'%Y-%m-%d %H:%M')
             🔢 **Versión:** v${{ github.run_number }}
+            📦 **Tipo:** Debug APK (para testing)
 
             ## 📲 Instalación:
             1. Descarga el APK
-            2. Habilita "Fuentes desconocidas"
+            2. Habilita "Fuentes desconocidas" en Android
             3. Instala la aplicación
+
+            ## 🗺️ Características:
+            - Rutas de transporte público en Popayán
+            - Mapas interactivos
+            - Información de paradas
+            - Navegación GPS
           files: |
-            build/app/outputs/flutter-apk/app-debug.apk
+            build/app/outputs/flutter-apk/RouWhite-v${{ github.run_number }}.apk
           draft: false
           prerelease: false
