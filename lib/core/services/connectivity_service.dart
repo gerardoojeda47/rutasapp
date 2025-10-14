@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 /// Servicio moderno de conectividad usando tecnologías actualizadas
@@ -10,7 +10,7 @@ class ConnectivityService {
   factory ConnectivityService() => _instance;
   ConnectivityService._internal();
 
-  final InternetConnectionCheckerPlus _connectionChecker = InternetConnectionCheckerPlus();
+  final InternetConnectionChecker _connectionChecker = InternetConnectionChecker();
   final NetworkInfo _networkInfo = NetworkInfo();
   
   StreamSubscription<InternetConnectionStatus>? _connectionSubscription;
