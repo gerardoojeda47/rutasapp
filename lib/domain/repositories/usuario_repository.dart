@@ -265,3 +265,4 @@ class UsuarioEstadisticas {
   double get sesionesPromedioPorDia =>
       diasRegistrado > 0 ? totalSesiones / diasRegistrado : 0;
 }
+

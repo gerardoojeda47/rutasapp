@@ -218,3 +218,4 @@ class Parada extends Equatable {
     return 'Parada(id: $id, nombre: $nombre, tipo: $tipo, coordenadas: $coordenadas)';
   }
 }
+

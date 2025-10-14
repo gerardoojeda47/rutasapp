@@ -86,3 +86,4 @@ class AppColors {
         brightness: Brightness.dark,
       );
 }
+

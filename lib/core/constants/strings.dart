@@ -129,3 +129,4 @@ class AppStrings {
   static const String connected = 'Conectado';
   static const String disconnected = 'Desconectado';
 }
+

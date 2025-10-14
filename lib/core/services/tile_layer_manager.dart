@@ -113,7 +113,6 @@ class TileLayerManager {
       userAgentPackageName: 'com.popayan.rutasapp',
       // Configuraciones para mejor performance
       maxNativeZoom: provider.maxZoom,
-      tileDimension: 256,
       // Headers para optimizar requests
       additionalOptions: const {
         'Accept': 'image/png,image/jpeg,image/*;q=0.8',
@@ -143,7 +142,6 @@ class TileLayerManager {
         maxZoom: effectiveMaxZoom.toDouble(),
         userAgentPackageName: 'com.popayan.rutasapp',
         maxNativeZoom: provider.maxZoom,
-        tileDimension: 256,
         additionalOptions: const {
           'Accept': 'image/png,image/jpeg,image/*;q=0.8',
           'Accept-Encoding': 'gzip, deflate',
@@ -198,3 +196,4 @@ class TileLayerManager {
     };
   }
 }
+

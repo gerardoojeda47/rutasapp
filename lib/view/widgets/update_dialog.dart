@@ -162,3 +162,4 @@ Future<void> showUpdateDialog(BuildContext context, UpdateInfo updateInfo) {
     builder: (context) => UpdateDialog(updateInfo: updateInfo),
   );
 }
+

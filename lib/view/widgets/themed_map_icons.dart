@@ -385,3 +385,4 @@ class MapInfoOverlay extends StatelessWidget {
     );
   }
 }
+

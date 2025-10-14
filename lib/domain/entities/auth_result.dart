@@ -36,3 +36,4 @@ class AuthResult extends Equatable {
     return 'AuthResult(usuario: ${usuario.email}, token: ${token.substring(0, 10)}...)';
   }
 }
+

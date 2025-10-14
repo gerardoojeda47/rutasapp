@@ -59,3 +59,4 @@ class ActualizarFavoritoParams extends Equatable {
     return 'ActualizarFavoritoParams(favoritoId: $favoritoId, alias: $alias, orden: $orden)';
   }
 }
+

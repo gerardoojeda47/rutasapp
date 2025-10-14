@@ -199,3 +199,4 @@ class FavoritosList extends Equatable {
     return 'FavoritosList(cantidad: $cantidad)';
   }
 }
+

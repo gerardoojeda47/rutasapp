@@ -233,3 +233,4 @@ class ConnectivityIndicator extends StatelessWidget {
     );
   }
 }
+

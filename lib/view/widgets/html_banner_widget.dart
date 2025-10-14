@@ -198,3 +198,4 @@ class _HtmlBannerWidgetState extends State<HtmlBannerWidget> {
     );
   }
 }
+

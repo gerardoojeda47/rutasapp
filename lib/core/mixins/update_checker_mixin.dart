@@ -120,3 +120,4 @@ mixin UpdateCheckerMixin<T extends StatefulWidget> on State<T> {
     );
   }
 }
+

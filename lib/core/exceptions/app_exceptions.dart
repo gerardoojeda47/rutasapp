@@ -116,3 +116,4 @@ class CacheException extends AppException {
     return 'CacheException: $message${code != null ? ' (Code: $code)' : ''}';
   }
 }
+

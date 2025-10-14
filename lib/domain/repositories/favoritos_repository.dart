@@ -273,3 +273,4 @@ abstract class FavoritosRepository {
     int limite = 10,
   });
 }
+

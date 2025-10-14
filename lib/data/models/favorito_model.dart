@@ -360,3 +360,4 @@ class FavoritosEstadisticasModel extends Equatable {
         favoritoMasReciente,
       ];
 }
+

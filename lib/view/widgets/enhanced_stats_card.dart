@@ -239,3 +239,4 @@ class _EnhancedStatsCardState extends State<EnhancedStatsCard>
     );
   }
 }
+

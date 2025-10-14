@@ -224,3 +224,4 @@ class Ruta extends Equatable {
     return 'Ruta(id: $id, nombre: $nombre, empresa: $empresa, estado: $estado)';
   }
 }
+

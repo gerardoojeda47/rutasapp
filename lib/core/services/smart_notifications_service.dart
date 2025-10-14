@@ -383,3 +383,4 @@ enum NotificationPriority {
   medium,
   high,
 }
+

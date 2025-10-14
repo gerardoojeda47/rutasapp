@@ -978,3 +978,4 @@ class BusInfo {
     required this.location,
   });
 }
+

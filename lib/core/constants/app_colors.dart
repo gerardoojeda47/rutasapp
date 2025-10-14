@@ -59,3 +59,4 @@ class AppColors {
   static Color whiteWithOpacity(double opacity) => Colors.white.withValues(alpha: opacity);
   static Color blackWithOpacity(double opacity) => Colors.black.withValues(alpha: opacity);
 }
+

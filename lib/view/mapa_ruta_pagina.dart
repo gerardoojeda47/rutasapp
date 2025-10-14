@@ -145,61 +145,61 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     // LUGARES PRINCIPALES DEL CENTRO DE POPAYÁN
     PointOfInterest(
       name: 'Parque Caldas',
-      position: const LatLng(2.4418, -76.6060),
+      position: LatLng(2.4418, -76.6060),
       type: POIType.park,
       description: 'Parque principal de Popayán',
     ),
     PointOfInterest(
       name: 'Catedral Basílica',
-      position: const LatLng(2.4415, -76.6063),
+      position: LatLng(2.4415, -76.6063),
       type: POIType.church,
       description: 'Catedral principal',
     ),
     PointOfInterest(
       name: 'Universidad del Cauca',
-      position: const LatLng(2.4448, -76.6060),
+      position: LatLng(2.4448, -76.6060),
       type: POIType.university,
       description: 'Universidad pública',
     ),
     PointOfInterest(
       name: 'Hospital Universitario San José',
-      position: const LatLng(2.4427, -76.6064),
+      position: LatLng(2.4427, -76.6064),
       type: POIType.hospital,
       description: 'Hospital principal',
     ),
     PointOfInterest(
       name: 'Centro Comercial Campanario',
-      position: const LatLng(2.4550, -76.5920),
+      position: LatLng(2.4550, -76.5920),
       type: POIType.mall,
       description: 'Centro comercial',
     ),
     PointOfInterest(
       name: 'Banco de la República',
-      position: const LatLng(2.4415, -76.6050),
+      position: LatLng(2.4415, -76.6050),
       type: POIType.bank,
       description: 'Banco central',
     ),
     PointOfInterest(
       name: 'Iglesia San Francisco',
-      position: const LatLng(2.4425, -76.6075),
+      position: LatLng(2.4425, -76.6075),
       type: POIType.church,
       description: 'Iglesia colonial',
     ),
     PointOfInterest(
       name: 'Droguería La Rebaja',
-      position: const LatLng(2.4420, -76.6055),
+      position: LatLng(2.4420, -76.6055),
       type: POIType.pharmacy,
       description: 'Farmacia',
     ),
     PointOfInterest(
       name: 'Restaurante La Cosecha',
-      position: const LatLng(2.4410, -76.6050),
+      position: LatLng(2.4410, -76.6050),
       type: POIType.restaurant,
       description: 'Comida típica',
     ),
     PointOfInterest(
       name: 'Hotel Monasterio',
-      position: const LatLng(2.4410, -76.6070),
+      position: LatLng(2.4410, -76.6070),
       type: POIType.hotel,
       description: 'Hotel colonial',
     ),
@@ -254,7 +254,7 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     } catch (e) {
       // Si no se puede obtener la ubicación, usar coordenadas por defecto de Popayán
       setState(() {
-        myPosition = const LatLng(2.4389, -76.6064); // Centro de Popayán
+        myPosition = LatLng(2.4389, -76.6064); // Centro de Popayán
         _isLoading = false;
       });
     }
@@ -296,14 +296,14 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
 
     // Puntos clave de las calles principales de Popayán
     final Map<String, LatLng> streetIntersections = {
-      'parque_caldas': const LatLng(2.4448, -76.6147),
-      'carrera_5_calle_5': const LatLng(2.4448, -76.6140),
-      'carrera_6_calle_5': const LatLng(2.4448, -76.6145),
-      'carrera_9_calle_5': const LatLng(2.4448, -76.6120),
-      'carrera_5_norte': const LatLng(2.4480, -76.6140),
-      'carrera_5_sur': const LatLng(2.4420, -76.6140),
-      'terminal_area': const LatLng(2.4500, -76.6170),
-      'campanario_area': const LatLng(2.4448, -76.6147),
+      'parque_caldas': LatLng(2.4448, -76.6147),
+      'carrera_5_calle_5': LatLng(2.4448, -76.6140),
+      'carrera_6_calle_5': LatLng(2.4448, -76.6145),
+      'carrera_9_calle_5': LatLng(2.4448, -76.6120),
+      'carrera_5_norte': LatLng(2.4480, -76.6140),
+      'carrera_5_sur': LatLng(2.4420, -76.6140),
+      'terminal_area': LatLng(2.4500, -76.6170),
+      'campanario_area': LatLng(2.4448, -76.6147),
     };
 
     // Agregar el primer punto
@@ -861,7 +861,6 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
                         maxZoom: 17,
                         minZoom: 10,
                         // Configuración para evitar tiles en blanco
-                        tileDimension: 256,
                         maxNativeZoom: 17,
                         // Headers optimizados
                         additionalOptions: const {
@@ -1864,3 +1863,4 @@ class _MapaRutaPaginaState extends State<MapaRutaPagina>
     );
   }
 }
+

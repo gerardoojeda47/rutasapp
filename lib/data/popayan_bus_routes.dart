@@ -17,7 +17,7 @@ class BusRoute {
   final double? distance;
   final int? estimatedTime;
 
-  const BusRoute({
+  BusRoute({
     required this.id,
     required this.name,
     required this.company,
@@ -36,7 +36,7 @@ class BusRoute {
 
 /// Base de datos de rutas de bus reales en Popayán
 class PopayanBusRoutes {
-  static const List<BusRoute> routes = [
+  static final List<BusRoute> routes = [
     // SOTRACAUCA - RUTA 1: La Paz/Campanario/Pomona/Chirimía
     BusRoute(
       id: 'sotracauca_ruta_1',

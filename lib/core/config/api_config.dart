@@ -22,3 +22,4 @@ class ApiConfig {
   static const double popayanMinLng = -76.7;
   static const double popayanMaxLng = -76.5;
 }
+

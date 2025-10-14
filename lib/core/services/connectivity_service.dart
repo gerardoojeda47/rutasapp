@@ -194,3 +194,4 @@ extension ConnectivityServiceExtension on ConnectivityService {
     return hasConnection;
   }
 }
+

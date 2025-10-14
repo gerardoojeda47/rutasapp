@@ -79,7 +79,7 @@ class BusTrackingService {
   static TrafficInfo getTrafficInfo([LatLng? location]) {
     final now = DateTime.now();
     final defaultLocation =
-        location ?? const LatLng(2.4448, -76.6147); // Centro Popayán
+        location ?? LatLng(2.4448, -76.6147); // Centro Popayán
 
     // Crear una ruta temporal para obtener métricas
     final tempRoute = PopayanBusRoutes.routes.first;
@@ -280,3 +280,4 @@ class TrafficInfo {
     }
   }
 }
+

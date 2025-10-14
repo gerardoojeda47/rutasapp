@@ -238,3 +238,4 @@ class NewsItem {
     required this.timeAgo,
   });
 }
+

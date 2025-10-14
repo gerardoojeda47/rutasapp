@@ -82,10 +82,8 @@ class LocationServiceShared {
       try {
         // Primer intento: Alta precisión
         position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-            timeLimit: Duration(seconds: 8),
-          ),
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 8),
         ).timeout(const Duration(seconds: 10));
       } catch (e) {
         debugPrint('⚠️ Primer intento falló, probando con precisión media: $e');
@@ -93,10 +91,8 @@ class LocationServiceShared {
         try {
           // Segundo intento: Precisión media
           position = await Geolocator.getCurrentPosition(
-            locationSettings: const LocationSettings(
-              accuracy: LocationAccuracy.medium,
-              timeLimit: Duration(seconds: 8),
-            ),
+            desiredAccuracy: LocationAccuracy.medium,
+            timeLimit: const Duration(seconds: 8),
           ).timeout(const Duration(seconds: 10));
         } catch (e2) {
           debugPrint(
@@ -104,10 +100,8 @@ class LocationServiceShared {
 
           // Tercer intento: Precisión baja
           position = await Geolocator.getCurrentPosition(
-            locationSettings: const LocationSettings(
-              accuracy: LocationAccuracy.low,
-              timeLimit: Duration(seconds: 5),
-            ),
+            desiredAccuracy: LocationAccuracy.low,
+            timeLimit: const Duration(seconds: 5),
           ).timeout(const Duration(seconds: 8));
         }
       }
@@ -117,8 +111,8 @@ class LocationServiceShared {
       _isLoading = false;
 
       debugPrint(
-          '✅ Ubicación obtenida: ${position.latitude}, ${position.longitude}');
-      debugPrint('📏 Precisión: ${position.accuracy} metros');
+          '✅ Ubicación obtenida: ${position?.latitude}, ${position?.longitude}');
+      debugPrint('📏 Precisión: ${position?.accuracy} metros');
 
       _notifyListeners();
       return position;
@@ -141,7 +135,6 @@ class LocationServiceShared {
     debugPrint('📡 Iniciando seguimiento continuo de ubicación...');
 
     const locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
       distanceFilter: 10, // Actualizar cada 10 metros
     );
 

@@ -301,3 +301,4 @@ class _HtmlWeatherTrafficWidgetState extends State<HtmlWeatherTrafficWidget> {
     );
   }
 }
+

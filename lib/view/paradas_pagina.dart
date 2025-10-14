@@ -144,20 +144,20 @@ class _ParadasPaginaState extends State<ParadasPagina>
   Map<String, bool> _paradaVisible = {};
 
   // Coordenadas de Popayán
-  static const LatLng _popayanCenter = LatLng(2.4448, -76.6147);
+  static final LatLng _popayanCenter = LatLng(2.4448, -76.6147);
 
   // Lista de puntos de interés principales en Popayán
   final List<PointOfInterest> _pointsOfInterest = [
     // HOSPITALES
     PointOfInterest(
       name: 'Hospital Universitario San José',
-      position: const LatLng(2.4427, -76.6064),
+      position: LatLng(2.4427, -76.6064),
       type: POIType.hospital,
       description: 'Hospital principal',
     ),
     PointOfInterest(
       name: 'Clínica La Estancia',
-      position: const LatLng(2.4489, -76.5972),
+      position: LatLng(2.4489, -76.5972),
       type: POIType.hospital,
       description: 'Clínica privada',
     ),
@@ -165,13 +165,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // UNIVERSIDADES
     PointOfInterest(
       name: 'Universidad del Cauca',
-      position: const LatLng(2.4448, -76.6060),
+      position: LatLng(2.4448, -76.6060),
       type: POIType.university,
       description: 'Universidad pública',
     ),
     PointOfInterest(
       name: 'SENA Popayán',
-      position: const LatLng(2.4380, -76.6000),
+      position: LatLng(2.4380, -76.6000),
       type: POIType.university,
       description: 'Formación técnica',
     ),
@@ -179,13 +179,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // COLEGIOS
     PointOfInterest(
       name: 'Colegio INEM',
-      position: const LatLng(2.4550, -76.5950),
+      position: LatLng(2.4550, -76.5950),
       type: POIType.school,
       description: 'Colegio público',
     ),
     PointOfInterest(
       name: 'Colegio Champagnat',
-      position: const LatLng(2.4380, -76.6120),
+      position: LatLng(2.4380, -76.6120),
       type: POIType.school,
       description: 'Colegio privado',
     ),
@@ -193,13 +193,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // PARQUES
     PointOfInterest(
       name: 'Parque Caldas',
-      position: const LatLng(2.4418, -76.6060),
+      position: LatLng(2.4418, -76.6060),
       type: POIType.park,
       description: 'Parque principal',
     ),
     PointOfInterest(
       name: 'Parque de la Salud',
-      position: const LatLng(2.4520, -76.5980),
+      position: LatLng(2.4520, -76.5980),
       type: POIType.park,
       description: 'Parque recreativo',
     ),
@@ -207,13 +207,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // IGLESIAS
     PointOfInterest(
       name: 'Catedral Basílica',
-      position: const LatLng(2.4415, -76.6063),
+      position: LatLng(2.4415, -76.6063),
       type: POIType.church,
       description: 'Catedral principal',
     ),
     PointOfInterest(
       name: 'Iglesia San Francisco',
-      position: const LatLng(2.4425, -76.6075),
+      position: LatLng(2.4425, -76.6075),
       type: POIType.church,
       description: 'Iglesia colonial',
     ),
@@ -221,13 +221,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // CENTROS COMERCIALES
     PointOfInterest(
       name: 'C.C. Campanario',
-      position: const LatLng(2.4550, -76.5920),
+      position: LatLng(2.4550, -76.5920),
       type: POIType.mall,
       description: 'Centro comercial',
     ),
     PointOfInterest(
       name: 'C.C. Anarkos',
-      position: const LatLng(2.4420, -76.6055),
+      position: LatLng(2.4420, -76.6055),
       type: POIType.mall,
       description: 'Centro del histórico',
     ),
@@ -235,13 +235,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // BANCOS
     PointOfInterest(
       name: 'Banco de la República',
-      position: const LatLng(2.4415, -76.6050),
+      position: LatLng(2.4415, -76.6050),
       type: POIType.bank,
       description: 'Banco central',
     ),
     PointOfInterest(
       name: 'Bancolombia',
-      position: const LatLng(2.4425, -76.6055),
+      position: LatLng(2.4425, -76.6055),
       type: POIType.bank,
       description: 'Banco comercial',
     ),
@@ -249,13 +249,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // RESTAURANTES
     PointOfInterest(
       name: 'La Cosecha',
-      position: const LatLng(2.4410, -76.6050),
+      position: LatLng(2.4410, -76.6050),
       type: POIType.restaurant,
       description: 'Comida típica',
     ),
     PointOfInterest(
       name: 'Café Macondo',
-      position: const LatLng(2.4440, -76.6060),
+      position: LatLng(2.4440, -76.6060),
       type: POIType.restaurant,
       description: 'Café cultural',
     ),
@@ -263,13 +263,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // FARMACIAS
     PointOfInterest(
       name: 'Droguería La Rebaja',
-      position: const LatLng(2.4420, -76.6055),
+      position: LatLng(2.4420, -76.6055),
       type: POIType.pharmacy,
       description: 'Farmacia',
     ),
     PointOfInterest(
       name: 'Cruz Verde',
-      position: const LatLng(2.4410, -76.6065),
+      position: LatLng(2.4410, -76.6065),
       type: POIType.pharmacy,
       description: 'Farmacia',
     ),
@@ -277,13 +277,13 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // SUPERMERCADOS
     PointOfInterest(
       name: 'Éxito',
-      position: const LatLng(2.4550, -76.5925),
+      position: LatLng(2.4550, -76.5925),
       type: POIType.supermarket,
       description: 'Supermercado',
     ),
     PointOfInterest(
       name: 'Olímpica',
-      position: const LatLng(2.4430, -76.6030),
+      position: LatLng(2.4430, -76.6030),
       type: POIType.supermarket,
       description: 'Supermercado',
     ),
@@ -291,31 +291,31 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // ========== MÁS BANCOS POR TODA LA CIUDAD ==========
     PointOfInterest(
       name: 'Banco de Bogotá Norte',
-      position: const LatLng(2.4520, -76.5960),
+      position: LatLng(2.4520, -76.5960),
       type: POIType.bank,
       description: 'Sucursal norte',
     ),
     PointOfInterest(
       name: 'BBVA Centro',
-      position: const LatLng(2.4440, -76.6035),
+      position: LatLng(2.4440, -76.6035),
       type: POIType.bank,
       description: 'Banco internacional',
     ),
     PointOfInterest(
       name: 'Davivienda Sur',
-      position: const LatLng(2.4300, -76.6110),
+      position: LatLng(2.4300, -76.6110),
       type: POIType.bank,
       description: 'Banco comercial sur',
     ),
     PointOfInterest(
       name: 'Banco Agrario',
-      position: const LatLng(2.4380, -76.5980),
+      position: LatLng(2.4380, -76.5980),
       type: POIType.bank,
       description: 'Banco rural',
     ),
     PointOfInterest(
       name: 'Banco Popular Norte',
-      position: const LatLng(2.4480, -76.5970),
+      position: LatLng(2.4480, -76.5970),
       type: POIType.bank,
       description: 'Sucursal norte',
     ),
@@ -323,61 +323,61 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // ========== MÁS RESTAURANTES ==========
     PointOfInterest(
       name: 'McDonald\'s Campanario',
-      position: const LatLng(2.4545, -76.5915),
+      position: LatLng(2.4545, -76.5915),
       type: POIType.restaurant,
       description: 'Comida rápida',
     ),
     PointOfInterest(
       name: 'KFC Norte',
-      position: const LatLng(2.4540, -76.5930),
+      position: LatLng(2.4540, -76.5930),
       type: POIType.restaurant,
       description: 'Pollo frito',
     ),
     PointOfInterest(
       name: 'Subway',
-      position: const LatLng(2.4535, -76.5925),
+      position: LatLng(2.4535, -76.5925),
       type: POIType.restaurant,
       description: 'Sándwiches',
     ),
     PointOfInterest(
       name: 'Frisby Centro',
-      position: const LatLng(2.4420, -76.6045),
+      position: LatLng(2.4420, -76.6045),
       type: POIType.restaurant,
       description: 'Pollo broaster',
     ),
     PointOfInterest(
       name: 'El Corral',
-      position: const LatLng(2.4460, -76.6020),
+      position: LatLng(2.4460, -76.6020),
       type: POIType.restaurant,
       description: 'Hamburguesas gourmet',
     ),
     PointOfInterest(
       name: 'Presto',
-      position: const LatLng(2.4380, -76.6040),
+      position: LatLng(2.4380, -76.6040),
       type: POIType.restaurant,
       description: 'Comida rápida',
     ),
     PointOfInterest(
       name: 'Pollo Campero',
-      position: const LatLng(2.4350, -76.6080),
+      position: LatLng(2.4350, -76.6080),
       type: POIType.restaurant,
       description: 'Pollo a la brasa',
     ),
     PointOfInterest(
       name: 'Domino\'s Pizza',
-      position: const LatLng(2.4470, -76.6010),
+      position: LatLng(2.4470, -76.6010),
       type: POIType.restaurant,
       description: 'Pizza a domicilio',
     ),
     PointOfInterest(
       name: 'Papa John\'s',
-      position: const LatLng(2.4490, -76.5990),
+      position: LatLng(2.4490, -76.5990),
       type: POIType.restaurant,
       description: 'Pizza artesanal',
     ),
     PointOfInterest(
       name: 'Crepes & Waffles',
-      position: const LatLng(2.4450, -76.6000),
+      position: LatLng(2.4450, -76.6000),
       type: POIType.restaurant,
       description: 'Postres y café',
     ),
@@ -385,37 +385,37 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // ========== MÁS FARMACIAS ==========
     PointOfInterest(
       name: 'Locatel Norte',
-      position: const LatLng(2.4500, -76.5950),
+      position: LatLng(2.4500, -76.5950),
       type: POIType.pharmacy,
       description: 'Farmacia 24 horas',
     ),
     PointOfInterest(
       name: 'Farmatodo',
-      position: const LatLng(2.4460, -76.5980),
+      position: LatLng(2.4460, -76.5980),
       type: POIType.pharmacy,
       description: 'Cadena farmacéutica',
     ),
     PointOfInterest(
       name: 'Cruz Verde Norte',
-      position: const LatLng(2.4520, -76.5940),
+      position: LatLng(2.4520, -76.5940),
       type: POIType.pharmacy,
       description: 'Farmacia norte',
     ),
     PointOfInterest(
       name: 'La Rebaja Sur',
-      position: const LatLng(2.4320, -76.6090),
+      position: LatLng(2.4320, -76.6090),
       type: POIType.pharmacy,
       description: 'Farmacia sur',
     ),
     PointOfInterest(
       name: 'Copidrogas',
-      position: const LatLng(2.4390, -76.6020),
+      position: LatLng(2.4390, -76.6020),
       type: POIType.pharmacy,
       description: 'Farmacia cooperativa',
     ),
     PointOfInterest(
       name: 'Farmacia San Jorge Norte',
-      position: const LatLng(2.4480, -76.5960),
+      position: LatLng(2.4480, -76.5960),
       type: POIType.pharmacy,
       description: 'Farmacia local',
     ),
@@ -423,43 +423,43 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // ========== MÁS SUPERMERCADOS ==========
     PointOfInterest(
       name: 'Carulla Norte',
-      position: const LatLng(2.4460, -76.5980),
+      position: LatLng(2.4460, -76.5980),
       type: POIType.supermarket,
       description: 'Supermercado premium',
     ),
     PointOfInterest(
       name: 'D1 Norte',
-      position: const LatLng(2.4480, -76.5990),
+      position: LatLng(2.4480, -76.5990),
       type: POIType.supermarket,
       description: 'Tienda de descuento',
     ),
     PointOfInterest(
       name: 'Justo & Bueno Centro',
-      position: const LatLng(2.4400, -76.6040),
+      position: LatLng(2.4400, -76.6040),
       type: POIType.supermarket,
       description: 'Conveniencia',
     ),
     PointOfInterest(
       name: 'Ara Sur',
-      position: const LatLng(2.4300, -76.6100),
+      position: LatLng(2.4300, -76.6100),
       type: POIType.supermarket,
       description: 'Supermercado económico',
     ),
     PointOfInterest(
       name: 'Surtimax',
-      position: const LatLng(2.4350, -76.6070),
+      position: LatLng(2.4350, -76.6070),
       type: POIType.supermarket,
       description: 'Cadena regional',
     ),
     PointOfInterest(
       name: 'Tiendas Ara Este',
-      position: const LatLng(2.4450, -76.5940),
+      position: LatLng(2.4450, -76.5940),
       type: POIType.supermarket,
       description: 'Descuentos',
     ),
     PointOfInterest(
       name: 'Merquefácil',
-      position: const LatLng(2.4380, -76.6120),
+      position: LatLng(2.4380, -76.6120),
       type: POIType.supermarket,
       description: 'Supermercado local',
     ),
@@ -467,25 +467,25 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // ========== ESTACIONES DE GASOLINA ==========
     PointOfInterest(
       name: 'Terpel Norte',
-      position: const LatLng(2.4500, -76.5950),
+      position: LatLng(2.4500, -76.5950),
       type: POIType.gasStation,
       description: 'Estación norte',
     ),
     PointOfInterest(
       name: 'Mobil Centro',
-      position: const LatLng(2.4420, -76.6080),
+      position: LatLng(2.4420, -76.6080),
       type: POIType.gasStation,
       description: 'Combustibles centro',
     ),
     PointOfInterest(
       name: 'Esso Sur',
-      position: const LatLng(2.4300, -76.6120),
+      position: LatLng(2.4300, -76.6120),
       type: POIType.gasStation,
       description: 'Estación sur',
     ),
     PointOfInterest(
       name: 'Petrobras Este',
-      position: const LatLng(2.4450, -76.5930),
+      position: LatLng(2.4450, -76.5930),
       type: POIType.gasStation,
       description: 'Combustibles este',
     ),
@@ -493,19 +493,19 @@ class _ParadasPaginaState extends State<ParadasPagina>
     // ========== MÁS HOTELES ==========
     PointOfInterest(
       name: 'Hotel Los Balcones',
-      position: const LatLng(2.4415, -76.6055),
+      position: LatLng(2.4415, -76.6055),
       type: POIType.hotel,
       description: 'Hotel tradicional',
     ),
     PointOfInterest(
       name: 'Hotel Casa Familiar',
-      position: const LatLng(2.4435, -76.6070),
+      position: LatLng(2.4435, -76.6070),
       type: POIType.hotel,
       description: 'Hotel económico',
     ),
     PointOfInterest(
       name: 'Hotel Camino Real',
-      position: const LatLng(2.4390, -76.6060),
+      position: LatLng(2.4390, -76.6060),
       type: POIType.hotel,
       description: 'Hotel de negocios',
     ),
@@ -696,7 +696,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
   List<ParadaInfo> get _paradas => [
         // SOTRACAUCA (Verde)
         ParadaInfo(
-          coords: const LatLng(2.4448, -76.6147),
+          coords: LatLng(2.4448, -76.6147),
           nombre: "Terminal de Transporte",
           codigo: "SOT-001",
           direccion: "Calle 5 # 8-08, Centro",
@@ -706,7 +706,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.terminal,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4580, -76.6180),
+          coords: LatLng(2.4580, -76.6180),
           nombre: "La Esmeralda",
           codigo: "SOT-002",
           direccion: "Barrio La Esmeralda",
@@ -716,7 +716,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.barrio,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4520, -76.6220),
+          coords: LatLng(2.4520, -76.6220),
           nombre: "Campanario",
           codigo: "SOT-003",
           direccion: "Barrio Campanario",
@@ -726,7 +726,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.barrio,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4280, -76.6280),
+          coords: LatLng(2.4280, -76.6280),
           nombre: "Pomona",
           codigo: "SOT-004",
           direccion: "Barrio Pomona",
@@ -736,7 +736,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.barrio,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4180, -76.6100),
+          coords: LatLng(2.4180, -76.6100),
           nombre: "Chirimía",
           codigo: "SOT-005",
           direccion: "Barrio Chirimía",
@@ -748,7 +748,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
 
         // TRANSPUBENZA (Azul)
         ParadaInfo(
-          coords: const LatLng(2.4320, -76.5980),
+          coords: LatLng(2.4320, -76.5980),
           nombre: "Lomas de Granada",
           codigo: "TPB-001",
           direccion: "Lomas de Granada",
@@ -758,7 +758,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.barrio,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4400, -76.6100),
+          coords: LatLng(2.4400, -76.6100),
           nombre: "Los Naranjos",
           codigo: "TPB-002",
           direccion: "Barrio Los Naranjos",
@@ -768,7 +768,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.barrio,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4450, -76.6000),
+          coords: LatLng(2.4450, -76.6000),
           nombre: "Tomás Cipriano",
           codigo: "TPB-003",
           direccion: "Barrio Tomás Cipriano",
@@ -778,7 +778,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.barrio,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4480, -76.5920),
+          coords: LatLng(2.4480, -76.5920),
           nombre: "Piscinas Comfa",
           codigo: "TPB-004",
           direccion: "Sector Piscinas Comfa",
@@ -790,7 +790,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
 
         // TRANSLIBERTAD (Naranja)
         ParadaInfo(
-          coords: const LatLng(2.4419, -76.6066),
+          coords: LatLng(2.4419, -76.6066),
           nombre: "Parque Caldas",
           codigo: "TRL-001",
           direccion: "Centro Histórico",
@@ -800,7 +800,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.centro,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4385, -76.6055),
+          coords: LatLng(2.4385, -76.6055),
           nombre: "Universidad del Cauca",
           codigo: "TRL-002",
           direccion: "Calle 5 # 4-70, Sector Tulcán",
@@ -810,7 +810,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.universidad,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4350, -76.6120),
+          coords: LatLng(2.4350, -76.6120),
           nombre: "Carrera 9 Norte",
           codigo: "TRL-003",
           direccion: "Carrera 9 Norte",
@@ -822,7 +822,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
 
         // TRANSTAMBO (Púrpura)
         ParadaInfo(
-          coords: const LatLng(2.4490, -76.6020),
+          coords: LatLng(2.4490, -76.6020),
           nombre: "Hospital Universitario",
           codigo: "TTB-001",
           direccion: "Carrera 6 # 9N-45",
@@ -832,7 +832,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.hospital,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4380, -76.6120),
+          coords: LatLng(2.4380, -76.6120),
           nombre: "Villa Del Viento",
           codigo: "TTB-002",
           direccion: "Barrio Villa Del Viento",
@@ -842,7 +842,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.barrio,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4550, -76.5950),
+          coords: LatLng(2.4550, -76.5950),
           nombre: "Las Guacas",
           codigo: "TTB-003",
           direccion: "Barrio Las Guacas",
@@ -852,7 +852,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.barrio,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4200, -76.6200),
+          coords: LatLng(2.4200, -76.6200),
           nombre: "Los Llanos",
           codigo: "TTB-004",
           direccion: "Barrio Los Llanos",
@@ -864,7 +864,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
 
         // Paradas adicionales
         ParadaInfo(
-          coords: const LatLng(2.4480, -76.5920),
+          coords: LatLng(2.4480, -76.5920),
           nombre: "C.C. Campanario",
           codigo: "COM-001",
           direccion: "Calle 5 # 38-95",
@@ -874,7 +874,7 @@ class _ParadasPaginaState extends State<ParadasPagina>
           tipo: TipoParada.comercial,
         ),
         ParadaInfo(
-          coords: const LatLng(2.4400, -76.6080),
+          coords: LatLng(2.4400, -76.6080),
           nombre: "Catedral Basílica",
           codigo: "CTR-001",
           direccion: "Calle 5 # 4-08",
@@ -1223,11 +1223,19 @@ class _ParadasPaginaState extends State<ParadasPagina>
                 userAgentPackageName: 'com.example.rouwhite',
                 // Zoom nativo alto para proveedores premium
                 maxNativeZoom: _showSatellite
-                    ? (_mapboxKey.isNotEmpty ? 22 : (_mapTilerKey.isNotEmpty ? 20 : 17))
-                    : (_mapboxKey.isNotEmpty ? 22 : (_mapTilerKey.isNotEmpty ? 20 : 19)),
+                    ? (_mapboxKey.isNotEmpty
+                        ? 22
+                        : (_mapTilerKey.isNotEmpty ? 20 : 17))
+                    : (_mapboxKey.isNotEmpty
+                        ? 22
+                        : (_mapTilerKey.isNotEmpty ? 20 : 19)),
                 maxZoom: _showSatellite
-                    ? (_mapboxKey.isNotEmpty ? 22.0 : (_mapTilerKey.isNotEmpty ? 20.0 : 17.5))
-                    : (_mapboxKey.isNotEmpty ? 22.0 : (_mapTilerKey.isNotEmpty ? 20.0 : 20.0)),
+                    ? (_mapboxKey.isNotEmpty
+                        ? 22.0
+                        : (_mapTilerKey.isNotEmpty ? 20.0 : 17.5))
+                    : (_mapboxKey.isNotEmpty
+                        ? 22.0
+                        : (_mapTilerKey.isNotEmpty ? 20.0 : 20.0)),
                 minZoom: 10.0,
                 // Mejor nitidez en pantallas HiDPI
                 retinaMode: true,

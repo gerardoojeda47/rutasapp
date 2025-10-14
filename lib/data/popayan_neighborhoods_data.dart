@@ -10,7 +10,7 @@ class PopayanNeighborhood {
   final List<String> keywords;
   final String? description;
 
-  const PopayanNeighborhood({
+  PopayanNeighborhood({
     required this.id,
     required this.name,
     required this.comuna,
@@ -23,7 +23,7 @@ class PopayanNeighborhood {
 
 /// Base de datos completa de barrios de Popayán organizados por comunas
 class PopayanNeighborhoodsDatabase {
-  static const List<PopayanNeighborhood> _neighborhoods = [
+  static final List<PopayanNeighborhood> _neighborhoods = [
     // COMUNA 1
     PopayanNeighborhood(
       id: 'modelo_c1',

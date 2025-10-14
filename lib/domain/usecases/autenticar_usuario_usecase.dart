@@ -400,3 +400,4 @@ class ValidationFailure extends UsuarioFailure {
   const ValidationFailure(String message)
       : super(message, code: 'VALIDATION_ERROR');
 }
+

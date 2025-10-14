@@ -78,3 +78,4 @@ class _FavoritosPaginaState extends State<FavoritosPagina> {
     );
   }
 }
+

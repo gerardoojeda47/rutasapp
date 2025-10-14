@@ -4,12 +4,12 @@ import 'package:latlong2/latlong.dart';
 /// Configuración optimizada para mapas de Popayán, Colombia
 class MapConfiguration {
   // Coordenadas del centro de Popayán
-  static const LatLng popayanCenter = LatLng(2.4389, -76.6064);
+  static final LatLng popayanCenter = LatLng(2.4389, -76.6064);
 
   // Límites geográficos de Popayán y área metropolitana
   static final LatLngBounds popayanBounds = LatLngBounds(
-    const LatLng(2.3800, -76.6800), // Suroeste
-    const LatLng(2.5000, -76.5300), // Noreste
+    LatLng(2.3800, -76.6800), // Suroeste
+    LatLng(2.5000, -76.5300), // Noreste
   );
 
   // Niveles de zoom optimizados para Popayán

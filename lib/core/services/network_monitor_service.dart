@@ -204,3 +204,4 @@ extension NetworkMonitorServiceExtension on NetworkMonitorService {
     return hasConnection;
   }
 }
+

@@ -250,3 +250,4 @@ class _NativeBannerWidgetState extends State<NativeBannerWidget>
     });
   }
 }
+

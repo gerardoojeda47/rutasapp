@@ -16,7 +16,7 @@ class PopayanPlace {
   final double rating;
   final List<String> photos;
 
-  const PopayanPlace({
+  PopayanPlace({
     required this.id,
     required this.name,
     required this.category,
@@ -33,7 +33,7 @@ class PopayanPlace {
 
 /// Base de datos de lugares reales en Popayán
 class PopayanPlacesDatabase {
-  static const List<PopayanPlace> places = [
+  static final List<PopayanPlace> places = [
     // CENTROS COMERCIALES Y TIENDAS
     PopayanPlace(
       id: 'cc_campanario',

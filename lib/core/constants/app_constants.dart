@@ -50,3 +50,4 @@ class AppConstants {
   static const String favoriteAddedMessage = 'Ruta agregada a favoritos';
   static const String favoriteRemovedMessage = 'Ruta eliminada de favoritos';
 }
+

@@ -367,7 +367,7 @@ class _RealTimeNavigationPageState extends State<RealTimeNavigationPage>
 
   void _startLocationTracking() {
     const locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
+      
       distanceFilter: 1, // Actualizar cada metro
     );
 
@@ -838,3 +838,4 @@ class BusStop {
     required this.routes,
   });
 }
+

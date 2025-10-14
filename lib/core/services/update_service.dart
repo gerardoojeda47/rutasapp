@@ -133,3 +133,4 @@ class UpdateInfo {
     return 'UpdateInfo(current: $currentVersion, latest: $latestVersion, url: $downloadUrl)';
   }
 }
+

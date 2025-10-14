@@ -144,3 +144,4 @@ class _RegistroPaginaState extends State<RegistroPagina> {
     );
   }
 } 
+

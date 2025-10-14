@@ -276,3 +276,4 @@ class RutaConTrafico {
 
   String get descripcionTrafico => trafico?.descripcion ?? 'Sin información';
 }
+

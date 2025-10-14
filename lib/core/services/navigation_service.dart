@@ -247,3 +247,4 @@ class NavigationService {
   /// Obtiene el número actual de fallos consecutivos
   static int get currentFailureCount => _failureCount;
 }
+

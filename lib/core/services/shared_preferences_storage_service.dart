@@ -173,3 +173,4 @@ class SharedPreferencesStorageService extends BaseStorageService {
     }
   }
 }
+

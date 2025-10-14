@@ -203,3 +203,4 @@ class _NativeStatsWidgetState extends State<NativeStatsWidget>
     );
   }
 }
+

@@ -311,3 +311,4 @@ class _NativeWeatherTrafficWidgetState extends State<NativeWeatherTrafficWidget>
     );
   }
 }
+

@@ -278,3 +278,4 @@ class _ImprovedStatsWidgetState extends State<ImprovedStatsWidget>
     );
   }
 }
+

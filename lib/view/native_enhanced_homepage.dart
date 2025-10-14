@@ -133,7 +133,7 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
   final fm.MapController _mapController = fm.MapController();
 
   // Coordenadas de Popayán como fallback
-  static const LatLng _popayanCenter = LatLng(2.444814, -76.614739);
+  static final LatLng _popayanCenter = LatLng(2.444814, -76.614739);
 
   // Lista completa de puntos de interés en toda la ciudad de Popayán
   final List<PointOfInterest> _pointsOfInterest = [
@@ -142,31 +142,31 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // BANCOS CENTRO
     PointOfInterest(
       name: 'Banco de la República',
-      position: const LatLng(2.4415, -76.6050),
+      position: LatLng(2.4415, -76.6050),
       type: POIType.bank,
       description: 'Banco central',
     ),
     PointOfInterest(
       name: 'Bancolombia Centro',
-      position: const LatLng(2.4425, -76.6055),
+      position: LatLng(2.4425, -76.6055),
       type: POIType.bank,
       description: 'Banco comercial',
     ),
     PointOfInterest(
       name: 'Banco de Bogotá',
-      position: const LatLng(2.4435, -76.6045),
+      position: LatLng(2.4435, -76.6045),
       type: POIType.bank,
       description: 'Banco nacional',
     ),
     PointOfInterest(
       name: 'Banco Popular',
-      position: const LatLng(2.4405, -76.6065),
+      position: LatLng(2.4405, -76.6065),
       type: POIType.bank,
       description: 'Servicios bancarios',
     ),
     PointOfInterest(
       name: 'BBVA',
-      position: const LatLng(2.4440, -76.6035),
+      position: LatLng(2.4440, -76.6035),
       type: POIType.bank,
       description: 'Banco internacional',
     ),
@@ -174,37 +174,37 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // RESTAURANTES CENTRO
     PointOfInterest(
       name: 'La Cosecha',
-      position: const LatLng(2.4410, -76.6050),
+      position: LatLng(2.4410, -76.6050),
       type: POIType.restaurant,
       description: 'Comida típica payanesa',
     ),
     PointOfInterest(
       name: 'Italiano D\'Verona',
-      position: const LatLng(2.4430, -76.6040),
+      position: LatLng(2.4430, -76.6040),
       type: POIType.restaurant,
       description: 'Restaurante italiano',
     ),
     PointOfInterest(
       name: 'Café Macondo',
-      position: const LatLng(2.4440, -76.6060),
+      position: LatLng(2.4440, -76.6060),
       type: POIType.restaurant,
       description: 'Café cultural',
     ),
     PointOfInterest(
       name: 'Balcón de los Arrieros',
-      position: const LatLng(2.4420, -76.6070),
+      position: LatLng(2.4420, -76.6070),
       type: POIType.restaurant,
       description: 'Comida tradicional',
     ),
     PointOfInterest(
       name: 'Restaurante Mora Castilla',
-      position: const LatLng(2.4390, -76.6080),
+      position: LatLng(2.4390, -76.6080),
       type: POIType.restaurant,
       description: 'Restaurante gourmet',
     ),
     PointOfInterest(
       name: 'Pizzería Leños & Carbón',
-      position: const LatLng(2.4450, -76.6030),
+      position: LatLng(2.4450, -76.6030),
       type: POIType.restaurant,
       description: 'Pizzas artesanales',
     ),
@@ -212,25 +212,25 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // FARMACIAS CENTRO
     PointOfInterest(
       name: 'Droguería La Rebaja Centro',
-      position: const LatLng(2.4420, -76.6055),
+      position: LatLng(2.4420, -76.6055),
       type: POIType.pharmacy,
       description: 'Farmacia 24 horas',
     ),
     PointOfInterest(
       name: 'Cruz Verde Centro',
-      position: const LatLng(2.4410, -76.6065),
+      position: LatLng(2.4410, -76.6065),
       type: POIType.pharmacy,
       description: 'Cadena farmacéutica',
     ),
     PointOfInterest(
       name: 'Farmacia San Jorge',
-      position: const LatLng(2.4430, -76.6050),
+      position: LatLng(2.4430, -76.6050),
       type: POIType.pharmacy,
       description: 'Farmacia local',
     ),
     PointOfInterest(
       name: 'Droguería Colsubsidio',
-      position: const LatLng(2.4440, -76.6040),
+      position: LatLng(2.4440, -76.6040),
       type: POIType.pharmacy,
       description: 'Farmacia cooperativa',
     ),
@@ -238,19 +238,19 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // HOTELES CENTRO
     PointOfInterest(
       name: 'Hotel Monasterio',
-      position: const LatLng(2.4410, -76.6070),
+      position: LatLng(2.4410, -76.6070),
       type: POIType.hotel,
       description: 'Hotel colonial',
     ),
     PointOfInterest(
       name: 'Hotel Dann Monasterio',
-      position: const LatLng(2.4400, -76.6075),
+      position: LatLng(2.4400, -76.6075),
       type: POIType.hotel,
       description: 'Hotel de lujo',
     ),
     PointOfInterest(
       name: 'Hotel La Plazuela',
-      position: const LatLng(2.4430, -76.6065),
+      position: LatLng(2.4430, -76.6065),
       type: POIType.hotel,
       description: 'Hotel boutique',
     ),
@@ -260,13 +260,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // CENTROS COMERCIALES NORTE
     PointOfInterest(
       name: 'Centro Comercial Campanario',
-      position: const LatLng(2.4550, -76.5920),
+      position: LatLng(2.4550, -76.5920),
       type: POIType.mall,
       description: 'Principal centro comercial',
     ),
     PointOfInterest(
       name: 'Plaza de Mercado del Norte',
-      position: const LatLng(2.4480, -76.6000),
+      position: LatLng(2.4480, -76.6000),
       type: POIType.mall,
       description: 'Mercado tradicional',
     ),
@@ -274,19 +274,19 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // SUPERMERCADOS NORTE
     PointOfInterest(
       name: 'Éxito Campanario',
-      position: const LatLng(2.4550, -76.5925),
+      position: LatLng(2.4550, -76.5925),
       type: POIType.supermarket,
       description: 'Supermercado grande',
     ),
     PointOfInterest(
       name: 'Carulla Norte',
-      position: const LatLng(2.4460, -76.5980),
+      position: LatLng(2.4460, -76.5980),
       type: POIType.supermarket,
       description: 'Supermercado premium',
     ),
     PointOfInterest(
       name: 'D1 Norte',
-      position: const LatLng(2.4480, -76.5990),
+      position: LatLng(2.4480, -76.5990),
       type: POIType.supermarket,
       description: 'Tienda de descuento',
     ),
@@ -294,19 +294,19 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // RESTAURANTES NORTE
     PointOfInterest(
       name: 'McDonald\'s Campanario',
-      position: const LatLng(2.4545, -76.5915),
+      position: LatLng(2.4545, -76.5915),
       type: POIType.restaurant,
       description: 'Comida rápida',
     ),
     PointOfInterest(
       name: 'KFC Norte',
-      position: const LatLng(2.4540, -76.5930),
+      position: LatLng(2.4540, -76.5930),
       type: POIType.restaurant,
       description: 'Pollo frito',
     ),
     PointOfInterest(
       name: 'Subway Norte',
-      position: const LatLng(2.4535, -76.5925),
+      position: LatLng(2.4535, -76.5925),
       type: POIType.restaurant,
       description: 'Sándwiches',
     ),
@@ -314,13 +314,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // BANCOS NORTE
     PointOfInterest(
       name: 'Bancolombia Campanario',
-      position: const LatLng(2.4548, -76.5922),
+      position: LatLng(2.4548, -76.5922),
       type: POIType.bank,
       description: 'Sucursal norte',
     ),
     PointOfInterest(
       name: 'Davivienda Norte',
-      position: const LatLng(2.4470, -76.5985),
+      position: LatLng(2.4470, -76.5985),
       type: POIType.bank,
       description: 'Banco comercial',
     ),
@@ -330,13 +330,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // SUPERMERCADOS SUR
     PointOfInterest(
       name: 'Olímpica Sur',
-      position: const LatLng(2.4300, -76.6100),
+      position: LatLng(2.4300, -76.6100),
       type: POIType.supermarket,
       description: 'Supermercado familiar',
     ),
     PointOfInterest(
       name: 'Justo & Bueno Sur',
-      position: const LatLng(2.4280, -76.6080),
+      position: LatLng(2.4280, -76.6080),
       type: POIType.supermarket,
       description: 'Tienda de conveniencia',
     ),
@@ -344,13 +344,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // RESTAURANTES SUR
     PointOfInterest(
       name: 'Asadero El Corral Sur',
-      position: const LatLng(2.4320, -76.6090),
+      position: LatLng(2.4320, -76.6090),
       type: POIType.restaurant,
       description: 'Parrilla y carnes',
     ),
     PointOfInterest(
       name: 'Pollo Campero Sur',
-      position: const LatLng(2.4290, -76.6070),
+      position: LatLng(2.4290, -76.6070),
       type: POIType.restaurant,
       description: 'Pollo a la brasa',
     ),
@@ -358,13 +358,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // FARMACIAS SUR
     PointOfInterest(
       name: 'La Rebaja Sur',
-      position: const LatLng(2.4310, -76.6085),
+      position: LatLng(2.4310, -76.6085),
       type: POIType.pharmacy,
       description: 'Farmacia sur',
     ),
     PointOfInterest(
       name: 'Locatel Sur',
-      position: const LatLng(2.4285, -76.6075),
+      position: LatLng(2.4285, -76.6075),
       type: POIType.pharmacy,
       description: 'Farmacia 24h',
     ),
@@ -374,13 +374,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // SUPERMERCADOS ESTE
     PointOfInterest(
       name: 'Ara Este',
-      position: const LatLng(2.4400, -76.5950),
+      position: LatLng(2.4400, -76.5950),
       type: POIType.supermarket,
       description: 'Supermercado económico',
     ),
     PointOfInterest(
       name: 'Tiendas Ara',
-      position: const LatLng(2.4450, -76.5940),
+      position: LatLng(2.4450, -76.5940),
       type: POIType.supermarket,
       description: 'Cadena de descuento',
     ),
@@ -388,13 +388,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // RESTAURANTES ESTE
     PointOfInterest(
       name: 'Frisby Este',
-      position: const LatLng(2.4420, -76.5960),
+      position: LatLng(2.4420, -76.5960),
       type: POIType.restaurant,
       description: 'Pollo broaster',
     ),
     PointOfInterest(
       name: 'Presto Este',
-      position: const LatLng(2.4440, -76.5945),
+      position: LatLng(2.4440, -76.5945),
       type: POIType.restaurant,
       description: 'Comida rápida',
     ),
@@ -402,7 +402,7 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // BANCOS ESTE
     PointOfInterest(
       name: 'Banco Agrario Este',
-      position: const LatLng(2.4430, -76.5955),
+      position: LatLng(2.4430, -76.5955),
       type: POIType.bank,
       description: 'Banco rural',
     ),
@@ -412,13 +412,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // SUPERMERCADOS OESTE
     PointOfInterest(
       name: 'Merquefácil Oeste',
-      position: const LatLng(2.4380, -76.6200),
+      position: LatLng(2.4380, -76.6200),
       type: POIType.supermarket,
       description: 'Supermercado local',
     ),
     PointOfInterest(
       name: 'Surtimax Oeste',
-      position: const LatLng(2.4420, -76.6180),
+      position: LatLng(2.4420, -76.6180),
       type: POIType.supermarket,
       description: 'Cadena regional',
     ),
@@ -426,13 +426,13 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // RESTAURANTES OESTE
     PointOfInterest(
       name: 'Donde Juancho',
-      position: const LatLng(2.4390, -76.6190),
+      position: LatLng(2.4390, -76.6190),
       type: POIType.restaurant,
       description: 'Comida casera',
     ),
     PointOfInterest(
       name: 'El Rincón Payanés',
-      position: const LatLng(2.4410, -76.6170),
+      position: LatLng(2.4410, -76.6170),
       type: POIType.restaurant,
       description: 'Comida típica',
     ),
@@ -440,7 +440,7 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // FARMACIAS OESTE
     PointOfInterest(
       name: 'Farmacia Popular Oeste',
-      position: const LatLng(2.4400, -76.6185),
+      position: LatLng(2.4400, -76.6185),
       type: POIType.pharmacy,
       description: 'Farmacia comunitaria',
     ),
@@ -448,25 +448,25 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // ========== ESTACIONES DE GASOLINA ==========
     PointOfInterest(
       name: 'Terpel Centro',
-      position: const LatLng(2.4500, -76.5950),
+      position: LatLng(2.4500, -76.5950),
       type: POIType.gasStation,
       description: 'Estación de servicio',
     ),
     PointOfInterest(
       name: 'Mobil Norte',
-      position: const LatLng(2.4520, -76.5970),
+      position: LatLng(2.4520, -76.5970),
       type: POIType.gasStation,
       description: 'Combustibles norte',
     ),
     PointOfInterest(
       name: 'Esso Sur',
-      position: const LatLng(2.4300, -76.6120),
+      position: LatLng(2.4300, -76.6120),
       type: POIType.gasStation,
       description: 'Estación sur',
     ),
     PointOfInterest(
       name: 'Petrobras Este',
-      position: const LatLng(2.4450, -76.5930),
+      position: LatLng(2.4450, -76.5930),
       type: POIType.gasStation,
       description: 'Combustibles este',
     ),
@@ -474,31 +474,31 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
     // ========== LUGARES HISTÓRICOS Y CULTURALES ==========
     PointOfInterest(
       name: 'Parque Caldas',
-      position: const LatLng(2.4418, -76.6060),
+      position: LatLng(2.4418, -76.6060),
       type: POIType.park,
       description: 'Parque principal',
     ),
     PointOfInterest(
       name: 'Catedral Basílica',
-      position: const LatLng(2.4415, -76.6063),
+      position: LatLng(2.4415, -76.6063),
       type: POIType.church,
       description: 'Catedral principal',
     ),
     PointOfInterest(
       name: 'Iglesia San Francisco',
-      position: const LatLng(2.4425, -76.6075),
+      position: LatLng(2.4425, -76.6075),
       type: POIType.church,
       description: 'Iglesia colonial',
     ),
     PointOfInterest(
       name: 'Universidad del Cauca',
-      position: const LatLng(2.4448, -76.6060),
+      position: LatLng(2.4448, -76.6060),
       type: POIType.university,
       description: 'Universidad pública',
     ),
     PointOfInterest(
       name: 'Hospital San José',
-      position: const LatLng(2.4427, -76.6064),
+      position: LatLng(2.4427, -76.6064),
       type: POIType.hospital,
       description: 'Hospital principal',
     ),
@@ -525,8 +525,7 @@ class _NativeEnhancedHomepageState extends State<NativeEnhancedHomepage> {
       }
 
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings:
-            const LocationSettings(accuracy: LocationAccuracy.high),
+        desiredAccuracy: LocationAccuracy.high,
       );
 
       setState(() {

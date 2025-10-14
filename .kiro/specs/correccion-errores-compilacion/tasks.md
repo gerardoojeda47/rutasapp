@@ -9,13 +9,17 @@
 
 - [x] 2. Resolver conflictos de dependencias
 
-  - [ ] 2.1 Actualizar dependency overrides en pubspec.yaml
+  - [x] 2.1 Actualizar dependency overrides en pubspec.yaml
+
+
 
     - Cambiar geolocator_android a versión 4.1.9
     - Downgrade flutter_map de 8.1.0 a 7.0.2
 
     - Agregar latlong2: 0.8.2 para compatibilidad
     - _Requirements: 3.1, 3.2_
+
+
 
   - [ ] 2.2 Limpiar y regenerar dependencias
 
@@ -25,7 +29,9 @@
     - Verificar árbol de dependencias con flutter pub deps
     - _Requirements: 3.3, 3.4_
 
-- [ ] 3. Verificar y corregir configuración de keystore
+- [x] 3. Verificar y corregir configuración de keystore
+
+
 
   - [ ] 3.1 Validar archivos de firma existentes
 
@@ -43,6 +49,8 @@
 - [ ] 4. Optimizar configuración de Gradle
 
   - [ ] 4.1 Actualizar configuraciones de compilación
+
+
 
     - Cambiar JavaVersion de VERSION_11 a VERSION_1_8
     - Configurar opciones de memoria para Gradle
@@ -66,6 +74,8 @@
 
   - [ ] 5.2 Corregir dependencias de Firebase
     - Verificar versión de firebase_core en pubspec.yaml
+
+
     - Comprobar compatibilidad con otras dependencias
     - Actualizar google-services plugin si es necesario
     - _Requirements: 5.3, 5.4_
@@ -73,7 +83,10 @@
 
 - [ ] 6. Ejecutar build de prueba y validación
 
-  - [ ] 6.1 Probar build debug
+  - [x] 6.1 Probar build debug
+
+
+
 
     - Ejecutar flutter build apk --debug
     - Verificar que no hay errores de compilación
@@ -113,11 +126,15 @@
     - Implementar tests de integración para Firebase
     - _Requirements: 6.1, 6.2_
 
+
+
   - [ ]\* 8.2 Documentar soluciones y troubleshooting
     - Crear guía de troubleshooting para errores comunes
     - Documentar proceso de regeneración de keystore
     - Escribir procedimientos de validación de build
     - _Requirements: 6.3, 6.4_
+
+
 
 - [ ] 9. Corregir errores de compatibilidad con flutter_map 7.0.2
 

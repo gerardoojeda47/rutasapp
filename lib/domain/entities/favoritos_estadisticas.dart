@@ -49,3 +49,4 @@ class FavoritosEstadisticas extends Equatable {
     return 'FavoritosEstadisticas(total: $totalFavoritos, recientes: $favoritosRecientes, conNotificaciones: $conNotificaciones)';
   }
 }
+

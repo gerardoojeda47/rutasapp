@@ -275,3 +275,4 @@ class RutaModelList extends Equatable {
   @override
   List<Object?> get props => [rutas];
 }
+

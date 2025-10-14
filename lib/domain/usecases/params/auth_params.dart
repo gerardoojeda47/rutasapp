@@ -58,3 +58,4 @@ class LoginParams extends Equatable {
     return 'LoginParams(email: $email, recordarSesion: $recordarSesion)';
   }
 }
+

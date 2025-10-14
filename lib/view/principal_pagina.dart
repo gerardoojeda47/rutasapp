@@ -131,7 +131,7 @@ class _HomeContentState extends State<HomeContent> {
   final fm.MapController _mapController = fm.MapController();
 
   // Coordenadas de Popayán como fallback
-  static const LatLng _popayanCenter = LatLng(2.444814, -76.614739);
+  static final LatLng _popayanCenter = LatLng(2.444814, -76.614739);
 
   @override
   void initState() {
@@ -162,9 +162,7 @@ class _HomeContentState extends State<HomeContent> {
 
       // Obtener ubicación actual
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
+        desiredAccuracy: LocationAccuracy.high,
       );
 
       setState(() {
@@ -208,7 +206,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4427, -76.6064),
+        point: LatLng(2.4427, -76.6064),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.red,
@@ -219,7 +217,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4489, -76.5972),
+        point: LatLng(2.4489, -76.5972),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.red,
@@ -230,7 +228,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4631, -76.5936),
+        point: LatLng(2.4631, -76.5936),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.red,
@@ -243,7 +241,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4448, -76.6060),
+        point: LatLng(2.4448, -76.6060),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.deepPurple,
@@ -254,7 +252,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4417, -76.6068),
+        point: LatLng(2.4417, -76.6068),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.deepPurple,
@@ -265,7 +263,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4550, -76.5950),
+        point: LatLng(2.4550, -76.5950),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.orange,
@@ -276,7 +274,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4380, -76.6120),
+        point: LatLng(2.4380, -76.6120),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.orange,
@@ -289,7 +287,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4415, -76.6050),
+        point: LatLng(2.4415, -76.6050),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.blue,
@@ -300,7 +298,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4430, -76.6040),
+        point: LatLng(2.4430, -76.6040),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.blue,
@@ -313,7 +311,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4550, -76.5920),
+        point: LatLng(2.4550, -76.5920),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.pink,
@@ -324,7 +322,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4420, -76.6055),
+        point: LatLng(2.4420, -76.6055),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.pink,
@@ -337,7 +335,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4410, -76.6050),
+        point: LatLng(2.4410, -76.6050),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.amber,
@@ -348,7 +346,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4420, -76.6045),
+        point: LatLng(2.4420, -76.6045),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.amber,
@@ -361,7 +359,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4415, -76.6063),
+        point: LatLng(2.4415, -76.6063),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.indigo,
@@ -372,7 +370,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4425, -76.6075),
+        point: LatLng(2.4425, -76.6075),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.indigo,
@@ -385,7 +383,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4418, -76.6060),
+        point: LatLng(2.4418, -76.6060),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.green,
@@ -396,7 +394,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4435, -76.6070),
+        point: LatLng(2.4435, -76.6070),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.green,
@@ -409,7 +407,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4420, -76.6055),
+        point: LatLng(2.4420, -76.6055),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.teal,
@@ -420,7 +418,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4440, -76.6030),
+        point: LatLng(2.4440, -76.6030),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.teal,
@@ -433,7 +431,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4550, -76.5925),
+        point: LatLng(2.4550, -76.5925),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.lightGreen,
@@ -444,7 +442,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4430, -76.6030),
+        point: LatLng(2.4430, -76.6030),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.lightGreen,
@@ -457,7 +455,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4500, -76.5950),
+        point: LatLng(2.4500, -76.5950),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.brown,
@@ -468,7 +466,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4380, -76.6100),
+        point: LatLng(2.4380, -76.6100),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.brown,
@@ -481,7 +479,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4440, -76.6020),
+        point: LatLng(2.4440, -76.6020),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.blueGrey,
@@ -492,7 +490,7 @@ class _HomeContentState extends State<HomeContent> {
       fm.Marker(
         width: 40,
         height: 40,
-        point: const LatLng(2.4418, -76.6070),
+        point: LatLng(2.4418, -76.6070),
         child: const InterestPointMarker(
           size: 30,
           color: Colors.blueGrey,
@@ -559,7 +557,7 @@ class _HomeContentState extends State<HomeContent> {
 
             // Paradas de bus
             fm.MarkerLayer(
-              markers: const [
+              markers: [
                 // Centro de Popayán - Parada activa
                 fm.Marker(
                   width: 50,

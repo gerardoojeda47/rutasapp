@@ -283,3 +283,4 @@ class ParadaModelList extends Equatable {
   @override
   List<Object?> get props => [paradas];
 }
+

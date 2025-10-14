@@ -390,3 +390,4 @@ class GestionarFavoritosUseCase {
   final BuscarFavoritosUseCase buscarFavoritos;
   final ObtenerEstadisticasFavoritosUseCase obtenerEstadisticas;
 }
+

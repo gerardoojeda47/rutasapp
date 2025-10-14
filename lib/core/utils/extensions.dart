@@ -238,3 +238,4 @@ extension DoubleExtensions on double {
     return '${(this * 100).round()}%';
   }
 }
+

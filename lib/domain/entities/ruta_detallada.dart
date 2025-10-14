@@ -252,3 +252,4 @@ class RutaDetallada extends Equatable {
     return 'RutaDetallada(distancia: $distanciaTotalFormateada, tiempo: $tiempoEstimadoFormateado, instrucciones: ${instrucciones.length})';
   }
 }
+

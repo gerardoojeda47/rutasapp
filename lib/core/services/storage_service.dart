@@ -188,3 +188,4 @@ abstract class BaseStorageService extends StorageService with JsonStorageMixin {
     }
   }
 }
+

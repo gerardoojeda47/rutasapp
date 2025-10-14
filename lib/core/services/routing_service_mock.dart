@@ -72,11 +72,11 @@ class RoutingServiceMock {
 
     // Direcciones simuladas en Popayán
     final direccionesSimuladas = {
-      'centro': const LatLng(2.444814, -76.614739),
-      'terminal': const LatLng(2.445000, -76.617000),
-      'universidad': const LatLng(2.453000, -76.599000),
-      'hospital': const LatLng(2.447500, -76.610000),
-      'plaza': const LatLng(2.444814, -76.614739),
+      'centro': LatLng(2.444814, -76.614739),
+      'terminal': LatLng(2.445000, -76.617000),
+      'universidad': LatLng(2.453000, -76.599000),
+      'hospital': LatLng(2.447500, -76.610000),
+      'plaza': LatLng(2.444814, -76.614739),
     };
 
     final query = direccion.toLowerCase();
@@ -192,3 +192,4 @@ class RoutingServiceMock {
     return segmentos;
   }
 }
+

@@ -240,3 +240,4 @@ class Usuario extends Equatable {
     return 'Usuario(id: $id, email: $email, nombre: $nombreCompleto, tipo: $tipo)';
   }
 }
+
