@@ -4,206 +4,189 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RouWhite - Descarga la App</title>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-
-      .container {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        padding: 40px;
-        text-align: center;
-        max-width: 500px;
-        width: 100%;
-      }
-
-      .logo {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #ff7b00 0%, #ff9500 100%);
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        color: white;
-        font-size: 32px;
-      }
-
-      h1 {
-        color: #333;
-        margin-bottom: 10px;
-        font-size: 28px;
-        font-weight: 700;
-      }
-
-      .subtitle {
-        color: #666;
-        margin-bottom: 30px;
-        font-size: 16px;
-      }
-
-      .qr-container {
-        background: #f8f9fa;
-        border-radius: 15px;
-        padding: 30px;
-        margin: 30px 0;
-        border: 2px dashed #ddd;
-      }
-
-      #qrcode {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 15px;
-      }
-
-      .download-btn {
-        background: linear-gradient(135deg, #ff7b00 0%, #ff9500 100%);
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        border-radius: 50px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-        margin: 10px;
-      }
-
-      .download-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(255, 123, 0, 0.3);
-      }
-
-      .download-btn i {
-        margin-right: 8px;
-      }
-
-      .status {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin: 20px 0;
-        padding: 10px;
-        border-radius: 8px;
-        background: #d4edda;
-        color: #155724;
-      }
-
-      .instructions {
-        text-align: left;
-        margin-top: 30px;
-        padding: 20px;
-        background: #fff3cd;
-        border-radius: 10px;
-        border-left: 4px solid #ffc107;
-      }
-
-      .instructions h3 {
-        color: #856404;
-        margin-bottom: 15px;
-        font-size: 16px;
-      }
-
-      .instructions ol {
-        color: #856404;
-        padding-left: 20px;
-      }
-
-      .instructions li {
-        margin-bottom: 8px;
-        line-height: 1.5;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   </head>
   <body>
     <div class="container">
-      <div class="logo">
-        <i class="fas fa-bus"></i>
-      </div>
+      <header>
+        <div class="logo">
+          <h1>🚌 RouWhite</h1>
+          <p>Rutas de Transporte Público en Popayán</p>
+        </div>
+      </header>
 
-      <h1>RouWhite</h1>
-      <p class="subtitle">Rutas de Transporte Público - Popayán</p>
+      <main>
+        <section class="download-section">
+          <h2>📱 Descarga la Aplicación</h2>
 
-      <div class="status">
-        <i class="fas fa-check-circle"></i>
-        <span>APK listo para descarga</span>
-      </div>
+          <div class="qr-container">
+            <div class="qr-code">
+              <canvas id="qr-canvas"></canvas>
+              <div id="qr-loading" class="loading">
+                <div class="spinner"></div>
+                <p>Generando código QR...</p>
+              </div>
+              <div id="qr-error" class="error" style="display: none">
+                <p>❌ Error al generar QR</p>
+                <button onclick="generateQR()" class="retry-btn">
+                  Reintentar
+                </button>
+              </div>
+            </div>
 
-      <div class="qr-container">
-        <div id="qrcode"></div>
-        <p><strong>Escanea el código QR</strong> con tu dispositivo móvil</p>
-      </div>
+            <div class="qr-instructions">
+              <h3>📲 Cómo descargar:</h3>
+              <ol>
+                <li>Escanea el código QR con tu teléfono</li>
+                <li>Se descargará el archivo APK</li>
+                <li>Instala la aplicación</li>
+              </ol>
+            </div>
+          </div>
 
-      <div>
-        <a
-          href="https://github.com/gerardoojeda47/rutasapp/releases/latest"
-          class="download-btn"
-          target="_blank"
-        >
-          <i class="fas fa-download"></i>
-          Descargar APK
-        </a>
-      </div>
+          <div class="version-info">
+            <div class="info-card">
+              <h4>📦 Información de la versión</h4>
+              <p>
+                <strong>Versión:</strong>
+                <span id="version-number">Cargando...</span>
+              </p>
+              <p>
+                <strong>Fecha:</strong>
+                <span id="release-date">Cargando...</span>
+              </p>
+              <p><strong>Tamaño:</strong> ~57 MB</p>
+            </div>
+          </div>
 
-      <div class="instructions">
-        <h3><i class="fas fa-info-circle"></i> Instrucciones:</h3>
-        <ol>
-          <li>Escanea el código QR o haz clic en "Descargar APK"</li>
-          <li>Descarga el archivo APK más reciente</li>
-          <li>Habilita "Fuentes desconocidas" en tu Android</li>
-          <li>Instala la aplicación</li>
-          <li>¡Disfruta de RouWhite!</li>
-        </ol>
-      </div>
+          <div class="direct-download">
+            <h3>🔗 Descarga directa</h3>
+            <p>Si el código QR no funciona, usa el enlace directo:</p>
+            <a
+              id="download-link"
+              href="#"
+              class="download-btn"
+              style="display: none"
+            >
+              📥 Descargar APK
+            </a>
+            <div id="download-loading" class="loading-text">
+              Obteniendo enlace de descarga...
+            </div>
+          </div>
+        </section>
+
+        <section class="instructions-section">
+          <h2>📋 Instrucciones de Instalación</h2>
+
+          <div class="instructions-grid">
+            <div class="instruction-card">
+              <h4>1️⃣ Habilitar fuentes desconocidas</h4>
+              <p>
+                Ve a
+                <strong
+                  >Configuración → Seguridad → Fuentes desconocidas</strong
+                >
+                y actívalo.
+              </p>
+            </div>
+
+            <div class="instruction-card">
+              <h4>2️⃣ Descargar el APK</h4>
+              <p>
+                Escanea el QR o usa el enlace directo para descargar el archivo.
+              </p>
+            </div>
+
+            <div class="instruction-card">
+              <h4>3️⃣ Instalar la aplicación</h4>
+              <p>
+                Abre el archivo descargado y sigue las instrucciones de
+                instalación.
+              </p>
+            </div>
+          </div>
+
+          <div class="troubleshooting">
+            <h4>🔧 Problemas comunes</h4>
+            <details>
+              <summary>No puedo instalar la aplicación</summary>
+              <p>
+                Asegúrate de haber habilitado "Fuentes desconocidas" en la
+                configuración de seguridad de tu dispositivo.
+              </p>
+            </details>
+
+            <details>
+              <summary>La descarga no inicia</summary>
+              <p>
+                Intenta usar el enlace directo en lugar del código QR, o
+                verifica tu conexión a internet.
+              </p>
+            </details>
+
+            <details>
+              <summary>La aplicación no abre</summary>
+              <p>
+                Verifica que tu dispositivo tenga Android 5.0 o superior.
+                Reinicia el dispositivo si es necesario.
+              </p>
+            </details>
+          </div>
+        </section>
+
+        <section class="features-section">
+          <h2>🌟 Características de la App</h2>
+
+          <div class="features-grid">
+            <div class="feature-card">
+              <h4>🗺️ Mapas Interactivos</h4>
+              <p>
+                Visualiza las rutas de transporte público en mapas detallados de
+                Popayán.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <h4>🚏 Información de Paradas</h4>
+              <p>
+                Encuentra las paradas más cercanas y conoce qué rutas pasan por
+                cada una.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <h4>🧭 Navegación GPS</h4>
+              <p>
+                Obtén direcciones paso a paso para llegar a tu destino usando
+                transporte público.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <h4>📱 Interfaz Intuitiva</h4>
+              <p>
+                Diseño moderno y fácil de usar, optimizado para dispositivos
+                móviles.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>© 2024 RouWhite - Aplicación de código abierto</p>
+        <p>
+          <a href="https://github.com/gerardoojeda47/rutasapp" target="_blank"
+            >📂 Ver código fuente</a
+          >
+          |
+          <a href="mailto:soporte@rouwhite.com">📧 Soporte</a>
+        </p>
+      </footer>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
-
-    <script>
-      // Generar QR code simple
-      const downloadUrl =
-        "https://github.com/gerardoojeda47/rutasapp/releases/latest";
-
-      QRCode.toCanvas(
-        document.getElementById("qrcode"),
-        downloadUrl,
-        {
-          width: 200,
-          height: 200,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M,
-        },
-        function (error) {
-          if (error) {
-            console.error("Error generating QR:", error);
-            document.getElementById("qrcode").innerHTML =
-              "<p>Error generando QR</p>";
-          }
-        }
-      );
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>

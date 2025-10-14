@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+# Secrets and sensitive files
+SETUP-SECRETS.md
+android/key.jks.base64
+android/key.properties
+
+# GitHub Pages generated files
+docs/latest-*.txt

@@ -1,111 +1,109 @@
-# RouWhite - Rutas Popayán 🚌
+# 🚌 RouWhite - Rutas de Transporte Público en Popayán
 
-App móvil para consultar rutas de buses en Popayán, Colombia.
+Una aplicación móvil para consultar rutas de transporte público en Popayán, Cauca, Colombia.
 
-## 📱 Descargar APK
+## 📱 Descargar la Aplicación
 
-**Descarga la última versión:** [📱 Descargar APK](https://gerardoojeda47.github.io/rutasapp/app-release.apk)
+### 🔗 Página de Descarga
 
-## 🌐 Versión Web
+**[https://gerardoojeda47.github.io/rutasapp/](https://gerardoojeda47.github.io/rutasapp/)**
 
-**Usar en el navegador:** [🌐 Abrir Web](https://gerardoojeda47.github.io/rutasapp/)
+### 📲 Instalación Rápida
 
-## ✨ Características
+1. Visita la página de descarga
+2. Escanea el código QR con tu teléfono
+3. Descarga e instala el APK
 
-- 🗺️ **Mapas interactivos** con zoom de alta calidad
-- 🚌 **Animaciones de buses** en tiempo real
-- 📍 **Paradas y rutas** actualizadas de Popayán
-- 🔍 **Búsqueda inteligente** de destinos
-- ⭐ **Favoritos** y navegación personalizada
-- 🔄 **Actualizaciones automáticas** via GitHub Actions
+### 📦 Descarga Directa
 
-## 🚀 Deployment Automático
+También puedes descargar la última versión desde [GitHub Releases](https://github.com/gerardoojeda47/rutasapp/releases/latest).
 
-Esta app se despliega automáticamente usando GitHub Actions:
+## 🌟 Características
 
-### Para APK:
-1. Cada push a `main` genera una nueva APK
-2. Se sube automáticamente a GitHub Pages
-3. Disponible en: `https://gerardoojeda47.github.io/rutasapp/app-release.apk`
+- 🗺️ **Mapas Interactivos**: Visualiza las rutas en mapas detallados
+- 🚏 **Información de Paradas**: Encuentra paradas cercanas y rutas disponibles
+- 🧭 **Navegación GPS**: Direcciones paso a paso usando transporte público
+- 📱 **Interfaz Intuitiva**: Diseño moderno y fácil de usar
+- 🔄 **Actualizaciones Automáticas**: Sistema de distribución continua
 
-### Para Web:
-1. Cada push a `main` construye la versión web
-2. Se despliega en GitHub Pages
-3. Disponible en: `https://gerardoojeda47.github.io/rutasapp/`
+## 🛠️ Tecnologías
 
-## 🛠️ Desarrollo
-
-### Requisitos
-- Flutter SDK 3.5.0+
-- Dart 3.5.0+
-- Android SDK
-
-### Instalación
-```bash
-git clone https://github.com/gerardoojeda47/rutasapp.git
-cd rutasapp
-flutter pub get
-flutter run
-```
-
-### Estructura del Proyecto
-```
-lib/
-├── core/           # Servicios y utilidades
-├── data/           # Modelos y repositorios
-├── domain/         # Entidades y casos de uso
-├── view/           # Pantallas y widgets
-└── main.dart       # Punto de entrada
-```
-
-## 📊 Tecnologías
-
-- **Flutter** - Framework de desarrollo
-- **Firebase** - Backend y autenticación
-- **Flutter Map** - Mapas interactivos
+- **Flutter** - Framework de desarrollo móvil
+- **Dart** - Lenguaje de programación
+- **OpenStreetMap** - Mapas y datos geográficos
 - **GitHub Actions** - CI/CD automático
-- **GitHub Pages** - Hosting gratuito
+- **GitHub Pages** - Hosting de la página de distribución
 
-## 🔧 Configuración de Mapas
+## 🚀 Sistema de Distribución
 
-Para zoom de alta calidad, configura las API keys en `lib/view/paradas_pagina.dart`:
+Esta aplicación utiliza un sistema de distribución automática:
 
-```dart
-// Mapbox (recomendado)
-static const String _mapboxKey = 'TU_TOKEN_MAPBOX';
+1. **Compilación Automática**: Cada commit genera un nuevo APK
+2. **GitHub Releases**: Los APKs se publican automáticamente
+3. **Página Web**: Interfaz con código QR para descarga fácil
+4. **Versionado Automático**: Incremento automático de versiones
 
-// MapTiler (alternativa)
-static const String _mapTilerKey = 'TU_KEY_MAPTILER';
-```
+### 🔧 Para Desarrolladores
 
-### Obtener API Keys:
-- **Mapbox**: https://account.mapbox.com/access-tokens/ (50k requests/mes gratis)
-- **MapTiler**: https://cloud.maptiler.com/account/keys/ (100k tiles/mes gratis)
+Si quieres contribuir o configurar el proyecto:
 
-## 📱 Instalación de APK
+1. **Clona el repositorio**:
 
-1. Descarga el APK desde el enlace arriba
-2. En Android, ve a Configuración > Seguridad > Fuentes desconocidas
-3. Permite instalación de apps de fuentes desconocidas
-4. Instala el APK descargado
+   ```bash
+   git clone https://github.com/gerardoojeda47/rutasapp.git
+   cd rutasapp
+   ```
 
-## 🔄 Actualizaciones
+2. **Instala dependencias**:
 
-- **Automáticas**: Cada cambio en el código genera una nueva APK
-- **Manual**: Descarga desde el enlace de arriba
-- **Web**: Se actualiza automáticamente en GitHub Pages
+   ```bash
+   flutter pub get
+   ```
 
-## 📞 Soporte
+3. **Ejecuta la aplicación**:
 
-Si encuentras algún problema:
-1. Abre un [Issue](https://github.com/gerardoojeda47/rutasapp/issues)
-2. Incluye detalles del error y dispositivo
-3. Adjunta capturas de pantalla si es necesario
+   ```bash
+   flutter run
+   ```
+
+4. **Compila para release**:
+   ```bash
+   flutter build apk --release
+   ```
+
+### 📋 Configuración de CI/CD
+
+El proyecto incluye GitHub Actions para:
+
+- ✅ Compilación automática de APK
+- ✅ Creación de releases en GitHub
+- ✅ Actualización de la página de distribución
+- ✅ Generación automática de códigos QR
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+Este proyecto es de código abierto. Ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## 🤝 Contribuir
+
+Las contribuciones son bienvenidas. Por favor:
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📞 Contacto
+
+- **Desarrollador**: Gerardo Ojeda
+- **Email**: soporte@rouwhite.com
+- **GitHub**: [@gerardoojeda47](https://github.com/gerardoojeda47)
+
+## 🏙️ Sobre Popayán
+
+Popayán es la capital del departamento del Cauca en Colombia, conocida como "La Ciudad Blanca" por su arquitectura colonial. Esta aplicación busca mejorar la movilidad urbana proporcionando información actualizada sobre el transporte público.
 
 ---
 
-**Desarrollado con ❤️ para Popayán, Colombia**
+**¿Problemas con la instalación?** Visita nuestra [página de descarga](https://gerardoojeda47.github.io/rutasapp/) para instrucciones detalladas.
