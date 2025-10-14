@@ -17,11 +17,11 @@ dependencies:
   lottie: ^3.2.0
   flutter_animate: ^4.5.2
 
-  # Maps and Location
-  flutter_map: ^8.1.0
-  latlong2: ^0.9.1
-  flutter_polyline_points: ^3.1.0
-  geolocator: ^14.0.2
+  # Maps and Location - Stable CI/CD versions
+  flutter_map: 6.1.0 # Versión más estable para CI
+  latlong2: 0.8.1 # Compatible con flutter_map 6.x
+  flutter_polyline_points: ^2.0.0 # Versión más estable
+  geolocator: 9.0.2 # Versión estable sin problemas de CI
 
   # State Management
   provider: ^6.1.5
@@ -75,9 +75,11 @@ flutter:
   assets:
     - assets/animaciones/bus.json
 
-# Dependency overrides to resolve version conflicts
+# Dependency overrides for CI/CD stability
 dependency_overrides:
-  # Use latest compatible versions
-  geolocator_android: 5.0.1
-  flutter_map: 8.1.0
-  latlong2: 0.9.1
+  # Stable versions that work in CI environments
+  geolocator_android: 4.4.0 # Versión más estable para CI
+  flutter_map: 6.1.0
+  latlong2: 0.8.1
+  geolocator: 9.0.2
+  geolocator_platform_interface: 4.0.6
