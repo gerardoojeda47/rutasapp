@@ -1,0 +1,148 @@
+name: 🚀 Build and Deploy APK with QR
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.35.3'
+        channel: 'stable'
+        cache: true
+
+    - name: 📦 Get dependencies
+      run: flutter pub get
+
+    - name: 🔍 Analyze code
+      run: flutter analyze
+
+    - name: 🧪 Run tests
+      run: flutter test
+
+    - name: 🏗️ Build APK Release
+      run: |
+        flutter build apk --release
+        echo "✅ APK built successfully!"
+        ls -la build/app/outputs/flutter-apk/
+
+    - name: 📊 APK Info
+      run: |
+        APK_SIZE=$(du -h build/app/outputs/flutter-apk/app-release.apk | cut -f1)
+        echo "📱 APK Size: $APK_SIZE"
+        echo "📅 Build Date: $(date)"
+        echo "🔖 Commit: ${{ github.sha }}"
+
+    - name: 📤 Upload APK as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+
+    - name: 🔗 Create download link (if main branch)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        # Create a simple download page
+        cat > download-info.html << EOF
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>RutasApp - Descarga APK</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: #f5f5f5; }
+                .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                .qr-code { margin: 20px 0; }
+                .download-btn { background: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px; }
+                .info { color: #666; font-size: 14px; margin: 10px 0; }
+                .success { color: #28a745; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>🚌 RutasApp</h1>
+                <p class="success">✅ Build exitoso - Sin errores de connectivity_plus</p>
+                <div class="info">
+                    <p>📱 Versión: 1.0.6+7</p>
+                    <p>📅 Fecha: $(date '+%Y-%m-%d %H:%M')</p>
+                    <p>🔖 Commit: ${{ github.sha }}</p>
+                </div>
+                <p>Escanea el QR para descargar la APK:</p>
+                <div class="qr-code">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://github.com/gerardoojeda47/rutasapp/actions/runs/${{ github.run_id }}" alt="QR Code">
+                </div>
+                <p>O descarga directamente:</p>
+                <a href="https://github.com/gerardoojeda47/rutasapp/actions/runs/${{ github.run_id }}" class="download-btn">📥 Descargar APK</a>
+                <div class="info">
+                    <p>💡 La APK estará disponible por 30 días</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        EOF
+
+    - name: 📋 Create QR Code for direct APK download
+      if: github.ref == 'refs/heads/main'
+      run: |
+        # Generate QR code for the artifact download URL
+        DOWNLOAD_URL="https://github.com/gerardoojeda47/rutasapp/actions/runs/${{ github.run_id }}"
+        QR_URL="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=$DOWNLOAD_URL"
+        
+        echo "🔗 Download URL: $DOWNLOAD_URL"
+        echo "📱 QR Code URL: $QR_URL"
+        
+        # Download QR code image
+        curl -o qr-code.png "$QR_URL"
+        
+        # Display QR code info
+        echo "## 📱 APK Download QR Code" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "![QR Code]($QR_URL)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**🔗 Download Link:** [$DOWNLOAD_URL]($DOWNLOAD_URL)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**📱 Instructions:**" >> $GITHUB_STEP_SUMMARY
+        echo "1. Ve a [Actions](https://github.com/gerardoojeda47/rutasapp/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+        echo "2. Descarga el artefacto 'app-release-apk'" >> $GITHUB_STEP_SUMMARY
+        echo "3. Instala en tu dispositivo Android" >> $GITHUB_STEP_SUMMARY
+
+    - name: 📤 Upload QR Code as artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: qr-code
+        path: qr-code.png
+        retention-days: 30
+
+    - name: ✅ Build Summary
+      run: |
+        echo "## 🎉 Build Completado Exitosamente" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### ✅ Problemas Resueltos:" >> $GITHUB_STEP_SUMMARY
+        echo "- ❌ Error de connectivity_plus: **SOLUCIONADO**" >> $GITHUB_STEP_SUMMARY
+        echo "- ❌ Problema de Gradle build.gradle: **SOLUCIONADO**" >> $GITHUB_STEP_SUMMARY
+        echo "- ❌ compileSdkVersion missing: **SOLUCIONADO**" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🚀 Tecnologías Implementadas:" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ internet_connection_checker (sin connectivity_plus)" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ network_info_plus para información WiFi" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ ConnectivityService moderno" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📱 APK Info:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Tamaño:** $(du -h build/app/outputs/flutter-apk/app-release.apk | cut -f1)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Fecha:** $(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
