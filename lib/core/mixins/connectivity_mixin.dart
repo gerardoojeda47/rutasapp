@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import '../services/connectivity_service.dart';
+import '../services/network_monitor_service.dart';
 
 /// Mixin que proporciona funcionalidades de conectividad a los widgets
 /// Reemplaza el uso directo de connectivity_plus con tecnologías modernas
 mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
-  final ConnectivityService _connectivityService = ConnectivityService();
+  final NetworkMonitorService _networkService = NetworkMonitorService();
   StreamSubscription<bool>? _connectivitySubscription;
   bool _isConnected = true;
   bool _isInitialized = false;
@@ -12,8 +13,8 @@ mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
   /// Estado actual de conectividad
   bool get isConnected => _isConnected;
 
-  /// Servicio de conectividad
-  ConnectivityService get connectivityService => _connectivityService;
+  /// Servicio de monitoreo de red
+  NetworkMonitorService get networkService => _networkService;
 
   @override
   void initState() {
@@ -32,13 +33,13 @@ mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
     if (_isInitialized) return;
     
     try {
-      await _connectivityService.initialize();
+      await _networkService.initialize();
       
       // Verificar estado inicial
-      _isConnected = await _connectivityService.hasInternetConnection();
+      _isConnected = await _networkService.hasInternetConnection();
       
       // Escuchar cambios de conectividad
-      _connectivitySubscription = _connectivityService.connectivityStream.listen(
+      _connectivitySubscription = _networkService.networkStatusStream.listen(
         _onConnectivityChanged,
         onError: (error) {
           debugPrint('❌ Error en connectivity stream: $error');
@@ -77,7 +78,7 @@ mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
   Future<bool> checkConnectionWithTimeout({
     Duration timeout = const Duration(seconds: 5),
   }) async {
-    return await _connectivityService.hasInternetConnectionWithTimeout(
+    return await _networkService.hasInternetConnectionWithTimeout(
       timeout: timeout,
     );
   }
@@ -88,7 +89,7 @@ mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
     VoidCallback? onNoConnection,
     bool showSnackBar = true,
   }) async {
-    final hasConnection = await _connectivityService.hasInternetConnection();
+    final hasConnection = await _networkService.hasInternetConnection();
     
     if (!hasConnection) {
       if (showSnackBar && mounted) {
@@ -123,7 +124,7 @@ mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
 
   /// Verifica conexión y actualiza el estado
   Future<void> _checkConnectionAndRefresh() async {
-    final hasConnection = await _connectivityService.hasInternetConnection();
+    final hasConnection = await _networkService.hasInternetConnection();
     if (mounted) {
       setState(() {
         _isConnected = hasConnection;
@@ -133,7 +134,7 @@ mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
 
   /// Obtiene información detallada de la red
   Future<Map<String, dynamic>> getNetworkInfo() async {
-    return await _connectivityService.getNetworkInfo();
+    return await _networkService.getNetworkInfo();
   }
 
   // Métodos que pueden ser sobrescritos por el widget que usa el mixin
@@ -162,23 +163,23 @@ mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
 
 /// Widget que muestra el estado de conectividad
 class ConnectivityStatusWidget extends StatelessWidget {
-  final ConnectivityService connectivityService;
+  final NetworkMonitorService networkService;
   final Widget Function(bool isConnected, String? connectionType) builder;
 
   const ConnectivityStatusWidget({
     super.key,
-    required this.connectivityService,
+    required this.networkService,
     required this.builder,
   });
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<bool>(
-      stream: connectivityService.connectivityStream,
-      initialData: connectivityService.isConnected,
+      stream: networkService.networkStatusStream,
+      initialData: networkService.isConnected,
       builder: (context, snapshot) {
         final isConnected = snapshot.data ?? false;
-        final connectionType = connectivityService.connectionType;
+        final connectionType = networkService.connectionType;
         
         return builder(isConnected, connectionType);
       },
@@ -188,14 +189,14 @@ class ConnectivityStatusWidget extends StatelessWidget {
 
 /// Indicador visual de conectividad
 class ConnectivityIndicator extends StatelessWidget {
-  final ConnectivityService connectivityService;
+  final NetworkMonitorService networkService;
   final double size;
   final Color? connectedColor;
   final Color? disconnectedColor;
 
   const ConnectivityIndicator({
     super.key,
-    required this.connectivityService,
+    required this.networkService,
     this.size = 16.0,
     this.connectedColor = Colors.green,
     this.disconnectedColor = Colors.red,
@@ -204,8 +205,8 @@ class ConnectivityIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<bool>(
-      stream: connectivityService.connectivityStream,
-      initialData: connectivityService.isConnected,
+      stream: networkService.networkStatusStream,
+      initialData: networkService.isConnected,
       builder: (context, snapshot) {
         final isConnected = snapshot.data ?? false;
         
