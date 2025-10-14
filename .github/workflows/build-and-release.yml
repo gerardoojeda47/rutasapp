@@ -26,21 +26,37 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.35.3"
+          flutter-version: "3.24.3"
           channel: "stable"
+
+      - name: Accept Android SDK licenses
+        run: |
+          yes | flutter doctor --android-licenses || true
 
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Clean build
+        run: flutter clean
+
+      - name: Get dependencies again
+        run: flutter pub get
+
       - name: Build APK (Debug - no keystore needed)
-        run: flutter build apk --debug
+        run: flutter build apk --debug --no-tree-shake-icons
+
+      - name: Verify APK exists
+        run: |
+          ls -la build/app/outputs/flutter-apk/
+          file build/app/outputs/flutter-apk/app-debug.apk
 
       - name: Rename APK for release
         run: |
-          cp build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/RouWhite-v${{ github.run_number }}.apk
+          mkdir -p release
+          cp build/app/outputs/flutter-apk/app-debug.apk release/RouWhite-v${{ github.run_number }}.apk
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
           name: RouWhite v${{ github.run_number }}
@@ -48,21 +64,29 @@ jobs:
             🚀 **Nueva versión de RouWhite disponible!**
 
             📱 **Descarga:** https://gerardoojeda47.github.io/rutasapp/
-            📅 **Fecha:** $(date +'%Y-%m-%d %H:%M')
+            📅 **Fecha:** ${{ github.event.head_commit.timestamp }}
             🔢 **Versión:** v${{ github.run_number }}
             📦 **Tipo:** Debug APK (para testing)
+            🔧 **Commit:** ${{ github.sha }}
 
             ## 📲 Instalación:
-            1. Descarga el APK
+            1. Descarga el APK desde los assets de esta release
             2. Habilita "Fuentes desconocidas" en Android
             3. Instala la aplicación
 
             ## 🗺️ Características:
             - Rutas de transporte público en Popayán
-            - Mapas interactivos
-            - Información de paradas
-            - Navegación GPS
+            - Mapas interactivos con flutter_map 8.1.0
+            - Información de paradas en tiempo real
+            - Navegación GPS mejorada
+            - Compatibilidad con Android SDK 36
+
+            ## 🔧 Correcciones en esta versión:
+            - ✅ Errores de compilación corregidos
+            - ✅ Dependencias actualizadas y compatibles
+            - ✅ API de geolocator actualizada
+            - ✅ Problemas de const LatLng resueltos
           files: |
-            build/app/outputs/flutter-apk/RouWhite-v${{ github.run_number }}.apk
+            release/RouWhite-v${{ github.run_number }}.apk
           draft: false
           prerelease: false
