@@ -69,7 +69,6 @@ dev_dependencies:
   json_annotation: ^4.8.1
   json_serializable: ^6.7.1
 
-
 flutter:
   uses-material-design: true
 
@@ -78,7 +77,7 @@ flutter:
 
 # Dependency overrides to resolve version conflicts
 dependency_overrides:
-  # Override geolocator_android to use a compatible version
+  # Use latest compatible versions
   geolocator_android: 5.0.1
-  # Override flutter_map to use exact compatible version
   flutter_map: 8.1.0
+  latlong2: 0.9.1

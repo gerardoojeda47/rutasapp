@@ -1,152 +1,134 @@
 # Implementation Plan
 
-- [x] 1. Analizar y respaldar archivos problemáticos
+- [x] 1. Corregir configuración de SDK y versiones críticas
 
+  - Downgrade compileSdk y targetSdk de 36 a 34 en build.gradle.kts
+  - Cambiar NDK version de 27.x a 25.1.8937393 para estabilidad
+  - Actualizar Gradle wrapper a versión 8.3 estable
+  - _Requirements: 1.1, 1.2, 4.1_
 
+- [x] 2. Resolver conflictos de dependencias
 
-  - Crear backup de paradas_pagina.dart antes de modificaciones
-  - Identificar líneas específicas con código corrupto (1326-1348)
-  - Documentar variables no definidas que necesitan declaración
-  - _Requirements: 1.1, 2.1_
+  - [ ] 2.1 Actualizar dependency overrides en pubspec.yaml
 
+    - Cambiar geolocator_android a versión 4.1.9
+    - Downgrade flutter_map de 8.1.0 a 7.0.2
 
+    - Agregar latlong2: 0.8.2 para compatibilidad
+    - _Requirements: 3.1, 3.2_
 
+  - [ ] 2.2 Limpiar y regenerar dependencias
 
+    - Ejecutar flutter clean para limpiar cache
+    - Ejecutar flutter pub get para reinstalar dependencias
 
+    - Verificar árbol de dependencias con flutter pub deps
+    - _Requirements: 3.3, 3.4_
 
-- [x] 2. Corregir código corrupto en paradas_pagina.dart
+- [ ] 3. Verificar y corregir configuración de keystore
 
+  - [ ] 3.1 Validar archivos de firma existentes
 
+    - Verificar existencia de android/key.jks
+    - Comprobar configuración en android/key.properties
+    - Validar credenciales de keystore
+    - _Requirements: 2.1, 2.2_
 
+  - [ ] 3.2 Regenerar keystore si es necesario
+    - Crear nuevo keystore con keytool si el actual está corrupto
+    - Actualizar key.properties con nuevas credenciales
+    - Configurar signing config en build.gradle.kts
+    - _Requirements: 2.3, 2.4_
 
+- [ ] 4. Optimizar configuración de Gradle
 
-  - [ ] 2.1 Limpiar código malformado en líneas 1326-1348
+  - [ ] 4.1 Actualizar configuraciones de compilación
 
-    - Remover sintaxis mezclada y código corrupto
+    - Cambiar JavaVersion de VERSION_11 a VERSION_1_8
+    - Configurar opciones de memoria para Gradle
+    - Optimizar configuración de dexOptions
+    - _Requirements: 4.1, 4.2_
 
+  - [ ] 4.2 Limpiar cache y rebuilds
+    - Ejecutar ./gradlew clean en directorio android
+    - Eliminar carpetas .gradle y build
+    - Regenerar wrapper de Gradle
+    - _Requirements: 4.3, 4.4_
 
-    - Eliminar tokens inesperados y declaraciones mal formadas
-    - Limpiar definiciones duplicadas de \_buildLeyendaItem
-    - _Requirements: 2.1, 2.2, 2.3_
+- [ ] 5. Validar configuración de Firebase
 
+  - [ ] 5.1 Verificar google-services.json
 
-  - [ ] 2.2 Definir variables faltantes en la clase
+    - Comprobar que el archivo esté en android/app/
+    - Validar que package_name coincida con applicationId
+    - Verificar configuración de Firebase plugins
+    - _Requirements: 5.1, 5.2_
 
-    - Declarar \_fadeAnimation como AnimationController
+  - [ ] 5.2 Corregir dependencias de Firebase
+    - Verificar versión de firebase_core en pubspec.yaml
+    - Comprobar compatibilidad con otras dependencias
+    - Actualizar google-services plugin si es necesario
+    - _Requirements: 5.3, 5.4_
 
-    - Declarar \_pulseAnimation como AnimationController
-    - Declarar \_mapController como MapController nullable
-    - Declarar \_isLoading como bool con valor inicial false
 
+- [ ] 6. Ejecutar build de prueba y validación
 
-    - Declarar \_showSatellite como bool con valor inicial false
+  - [ ] 6.1 Probar build debug
 
+    - Ejecutar flutter build apk --debug
+    - Verificar que no hay errores de compilación
 
-    - _Requirements: 3.1, 3.2, 3.4_
 
-  - [ ] 2.3 Implementar métodos faltantes
-    - Implementar método \_centrarMapa() con funcionalidad básica
-    - Implementar método \_toggleCapas() para cambio de capas
-    - Corregir asignaciones a variables final (proximoBus)
 
-    - _Requirements: 3.3, 2.3_
+    - Validar que el APK se genera correctamente
+    - _Requirements: 1.1, 6.1_
 
-- [ ] 3. Eliminar definiciones duplicadas
+  - [ ] 6.2 Probar build release
+    - Ejecutar flutter build apk --release
+    - Verificar firma del APK generado
+    - Probar instalación en dispositivo de prueba
+    - _Requirements: 1.2, 2.3, 6.2_
 
+- [ ] 7. Implementar validaciones automáticas
 
+  - [ ] 7.1 Crear script de validación pre-build
 
+    - Verificar configuración de dependencias
+    - Validar archivos de keystore antes del build
+    - Comprobar configuración de Firebase
+    - _Requirements: 6.1, 6.3_
 
-  - [x] 3.1 Corregir definiciones duplicadas de clases
+  - [ ] 7.2 Configurar checks de CI/CD
+    - Actualizar GitHub Actions para usar configuraciones corregidas
+    - Agregar validaciones de build en workflow
+    - Configurar notificaciones de errores
+    - _Requirements: 6.2, 6.4_
 
+- [ ]\* 8. Testing y documentación
 
+  - [ ]\* 8.1 Crear tests de validación de build
 
-    - Mantener una sola definición válida de ParadaInfo
-    - Mantener una sola definición válida de TipoParada enum
-    - Remover definiciones duplicadas al final del archivo
-    - _Requirements: 4.1, 4.2, 4.3_
+    - Escribir tests para verificar configuración de Gradle
+    - Crear tests para validar dependencias
+    - Implementar tests de integración para Firebase
+    - _Requirements: 6.1, 6.2_
 
+  - [ ]\* 8.2 Documentar soluciones y troubleshooting
+    - Crear guía de troubleshooting para errores comunes
+    - Documentar proceso de regeneración de keystore
+    - Escribir procedimientos de validación de build
+    - _Requirements: 6.3, 6.4_
 
+- [ ] 9. Corregir errores de compatibilidad con flutter_map 7.0.2
 
-  - [x] 3.2 Limpiar métodos duplicados
+  - [ ] 9.1 Remover declaraciones const de constructores LatLng
 
+    - Quitar const de todas las instancias de LatLng en archivos de vista
+    - Actualizar archivos de datos de barrios y rutas
+    - Corregir archivos de configuración y servicios
+    - _Requirements: 3.1, 3.2_
 
-    - Mantener una sola definición correcta de \_buildLeyendaItem
-
-
-    - Remover definiciones malformadas de métodos
-    - Asegurar que todos los métodos tengan sintaxis válida
-    - _Requirements: 4.4, 2.2_
-
-- [x] 4. Corregir imports relativos
-
-
-
-  - [ ] 4.1 Actualizar imports en archivos de ejemplo
-
-
-
-    - Cambiar imports relativos en example/intelligent_prediction_example.dart
-
-
-    - Usar imports de paquete en lugar de rutas relativas
-    - Verificar que todos los imports funcionen correctamente
-    - _Requirements: 5.1_
-
-  - [x] 4.2 Actualizar imports en archivos de test
-
-    - Corregir imports relativos en todos los archivos de test
-    - Cambiar imports relativos por imports de paquete
-    - Verificar que las pruebas sigan funcionando
-    - _Requirements: 5.1_
-
-
-
-
-
-
-- [ ] 5. Corregir métodos deprecados
-
-  - [ ] 5.1 Actualizar Radio widgets deprecados
-
-    - Reemplazar groupValue y onChanged en Radio por RadioGroup
-
-
-    - Actualizar todos los Radio widgets en perfil_usuario_pagina.dart
-    - Verificar que la funcionalidad se mantenga
-    - _Requirements: 5.2_
-
-  - [ ] 5.2 Actualizar otros métodos deprecados
-    - Cambiar activeColor por activeThumbColor en Switch widgets
-    - Actualizar cualquier otro método deprecado encontrado
-    - Verificar compatibilidad con la versión actual de Flutter
-    - _Requirements: 5.2_
-
-- [ ] 6. Limpiar warnings de calidad de código
-
-  - [ ] 6.1 Remover uso de print en producción
-
-    - Reemplazar print() por logging apropiado en archivos de ejemplo
-    - Remover print() de archivos de test o usar debugPrint
-    - Configurar logging apropiado para la aplicación
-    - _Requirements: 5.3_
-
-  - [ ] 6.2 Aplicar mejores prácticas de Dart
-    - Agregar const a variables que pueden ser constantes
-    - Corregir convenciones de nomenclatura si es necesario
-    - Remover elementos no utilizados marcados como unused_element
-    - _Requirements: 5.4_
-
-- [ ] 7. Ejecutar pruebas y validación final
-
-  - [ ] 7.1 Verificar compilación sin errores críticos
-
-    - Ejecutar flutter analyze y confirmar reducción significativa de errores
-    - Ejecutar flutter build para verificar compilación exitosa
-    - Corregir cualquier error crítico restante
-    - _Requirements: 1.1, 1.2_
-
-  - [ ] 7.2 Probar funcionalidad de la aplicación
-    - Iniciar aplicación con flutter run y verificar que no crashee
-    - Probar navegación a página de paradas sin errores
-    - Verificar que las funcionalidades básicas funcionen
-    - _Requirements: 1.2, 1.3_
+  - [ ] 9.2 Corregir parámetros obsoletos de TileLayer
+    - Remover parámetro tileDimension que no existe en flutter_map 7.0.2
+    - Actualizar configuración de capas de mapa
+    - _Requirements: 3.1, 3.2_

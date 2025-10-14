@@ -1,202 +1,309 @@
-# Design Document
+# Design Document - Corrección de Errores de Compilación
 
 ## Overview
 
-La aplicación RouWhite tiene más de 100 errores críticos de compilación que se originan principalmente en el archivo `lib/view/paradas_pagina.dart` que contiene código corrupto y sintaxis mezclada. Los errores incluyen variables no definidas, definiciones duplicadas, sintaxis incorrecta, y problemas estructurales graves. También hay problemas menores en otros archivos como imports relativos, métodos deprecados, y uso de print. El diseño se enfoca en corregir sistemáticamente estos problemas manteniendo la funcionalidad existente.
+Este documento presenta el diseño de soluciones para corregir los errores de compilación identificados en la aplicación Flutter "rouwhite". Los errores principales incluyen fallos en la tarea `assembleRelease`, problemas de configuración de Gradle, conflictos de dependencias, y configuración incorrecta de Firebase.
+
+**Estrategia Principal:** Diagnóstico sistemático y corrección incremental de cada componente del sistema de build.
 
 ## Architecture
 
-### Problemas Principales Identificados
+```mermaid
+graph TB
+    A[Análisis de Errores] --> B[Corrección de Gradle]
+    B --> C[Resolución de Dependencias]
+    C --> D[Configuración de Keystore]
+    D --> E[Validación de Firebase]
+    E --> F[Testing de Build]
+    F --> G[Optimización Final]
 
-Los errores de análisis muestran que hay problemas graves en múltiples archivos:
-
-1. **Código corrupto en paradas_pagina.dart**: Sintaxis mezclada, líneas 1326-1348 con código malformado
-2. **Variables no definidas**: \_fadeAnimation, \_isLoading, \_mapController, \_pulseAnimation no están declaradas
-3. **Definiciones duplicadas**: Múltiples definiciones de \_buildLeyendaItem, ParadaInfo, TipoParada
-4. **Sintaxis incorrecta**: Métodos const mal definidos, parámetros incorrectos, tokens inesperados
-5. **Variables final no inicializadas**: Campos marcados como final sin inicialización
-6. **Imports relativos**: Uso de imports relativos en lugar de imports de paquete
-7. **Métodos deprecados**: Uso de groupValue y onChanged en Radio widgets
-8. **Print en producción**: Uso extensivo de print() en lugar de logging apropiado
-
-### Estrategia de Corrección
-
-1. **Análisis y backup**: Identificar secciones problemáticas y crear respaldos
-2. **Limpieza de código corrupto**: Remover código malformado en paradas_pagina.dart
-3. **Definición de variables faltantes**: Declarar todas las variables no definidas
-4. **Eliminación de duplicados**: Remover definiciones duplicadas manteniendo las correctas
-5. **Corrección de sintaxis**: Arreglar todos los errores de sintaxis de Dart
-6. **Actualización de imports**: Cambiar imports relativos por imports de paquete
-7. **Actualización de métodos deprecados**: Reemplazar métodos obsoletos
-8. **Limpieza de warnings**: Remover prints y aplicar mejores prácticas
+    H[Gradle Wrapper] --> B
+    I[pubspec.yaml] --> C
+    J[build.gradle.kts] --> B
+    K[google-services.json] --> E
+    L[key.properties] --> D
+```
 
 ## Components and Interfaces
 
-### 1. ParadasPagina Class (lib/view/paradas_pagina.dart)
+### 1. Gradle Configuration Manager
 
-**Estado Actual**: Código corrupto con sintaxis mezclada y variables no definidas
-**Acción**: Limpiar código corrupto y definir variables faltantes
+**Responsabilidades:**
 
-**Variables faltantes a definir**:
+- Actualizar versiones de Gradle y AGP (Android Gradle Plugin)
+- Configurar opciones de compilación optimizadas
+- Resolver conflictos de versiones de herramientas
 
-```dart
-late AnimationController _fadeAnimation;
-late AnimationController _pulseAnimation;
-MapController? _mapController;
-bool _isLoading = false;
-bool _showSatellite = false;
+**Archivos Afectados:**
+
+- `android/gradle/wrapper/gradle-wrapper.properties`
+- `android/build.gradle.kts`
+- `android/app/build.gradle.kts`
+
+**Configuraciones Clave:**
+
+```kotlin
+// Versiones estables recomendadas
+compileSdk = 34  // Cambiar de 36 a 34 para estabilidad
+targetSdk = 34   // Cambiar de 36 a 34
+ndkVersion = "25.1.8937393"  // Versión más estable
 ```
 
-**Métodos duplicados a limpiar**:
+### 2. Dependency Resolution System
 
-- \_buildLeyendaItem (múltiples definiciones incorrectas)
-- Definiciones corruptas en líneas 1326-1348
+**Problema Identificado:** Conflictos entre versiones de dependencias, especialmente con geolocator y flutter_map.
 
-### 2. ParadaInfo Class
+**Solución:**
 
-**Estado Actual**: Definición duplicada
-**Acción**: Mantener una sola definición correcta
+- Implementar dependency overrides específicos
+- Actualizar dependencias a versiones compatibles
+- Resolver conflictos de transitive dependencies
 
-### 3. TipoParada Enum
+**Configuración en pubspec.yaml:**
 
-**Estado Actual**: Definición duplicada
-**Acción**: Mantener una sola definición correcta
-
-### 4. Archivos con Imports Relativos
-
-**Archivos afectados**:
-
-- example/intelligent_prediction_example.dart
-- test/core/services/bus_companies_test.dart
-- test/core/services/smart_route_assistant_test.dart
-- test/data/popayan_neighborhoods_data_test.dart
-- test/data/popayan_places_integration_test.dart
-- test/view/company_colors_test.dart
-- test/view/smart_search_neighborhoods_test.dart
-
-**Acción**: Cambiar imports relativos por imports de paquete
-
-## Data Models
-
-### Estructura de Estado en ParadasPagina
-
-**Variables de animación**:
-
-```dart
-late AnimationController _fadeAnimation;
-late AnimationController _pulseAnimation;
+```yaml
+dependency_overrides:
+  geolocator_android: 4.1.9 # Versión más estable
+  flutter_map: 7.0.2 # Versión compatible con SDK actual
+  latlong2: 0.8.2 # Compatible con flutter_map 7.x
 ```
 
-**Variables de control de mapa**:
+### 3. Keystore Management System
 
-```dart
-MapController? _mapController;
-bool _showSatellite = false;
+**Problema Actual:** Configuración de firma puede estar causando errores en assembleRelease.
+
+**Solución:**
+
+- Verificar existencia y validez del keystore
+- Regenerar keystore si es necesario
+- Configurar key.properties correctamente
+- Implementar fallback a debug signing si es necesario
+
+**Estructura de Archivos:**
+
+```
+android/
+├── key.jks (keystore file)
+├── key.properties (credentials)
+└── app/build.gradle.kts (signing config)
 ```
 
-**Variables de estado**:
+### 4. Firebase Integration Validator
 
-```dart
-bool _isLoading = false;
-```
+**Responsabilidades:**
 
-### Clases de Datos
+- Validar google-services.json
+- Verificar configuración de Firebase plugins
+- Resolver conflictos con otras dependencias
 
-**ParadaInfo** (una sola definición):
+**Validaciones:**
 
-```dart
-class ParadaInfo {
-  final String id;
-  final String nombre;
-  final LatLng coordenadas;
-  final TipoParada tipo;
-  // otros campos necesarios
+- Archivo google-services.json en ubicación correcta
+- Package name coincide con applicationId
+- Versiones de Firebase SDK compatibles
+
+### 5. Build Optimization Engine
+
+**Configuraciones de Rendimiento:**
+
+```kotlin
+android {
+    // Optimizaciones de memoria
+    dexOptions {
+        javaMaxHeapSize = "4g"
+    }
+
+    // Configuración de compilación
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
 ```
 
-**TipoParada** (una sola definición):
+## Data Models
+
+### Build Configuration
 
 ```dart
-enum TipoParada {
-  principal,
-  secundaria,
-  temporal
+class BuildConfiguration {
+  final String compileSdk;
+  final String targetSdk;
+  final String minSdk;
+  final String ndkVersion;
+  final String gradleVersion;
+  final String agpVersion;
+  final Map<String, String> dependencyOverrides;
+}
+```
+
+### Error Diagnostic
+
+```dart
+class BuildError {
+  final String errorType;
+  final String errorMessage;
+  final String suggestedFix;
+  final List<String> affectedFiles;
+  final ErrorSeverity severity;
+}
+
+enum ErrorSeverity {
+  critical,    // Bloquea el build completamente
+  warning,     // Puede causar problemas
+  info         // Información adicional
 }
 ```
 
 ## Error Handling
 
-### Tipos de Errores a Corregir
+### Gradle Build Failures
 
-1. **Errores Críticos en paradas_pagina.dart**
+**Error Común:** `assembleRelease` falla con exit code 1
 
-   - `assignment_to_final`: Asignación a variable final
-   - `expected_token`: Tokens faltantes (punto y coma)
-   - `missing_const_final_var_or_type`: Variables sin declaración de tipo
-   - `expected_class_member`: Código fuera de contexto de clase
-   - `final_not_initialized_constructor`: Variables final sin inicializar
-   - `missing_method_parameters`: Métodos sin parámetros
-   - `invalid_constructor_name`: Nombres de constructor incorrectos
-   - `undefined_identifier`: Variables no definidas
-   - `duplicate_definition`: Definiciones duplicadas
+**Diagnóstico:**
 
-2. **Errores de Imports**
+1. Verificar logs de Gradle para identificar causa específica
+2. Comprobar configuración de signing
+3. Validar dependencias y versiones
+4. Revisar configuración de ProGuard/R8
 
-   - `avoid_relative_lib_imports`: Imports relativos en lugar de paquete
+**Soluciones:**
 
-3. **Errores de Métodos Deprecados**
+- Limpiar cache de Gradle: `./gradlew clean`
+- Regenerar wrapper: `gradle wrapper --gradle-version 8.3`
+- Actualizar AGP a versión compatible
 
-   - `deprecated_member_use`: groupValue y onChanged en Radio
-   - `deprecated_member_use`: activeColor en Switch
+### Dependency Conflicts
 
-4. **Warnings de Calidad**
-   - `avoid_print`: Uso de print en producción
-   - `prefer_const_declarations`: Variables que pueden ser const
-   - `unused_element`: Elementos no utilizados
+**Error Común:** Version conflicts entre dependencias
 
-### Estrategia de Manejo
+**Estrategia de Resolución:**
 
-1. **Identificación**: Usar `flutter analyze` para identificar todos los errores
-2. **Priorización**: Corregir errores críticos primero (sintaxis, tipos)
-3. **Validación**: Verificar cada corrección individualmente
-4. **Pruebas**: Ejecutar análisis después de cada grupo de correcciones
+1. Identificar dependencias conflictivas
+2. Aplicar dependency overrides específicos
+3. Actualizar a versiones compatibles
+4. Usar `flutter pub deps` para verificar árbol de dependencias
+
+### Keystore Issues
+
+**Errores Posibles:**
+
+- Keystore file not found
+- Invalid keystore password
+- Key alias not found
+
+**Soluciones:**
+
+- Verificar existencia de archivos
+- Regenerar keystore si es necesario
+- Configurar fallback a debug signing
 
 ## Testing Strategy
 
-### Fases de Prueba
+### Build Validation Tests
 
-1. **Análisis Estático**
+```bash
+# Test básico de compilación
+flutter clean
+flutter pub get
+flutter build apk --debug
 
-   - Ejecutar `flutter analyze` después de cada corrección
-   - Objetivo: 0 errores críticos
+# Test de release build
+flutter build apk --release
 
-2. **Compilación**
+# Test de signing
+jarsigner -verify -verbose -certs app-release.apk
+```
 
-   - Ejecutar `flutter build` para verificar compilación
-   - Objetivo: Compilación exitosa
+### Dependency Validation
 
-3. **Pruebas de Funcionalidad**
+```bash
+# Verificar dependencias
+flutter pub deps
+flutter pub outdated
 
-   - Verificar búsqueda de lugares
-   - Verificar filtrado por categoría
-   - Verificar navegación a detalles
+# Analizar conflictos
+flutter pub deps --style=compact
+```
 
-4. **Pruebas de Integración**
-   - Verificar que la aplicación inicie correctamente
-   - Verificar que todas las páginas funcionen
-   - Verificar que no haya crashes
+### Firebase Integration Test
 
-### Criterios de Éxito
+```bash
+# Verificar configuración Firebase
+flutter packages pub run build_runner build
+```
 
-- ✅ `flutter analyze` sin errores críticos
-- ✅ `flutter run` inicia la aplicación
-- ✅ Búsqueda de lugares funciona
-- ✅ Navegación entre páginas funciona
-- ✅ No hay crashes durante uso normal
+## Implementation Phases
 
-### Herramientas de Validación
+### Phase 1: Immediate Fixes (Crítico)
 
-- **Flutter Analyzer**: Para errores de sintaxis y tipos
-- **Dart Formatter**: Para formateo consistente del código
-- **Hot Reload**: Para pruebas rápidas durante desarrollo
-- **Debug Console**: Para identificar errores en tiempo de ejecución
+1. **Downgrade SDK versions** de 36 a 34 para estabilidad
+2. **Fix dependency overrides** para resolver conflictos
+3. **Verify keystore configuration** y regenerar si es necesario
+4. **Clean and rebuild** todo el proyecto
+
+### Phase 2: Configuration Optimization
+
+1. **Update Gradle wrapper** a versión estable
+2. **Optimize build.gradle** configurations
+3. **Implement proper ProGuard rules** si es necesario
+4. **Configure build variants** para diferentes ambientes
+
+### Phase 3: Validation and Monitoring
+
+1. **Implement build validation scripts**
+2. **Add pre-commit hooks** para detectar errores temprano
+3. **Configure CI/CD health checks**
+4. **Document troubleshooting procedures**
+
+## Security Considerations
+
+### Keystore Security
+
+- **Never commit keystore files** to version control
+- **Use environment variables** for sensitive data
+- **Implement keystore backup** strategy
+- **Rotate keys periodically** para seguridad
+
+### Build Security
+
+- **Validate all dependencies** antes de usar
+- **Use official repositories** solamente
+- **Implement dependency scanning** para vulnerabilidades
+- **Configure ProGuard** para ofuscar código en release
+
+## Specific Solutions for Current Errors
+
+### Error: "assembleRelease failed with exit code 1"
+
+**Root Cause Analysis:**
+
+- SDK version 36 es muy nueva y puede tener incompatibilidades
+- NDK version 27.x puede tener problemas con dependencias nativas
+- Configuración de signing puede estar incorrecta
+
+**Immediate Actions:**
+
+1. Downgrade compileSdk y targetSdk a 34
+2. Cambiar NDK a versión 25.1.8937393
+3. Verificar y regenerar keystore
+4. Limpiar cache de Gradle completamente
+
+### Error: "Keystore file not found for signing config 'release'"
+
+**Solution:**
+
+1. Verificar existencia de `android/key.jks`
+2. Validar `android/key.properties`
+3. Regenerar keystore si es necesario
+4. Configurar fallback a debug signing
+
+### Error: Dependency version conflicts
+
+**Solution:**
+
+1. Implementar dependency overrides específicos
+2. Downgrade flutter_map a versión 7.x
+3. Usar geolocator_android 4.1.9
+4. Ejecutar `flutter pub deps` para verificar

@@ -1,61 +1,73 @@
 # Requirements Document
 
-## Introduction
+## Introducción
 
-La aplicación RouWhite de rutas de Popayán tiene más de 100 errores de compilación críticos que impiden su funcionamiento correcto. Los errores principales se encuentran en el archivo `lib/view/paradas_pagina.dart` donde hay código corrupto, sintaxis mezclada, definiciones duplicadas, variables no definidas, y problemas graves de estructura. También hay problemas menores en otros archivos como imports relativos, métodos deprecados, y uso de print en producción. Estos errores deben ser corregidos sistemáticamente para restaurar la funcionalidad completa de la aplicación.
+Este documento define los requisitos para solucionar los errores de compilación que impiden la generación exitosa del APK de la aplicación Flutter "rouwhite". Los errores identificados incluyen problemas con la tarea `assembleRelease`, configuración de Gradle, y dependencias incompatibles que están bloqueando el proceso de distribución automática.
 
 ## Requirements
 
 ### Requirement 1
 
-**User Story:** Como desarrollador, quiero que la aplicación compile sin errores, para que los usuarios puedan usar todas las funcionalidades sin problemas.
+**User Story:** Como desarrollador, quiero resolver los errores de compilación de Gradle, para que el proceso de build genere exitosamente el APK de la aplicación.
 
 #### Acceptance Criteria
 
-1. WHEN se ejecuta `flutter analyze` THEN no debe mostrar errores de compilación críticos
-2. WHEN se ejecuta `flutter run` THEN la aplicación debe iniciar correctamente sin crashes
-3. WHEN se navega por la aplicación THEN todas las funcionalidades deben estar disponibles
+1. WHEN se ejecuta `flutter build apk --release` THEN el sistema SHALL completar la compilación sin errores
+2. WHEN se ejecuta la tarea `assembleRelease` THEN Gradle SHALL generar el APK firmado correctamente
+3. WHEN hay conflictos de dependencias THEN el sistema SHALL resolverlos automáticamente
+4. IF hay errores de configuración THEN el sistema SHALL mostrar mensajes claros de diagnóstico
 
 ### Requirement 2
 
-**User Story:** Como desarrollador, quiero que el archivo paradas_pagina.dart tenga una estructura válida de código Dart, para que la página de paradas funcione correctamente.
+**User Story:** Como desarrollador, quiero corregir la configuración de firma de APK, para que el archivo generado pueda ser instalado en dispositivos Android.
 
 #### Acceptance Criteria
 
-1. WHEN se revisa el archivo paradas_pagina.dart THEN no debe tener código corrupto o sintaxis mezclada
-2. WHEN se definen variables THEN deben estar correctamente declaradas con tipos válidos
-3. WHEN se definen métodos THEN deben tener sintaxis correcta y parámetros válidos
-4. WHEN se usan variables THEN deben estar definidas previamente en el scope correcto
+1. WHEN se configura el keystore THEN el sistema SHALL usar las credenciales correctas para la firma
+2. WHEN se genera el APK THEN el archivo SHALL estar firmado con el certificado de release
+3. WHEN se verifica la firma THEN el APK SHALL ser válido para instalación
+4. IF faltan archivos de keystore THEN el sistema SHALL generar nuevos certificados automáticamente
 
 ### Requirement 3
 
-**User Story:** Como desarrollador, quiero que todas las variables y controladores estén correctamente definidos, para que la funcionalidad de la página de paradas funcione sin errores.
+**User Story:** Como desarrollador, quiero resolver conflictos de versiones de SDK y dependencias, para que todas las librerías sean compatibles entre sí.
 
 #### Acceptance Criteria
 
-1. WHEN se usan variables como \_fadeAnimation THEN deben estar definidas como campos de la clase
-2. WHEN se usan controladores como \_mapController THEN deben estar inicializados correctamente
-3. WHEN se definen métodos como \_centrarMapa THEN deben tener implementación válida
-4. WHEN se usan variables de estado como \_isLoading THEN deben estar declaradas y manejadas correctamente
+1. WHEN se analizan las dependencias THEN el sistema SHALL identificar conflictos de versiones
+2. WHEN hay incompatibilidades THEN el sistema SHALL aplicar overrides específicos
+3. WHEN se actualiza el SDK THEN todas las dependencias SHALL ser compatibles
+4. IF hay dependencias obsoletas THEN el sistema SHALL sugerir actualizaciones seguras
 
 ### Requirement 4
 
-**User Story:** Como desarrollador, quiero que las clases y enums estén correctamente definidos sin duplicados, para evitar errores de compilación.
+**User Story:** Como desarrollador, quiero optimizar la configuración de Gradle, para que el proceso de build sea más rápido y estable.
 
 #### Acceptance Criteria
 
-1. WHEN se define la clase ParadaInfo THEN debe tener una sola definición válida
-2. WHEN se define el enum TipoParada THEN debe tener una sola definición válida
-3. WHEN se definen métodos como \_buildLeyendaItem THEN no deben tener definiciones duplicadas
-4. WHEN se usan tipos de datos THEN deben referenciar definiciones existentes y válidas
+1. WHEN se configura Gradle THEN el sistema SHALL usar versiones estables y compatibles
+2. WHEN se ejecuta el build THEN el proceso SHALL completarse en tiempo razonable
+3. WHEN hay errores de memoria THEN el sistema SHALL usar configuraciones optimizadas
+4. IF el build falla THEN el sistema SHALL proporcionar logs detallados para debugging
 
 ### Requirement 5
 
-**User Story:** Como desarrollador, quiero que el código siga las mejores prácticas de Dart y no tenga warnings menores, para mantener la calidad y legibilidad del código.
+**User Story:** Como desarrollador, quiero validar la configuración de Firebase, para que la integración no cause errores de compilación.
 
 #### Acceptance Criteria
 
-1. WHEN se usan imports relativos THEN deben ser reemplazados por imports de paquete
-2. WHEN se usan métodos deprecados como groupValue en Radio THEN deben ser actualizados
-3. WHEN se usa print() en código de producción THEN debe ser reemplazado por logging apropiado
-4. WHEN se definen constantes THEN deben ser marcadas como `const` cuando sea apropiado
+1. WHEN se integra Firebase THEN el archivo google-services.json SHALL estar correctamente configurado
+2. WHEN se compila con Firebase THEN no SHALL haber conflictos de dependencias
+3. WHEN se inicializa Firebase THEN la aplicación SHALL arrancar sin errores
+4. IF hay problemas de configuración THEN el sistema SHALL mostrar mensajes específicos de Firebase
+
+### Requirement 6
+
+**User Story:** Como desarrollador, quiero implementar un proceso de validación automática, para que los errores de compilación se detecten tempranamente.
+
+#### Acceptance Criteria
+
+1. WHEN se realizan cambios al código THEN el sistema SHALL ejecutar validaciones automáticas
+2. WHEN hay errores de sintaxis THEN el sistema SHALL reportarlos antes del build
+3. WHEN se modifican dependencias THEN el sistema SHALL verificar compatibilidad
+4. IF el build está roto THEN el sistema SHALL prevenir commits hasta que se corrija
