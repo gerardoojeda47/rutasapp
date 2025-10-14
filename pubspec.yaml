@@ -32,7 +32,8 @@ dependencies:
 
   # Network and API
   dio: ^5.9.0
-  connectivity_plus: ^7.0.0
+  internet_connection_checker_plus: ^2.0.6
+  network_info_plus: ^5.0.0
   geocoding: ^4.0.0
 
   # Utilities
@@ -81,5 +82,3 @@ dependency_overrides:
   geolocator_android: 5.0.1
   # Override flutter_map to use exact compatible version
   flutter_map: 8.1.0
-  # Override connectivity_plus to use stable version
-  connectivity_plus: 7.0.0
