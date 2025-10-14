@@ -49,6 +49,7 @@
 
     - Incluir biblioteca para generar códigos QR
 
+
     - Crear función para obtener último release de GitHub API
     - Generar QR code dinámico apuntando al APK más reciente
     - _Requirements: 2.1, 2.4_

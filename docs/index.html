@@ -4,189 +4,166 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RouWhite - Descarga la App</title>
-    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+      h1 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+      .qr-container {
+        margin: 30px 0;
+      }
+      #qr-canvas {
+        border: 3px solid #667eea;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+      .download-btn {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 15px 30px;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: bold;
+        margin: 10px;
+        transition: all 0.3s ease;
+      }
+      .download-btn:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+      .info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+      .loading {
+        color: #666;
+        font-style: italic;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
-      <header>
-        <div class="logo">
-          <h1>🚌 RouWhite</h1>
-          <p>Rutas de Transporte Público en Popayán</p>
+      <h1>🚌 RouWhite</h1>
+      <p>Rutas de Transporte Público en Popayán</p>
+
+      <div class="qr-container">
+        <h2>📱 Descarga la App</h2>
+        <div id="qr-loading" class="loading">Generando código QR...</div>
+        <canvas id="qr-canvas" style="display: none"></canvas>
+        <div id="qr-error" style="display: none; color: red">
+          ❌ Error al generar QR
+          <button onclick="loadApp()" style="margin-left: 10px">
+            Reintentar
+          </button>
         </div>
-      </header>
+      </div>
 
-      <main>
-        <section class="download-section">
-          <h2>📱 Descarga la Aplicación</h2>
+      <div class="info">
+        <h3>📦 Información</h3>
+        <p><strong>Versión:</strong> <span id="version">Cargando...</span></p>
+        <p><strong>Fecha:</strong> <span id="date">Cargando...</span></p>
+      </div>
 
-          <div class="qr-container">
-            <div class="qr-code">
-              <canvas id="qr-canvas"></canvas>
-              <div id="qr-loading" class="loading">
-                <div class="spinner"></div>
-                <p>Generando código QR...</p>
-              </div>
-              <div id="qr-error" class="error" style="display: none">
-                <p>❌ Error al generar QR</p>
-                <button onclick="generateQR()" class="retry-btn">
-                  Reintentar
-                </button>
-              </div>
-            </div>
+      <div>
+        <a
+          id="download-link"
+          href="#"
+          class="download-btn"
+          style="display: none"
+        >
+          📥 Descargar APK Directamente
+        </a>
+        <div id="download-loading" class="loading">Obteniendo enlace...</div>
+      </div>
 
-            <div class="qr-instructions">
-              <h3>📲 Cómo descargar:</h3>
-              <ol>
-                <li>Escanea el código QR con tu teléfono</li>
-                <li>Se descargará el archivo APK</li>
-                <li>Instala la aplicación</li>
-              </ol>
-            </div>
-          </div>
-
-          <div class="version-info">
-            <div class="info-card">
-              <h4>📦 Información de la versión</h4>
-              <p>
-                <strong>Versión:</strong>
-                <span id="version-number">Cargando...</span>
-              </p>
-              <p>
-                <strong>Fecha:</strong>
-                <span id="release-date">Cargando...</span>
-              </p>
-              <p><strong>Tamaño:</strong> ~57 MB</p>
-            </div>
-          </div>
-
-          <div class="direct-download">
-            <h3>🔗 Descarga directa</h3>
-            <p>Si el código QR no funciona, usa el enlace directo:</p>
-            <a
-              id="download-link"
-              href="#"
-              class="download-btn"
-              style="display: none"
-            >
-              📥 Descargar APK
-            </a>
-            <div id="download-loading" class="loading-text">
-              Obteniendo enlace de descarga...
-            </div>
-          </div>
-        </section>
-
-        <section class="instructions-section">
-          <h2>📋 Instrucciones de Instalación</h2>
-
-          <div class="instructions-grid">
-            <div class="instruction-card">
-              <h4>1️⃣ Habilitar fuentes desconocidas</h4>
-              <p>
-                Ve a
-                <strong
-                  >Configuración → Seguridad → Fuentes desconocidas</strong
-                >
-                y actívalo.
-              </p>
-            </div>
-
-            <div class="instruction-card">
-              <h4>2️⃣ Descargar el APK</h4>
-              <p>
-                Escanea el QR o usa el enlace directo para descargar el archivo.
-              </p>
-            </div>
-
-            <div class="instruction-card">
-              <h4>3️⃣ Instalar la aplicación</h4>
-              <p>
-                Abre el archivo descargado y sigue las instrucciones de
-                instalación.
-              </p>
-            </div>
-          </div>
-
-          <div class="troubleshooting">
-            <h4>🔧 Problemas comunes</h4>
-            <details>
-              <summary>No puedo instalar la aplicación</summary>
-              <p>
-                Asegúrate de haber habilitado "Fuentes desconocidas" en la
-                configuración de seguridad de tu dispositivo.
-              </p>
-            </details>
-
-            <details>
-              <summary>La descarga no inicia</summary>
-              <p>
-                Intenta usar el enlace directo en lugar del código QR, o
-                verifica tu conexión a internet.
-              </p>
-            </details>
-
-            <details>
-              <summary>La aplicación no abre</summary>
-              <p>
-                Verifica que tu dispositivo tenga Android 5.0 o superior.
-                Reinicia el dispositivo si es necesario.
-              </p>
-            </details>
-          </div>
-        </section>
-
-        <section class="features-section">
-          <h2>🌟 Características de la App</h2>
-
-          <div class="features-grid">
-            <div class="feature-card">
-              <h4>🗺️ Mapas Interactivos</h4>
-              <p>
-                Visualiza las rutas de transporte público en mapas detallados de
-                Popayán.
-              </p>
-            </div>
-
-            <div class="feature-card">
-              <h4>🚏 Información de Paradas</h4>
-              <p>
-                Encuentra las paradas más cercanas y conoce qué rutas pasan por
-                cada una.
-              </p>
-            </div>
-
-            <div class="feature-card">
-              <h4>🧭 Navegación GPS</h4>
-              <p>
-                Obtén direcciones paso a paso para llegar a tu destino usando
-                transporte público.
-              </p>
-            </div>
-
-            <div class="feature-card">
-              <h4>📱 Interfaz Intuitiva</h4>
-              <p>
-                Diseño moderno y fácil de usar, optimizado para dispositivos
-                móviles.
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer>
-        <p>© 2024 RouWhite - Aplicación de código abierto</p>
-        <p>
-          <a href="https://github.com/gerardoojeda47/rutasapp" target="_blank"
-            >📂 Ver código fuente</a
-          >
-          |
-          <a href="mailto:soporte@rouwhite.com">📧 Soporte</a>
-        </p>
-      </footer>
+      <div class="info">
+        <h3>📋 Instrucciones</h3>
+        <ol style="text-align: left">
+          <li>Escanea el código QR o usa el enlace directo</li>
+          <li>Habilita "Fuentes desconocidas" en tu Android</li>
+          <li>Instala la aplicación</li>
+        </ol>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+      const API_URL =
+        "https://api.github.com/repos/gerardoojeda47/rutasapp/releases/latest";
+
+      async function loadApp() {
+        try {
+          console.log("Cargando información...");
+
+          const response = await fetch(API_URL);
+          if (!response.ok) throw new Error("Error al obtener releases");
+
+          const release = await response.json();
+          console.log("Release obtenido:", release);
+
+          // Actualizar información
+          document.getElementById("version").textContent =
+            release.tag_name || "Desconocida";
+          document.getElementById("date").textContent = new Date(
+            release.published_at
+          ).toLocaleDateString("es-ES");
+
+          // Buscar APK
+          const apk = release.assets.find((asset) =>
+            asset.name.endsWith(".apk")
+          );
+          if (!apk) throw new Error("No se encontró APK");
+
+          // Generar QR
+          const canvas = document.getElementById("qr-canvas");
+          await QRCode.toCanvas(canvas, apk.browser_download_url, {
+            width: 256,
+            margin: 2,
+          });
+
+          // Mostrar elementos
+          document.getElementById("qr-loading").style.display = "none";
+          document.getElementById("qr-error").style.display = "none";
+          canvas.style.display = "block";
+
+          // Enlace directo
+          const downloadLink = document.getElementById("download-link");
+          downloadLink.href = apk.browser_download_url;
+          downloadLink.style.display = "inline-block";
+          document.getElementById("download-loading").style.display = "none";
+
+          console.log("✅ Todo cargado correctamente");
+        } catch (error) {
+          console.error("❌ Error:", error);
+          document.getElementById("qr-loading").style.display = "none";
+          document.getElementById("qr-error").style.display = "block";
+          document.getElementById("download-loading").innerHTML =
+            '<a href="https://github.com/gerardoojeda47/rutasapp/releases" target="_blank" class="download-btn">Ver Releases en GitHub</a>';
+        }
+      }
+
+      // Cargar al iniciar
+      document.addEventListener("DOMContentLoaded", loadApp);
+    </script>
   </body>
 </html>

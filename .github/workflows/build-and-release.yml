@@ -3,7 +3,12 @@ name: Build and Release APK
 on:
   push:
     branches: [main]
-  workflow_dispatch: # Permite ejecutar manualmente
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -29,76 +34,26 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Create keystore from secrets
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/key.jks
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=../key.jks" >> android/key.properties
-
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+      - name: Build APK (Debug first to test)
+        run: flutter build apk --debug
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.run_number }}
-          release_name: RouWhite v${{ github.run_number }}
+          name: RouWhite v${{ github.run_number }}
           body: |
             🚀 **Nueva versión de RouWhite disponible!**
 
-            📱 **Descarga directa:** Escanea el QR code en https://${{ github.repository_owner }}.github.io/rutasapp/
-
-            📅 **Fecha:** ${{ steps.date.outputs.date }}
+            📱 **Descarga:** https://gerardoojeda47.github.io/rutasapp/
+            📅 **Fecha:** $(date)
             🔢 **Versión:** v${{ github.run_number }}
-            📦 **Tamaño:** ~57MB
 
-            ## 📲 Cómo instalar:
-            1. Descarga el APK desde este release
-            2. Habilita "Fuentes desconocidas" en tu dispositivo
+            ## 📲 Instalación:
+            1. Descarga el APK
+            2. Habilita "Fuentes desconocidas"
             3. Instala la aplicación
-
-            ## 🗺️ Características:
-            - Rutas de transporte público en Popayán
-            - Mapas interactivos
-            - Información de paradas
-            - Navegación GPS
-
-            ---
-            *Generado automáticamente por GitHub Actions*
+          files: |
+            build/app/outputs/flutter-apk/app-debug.apk
           draft: false
           prerelease: false
-
-      - name: Upload APK to Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/app/outputs/flutter-apk/app-release.apk
-          asset_name: RouWhite-v${{ github.run_number }}.apk
-          asset_content_type: application/vnd.android.package-archive
-
-      - name: Update GitHub Pages
-        run: |
-          # Actualizar información de la última versión en la página
-          mkdir -p docs
-          echo "v${{ github.run_number }}" > docs/latest-version.txt
-          echo "${{ steps.date.outputs.date }}" > docs/latest-date.txt
-          echo "https://github.com/${{ github.repository }}/releases/download/v${{ github.run_number }}/RouWhite-v${{ github.run_number }}.apk" > docs/latest-url.txt
-
-      - name: Commit updated files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add docs/
-          git diff --staged --quiet || git commit -m "Auto-update: Nueva versión v${{ github.run_number }}"
-          git push
