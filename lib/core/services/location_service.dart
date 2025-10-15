@@ -44,7 +44,6 @@ abstract class LocationService {
 /// Implementation of LocationService using Geolocator
 class GeolocatorLocationService implements LocationService {
   static const LocationSettings _locationSettings = LocationSettings(
-    
     distanceFilter: 10, // Update every 10 meters
   );
 
@@ -71,9 +70,7 @@ class GeolocatorLocationService implements LocationService {
 
       // Get current position
       final position = await Geolocator.getCurrentPosition(
-        desired
-          
-        ),
+        desiredAccuracy: LocationAccuracy.high,
       );
 
       return position;
@@ -280,8 +277,6 @@ class MockLocationService implements LocationService {
           heading: 0.0,
           speed: 0.0,
           speedAccuracy: 0.0,
-          altitudeAccuracy: 0.0,
-          headingAccuracy: 0.0,
         );
   }
 
@@ -300,8 +295,6 @@ class MockLocationService implements LocationService {
             heading: 0.0,
             speed: 0.0,
             speedAccuracy: 0.0,
-            altitudeAccuracy: 0.0,
-            headingAccuracy: 0.0,
           ),
     );
   }
@@ -355,4 +348,3 @@ class MockLocationService implements LocationService {
     );
   }
 }
-
