@@ -119,7 +119,7 @@ class Miapp extends StatelessWidget {
           foregroundColor: Colors.white,
         ),
         // Configuración de sombras
-        cardTheme: CardThemeData(
+        cardTheme: const CardTheme(
           elevation: 4,
           shadowColor: AppColors.shadowMedium,
           shape: RoundedRectangleBorder(

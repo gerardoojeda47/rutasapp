@@ -246,7 +246,7 @@ class GoogleMapsTheme {
           centerTitle: true,
           titleTextStyle: headingMedium,
         ),
-        cardTheme: CardThemeData(
+        cardTheme: const CardTheme(
           color: Colors.white,
           elevation: 4,
           shape: RoundedRectangleBorder(
