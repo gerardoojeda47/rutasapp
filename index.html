@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RouWhite - Rutas Popayán</title>
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -22,7 +24,7 @@
         padding: 40px;
         border-radius: 20px;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        max-width: 500px;
+        max-width: 600px;
         margin: 20px;
       }
 
@@ -52,6 +54,72 @@
         font-size: 1.2em;
       }
 
+      /* QR Code Section */
+      .qr-section {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 30px 0;
+        border: 2px solid #ff6a00;
+      }
+
+      .qr-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .qr-code-wrapper {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: inline-block;
+      }
+
+      #qr-canvas {
+        border-radius: 10px;
+      }
+
+      .qr-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+      }
+
+      .qr-status.loading {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .qr-status.success {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .qr-status.error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .qr-instructions {
+        color: #666;
+        font-size: 0.95em;
+        line-height: 1.5;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      /* Download Section */
+      .download-section {
+        margin: 30px 0;
+      }
+
       .download-btn {
         background: #ff6a00;
         color: white;
@@ -74,6 +142,60 @@
         box-shadow: 0 8px 25px rgba(255, 106, 0, 0.4);
       }
 
+      .download-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Version Info */
+      .version-info {
+        background: #f0f8ff;
+        border-left: 4px solid #ff6a00;
+        padding: 20px;
+        margin: 30px 0;
+        border-radius: 5px;
+        text-align: left;
+      }
+
+      .version-info h3 {
+        margin: 0 0 15px 0;
+        color: #ff6a00;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .version-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .version-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .version-item:last-child {
+        border-bottom: none;
+      }
+
+      .version-label {
+        font-weight: bold;
+        color: #555;
+      }
+
+      .version-value {
+        color: #333;
+        font-family: monospace;
+      }
+
+      /* Features */
       .features {
         margin-top: 40px;
         text-align: left;
@@ -99,23 +221,270 @@
         font-size: 14px;
       }
 
-      .version {
-        margin-top: 30px;
-        color: #999;
-        font-size: 0.9em;
+      /* Loading Animation */
+      .loading-spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #ff6a00;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
       }
 
-      .update-info {
-        background: #f0f8ff;
-        border-left: 4px solid #ff6a00;
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Mobile-First Responsive Design */
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+
+        .container {
+          padding: 20px;
+          margin: 5px;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        .qr-section {
+          padding: 15px;
+          margin: 20px 0;
+        }
+
+        .qr-code-wrapper {
+          padding: 15px;
+        }
+
+        #qr-canvas {
+          max-width: 200px;
+          height: auto;
+        }
+
+        .version-details {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .version-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 5px;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+
+        .subtitle {
+          font-size: 1em;
+        }
+
+        .download-btn {
+          width: 100%;
+          max-width: 300px;
+          padding: 18px 20px;
+          font-size: 1.1em;
+          margin: 15px 0;
+        }
+
+        .features {
+          margin-top: 30px;
+        }
+
+        .feature {
+          margin: 12px 0;
+          font-size: 0.95em;
+        }
+
+        .qr-instructions {
+          font-size: 0.9em;
+          padding: 0 10px;
+        }
+
+        .refresh-btn {
+          padding: 10px 20px;
+          font-size: 1em;
+        }
+      }
+
+      /* Extra small devices */
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 0;
+          border-radius: 15px;
+        }
+
+        .logo {
+          width: 100px;
+          height: 100px;
+          font-size: 40px;
+          margin-bottom: 20px;
+        }
+
+        h1 {
+          font-size: 1.8em;
+          margin-bottom: 8px;
+        }
+
+        .subtitle {
+          font-size: 0.95em;
+          margin-bottom: 20px;
+        }
+
+        .qr-section {
+          padding: 12px;
+          margin: 15px 0;
+        }
+
+        #qr-canvas {
+          max-width: 180px;
+        }
+
+        .download-btn {
+          padding: 16px 18px;
+          font-size: 1em;
+        }
+
+        .version-info {
+          padding: 15px;
+        }
+
+        .version-info h3 {
+          font-size: 1.1em;
+        }
+
+        .feature-icon {
+          width: 25px;
+          height: 25px;
+          font-size: 12px;
+        }
+
+        .feature {
+          font-size: 0.9em;
+        }
+      }
+
+      /* Mobile-specific enhancements */
+      @media (hover: none) and (pointer: coarse) {
+        /* Touch device optimizations */
+        .download-btn {
+          min-height: 48px; /* Minimum touch target size */
+          touch-action: manipulation;
+        }
+
+        .refresh-btn {
+          min-height: 44px;
+          touch-action: manipulation;
+        }
+
+        .qr-code-wrapper {
+          /* Make QR code easier to scan on mobile */
+          background: white;
+          padding: 25px;
+          border: 2px solid #ff6a00;
+        }
+
+        /* Improve text readability on mobile */
+        .version-value {
+          font-size: 0.95em;
+          word-break: break-word;
+        }
+
+        .qr-instructions {
+          line-height: 1.6;
+        }
+      }
+
+      /* Landscape mobile optimization */
+      @media (max-width: 768px) and (orientation: landscape) {
+        .container {
+          max-width: 90%;
+          margin: 10px auto;
+        }
+
+        .qr-container {
+          flex-direction: row;
+          align-items: center;
+          gap: 30px;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .qr-code-wrapper {
+          flex-shrink: 0;
+        }
+
+        .qr-instructions {
+          flex: 1;
+          min-width: 250px;
+          text-align: left;
+        }
+      }
+
+      /* iOS Safari specific fixes */
+      @supports (-webkit-touch-callout: none) {
+        .download-btn {
+          -webkit-appearance: none;
+          border-radius: 50px;
+        }
+
+        .refresh-btn {
+          -webkit-appearance: none;
+        }
+      }
+
+      /* Error Message */
+      .error-message {
+        background: #f8d7da;
+        color: #721c24;
         padding: 15px;
+        border-radius: 10px;
         margin: 20px 0;
-        border-radius: 5px;
+        border: 1px solid #f5c6cb;
       }
 
-      .update-info h3 {
-        margin: 0 0 10px 0;
-        color: #ff6a00;
+      .retry-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .retry-btn:hover {
+        background: #c82333;
+      }
+
+      .refresh-btn {
+        background: #ff6a00;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .refresh-btn:hover {
+        background: #e55a00;
+        transform: translateY(-1px);
+      }
+
+      .refresh-btn:active {
+        transform: translateY(0);
       }
     </style>
   </head>
@@ -123,70 +492,988 @@
     <div class="container">
       <div class="logo">🚌</div>
       <h1>RouWhite</h1>
-      <p class="subtitle">Rutas de Buses en Popayán</p>
+      <p class="subtitle">Rutas de Transporte Público en Popayán</p>
 
-      <div class="update-info">
-        <h3>🔄 Actualización Automática</h3>
-        <p>
-          Descarga la última versión de la app. Cada vez que hagas cambios en el
-          código, se generará automáticamente una nueva APK.
-        </p>
+      <!-- QR Code Section -->
+      <div class="qr-section">
+        <div class="qr-container">
+          <div class="qr-status loading" id="qr-status">
+            <div class="loading-spinner"></div>
+            <span>Generando código QR...</span>
+          </div>
+
+          <div class="qr-code-wrapper" id="qr-wrapper" style="display: none">
+            <canvas id="qr-canvas"></canvas>
+          </div>
+
+          <div class="qr-instructions">
+            <strong>📱 Escanea el código QR</strong> con la cámara de tu
+            teléfono o una app de códigos QR para descargar directamente la
+            última versión de RouWhite. <br /><br />
+            <button onclick="refreshQR()" class="refresh-btn">
+              🔄 Actualizar QR
+            </button>
+          </div>
+        </div>
       </div>
 
-      <a
-        href="app-release.apk"
-        class="download-btn"
-        download="RouWhite-v1.0.6.apk"
-      >
-        📱 Descargar APK
-      </a>
+      <!-- Download Section -->
+      <div class="download-section">
+        <a href="#" class="download-btn" id="download-btn" disabled>
+          📱 Descargando información...
+        </a>
+        <br />
+        <small style="color: #666">
+          Si el QR no funciona, usa el botón de descarga directa
+        </small>
+      </div>
 
+      <!-- Version Information -->
+      <div class="version-info">
+        <h3>
+          <span>📊</span>
+          <span>Información de la Versión</span>
+          <span
+            id="update-indicator"
+            style="margin-left: auto; font-size: 0.8em"
+            >🔄</span
+          >
+        </h3>
+        <div class="version-details" id="version-details">
+          <div class="version-item">
+            <span class="version-label">Versión:</span>
+            <span class="version-value" id="version-number">Cargando...</span>
+          </div>
+          <div class="version-item">
+            <span class="version-label">Tipo de Build:</span>
+            <span class="version-value" id="build-type">Cargando...</span>
+          </div>
+          <div class="version-item">
+            <span class="version-label">Tamaño:</span>
+            <span class="version-value" id="apk-size">Cargando...</span>
+          </div>
+          <div class="version-item">
+            <span class="version-label">Fecha:</span>
+            <span class="version-value" id="build-date">Cargando...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features -->
       <div class="features">
         <div class="feature">
           <div class="feature-icon">🗺️</div>
-          <span>Mapas interactivos con zoom de alta calidad</span>
+          <span>Mapas interactivos con flutter_map 8.1.0</span>
         </div>
         <div class="feature">
           <div class="feature-icon">🚌</div>
-          <span>Animaciones de buses en tiempo real</span>
+          <span>Rutas de buses actualizadas en tiempo real</span>
         </div>
         <div class="feature">
           <div class="feature-icon">📍</div>
-          <span>Paradas y rutas actualizadas</span>
+          <span>Información de paradas y horarios</span>
         </div>
         <div class="feature">
-          <div class="feature-icon">🔍</div>
-          <span>Búsqueda inteligente de destinos</span>
+          <div class="feature-icon">🧭</div>
+          <span>Navegación GPS con geolocator 9.0.2</span>
         </div>
         <div class="feature">
           <div class="feature-icon">⭐</div>
-          <span>Favoritos y navegación personalizada</span>
+          <span>Interfaz optimizada y responsive</span>
         </div>
-      </div>
-
-      <div class="version">
-        <p>Versión 1.0.6+7</p>
-        <p>Última actualización: <span id="lastUpdate"></span></p>
       </div>
     </div>
 
+    <!-- Dynamic QR System Script -->
+    <script src="js/dynamic-qr-system.js"></script>
+    <!-- Download Manager Script -->
+    <script src="js/download-manager.js"></script>
     <script>
-      // Mostrar fecha de última actualización
-      document.getElementById("lastUpdate").textContent =
-        new Date().toLocaleDateString("es-CO");
+      // Global system instances
+      let qrSystem = null;
+      let downloadManager = null;
 
-      // Verificar si hay una nueva versión disponible
-      fetch("app-release.apk", { method: "HEAD" })
-        .then((response) => {
-          if (response.ok) {
-            console.log("APK disponible para descarga");
-          } else {
-            console.log("APK no encontrado");
+      // Initialize the system when page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log(
+          "🌐 Page loaded, initializing RouWhite Distribution System..."
+        );
+
+        // Configuration for the QR system
+        const qrConfig = {
+          githubRepo: "gerardoojeda47/rutasapp",
+          updateInterval: 30000, // 30 seconds
+          maxRetries: 3,
+          retryDelay: 5000,
+          qrOptions: {
+            width: 256,
+            margin: 2,
+            color: {
+              dark: "#FF6A00",
+              light: "#FFFFFF",
+            },
+            errorCorrectionLevel: "M",
+          },
+        };
+
+        // Configuration for download manager
+        const downloadConfig = {
+          maxRetries: 3,
+          retryDelay: 2000,
+          timeoutMs: 10000,
+          fallbackUrls: [
+            "./app-release.apk",
+            "https://github.com/gerardoojeda47/rutasapp/releases/latest/download/app-release.apk",
+          ],
+        };
+
+        // Create and store global instances
+        qrSystem = new DynamicQRSystem(qrConfig);
+        downloadManager = new DownloadManager(downloadConfig);
+
+        window.qrSystem = qrSystem;
+        window.downloadManager = downloadManager;
+
+        // Setup enhanced download handling
+        setupDownloadHandling();
+
+        // Setup mobile-specific enhancements
+        setupMobileEnhancements();
+
+        // Setup integrity verification display
+        setupIntegrityVerification();
+      });
+
+      // Setup enhanced download handling
+      function setupDownloadHandling() {
+        const downloadBtn = document.getElementById("download-btn");
+
+        if (downloadBtn) {
+          // Override click handler for enhanced download
+          downloadBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            const url = downloadBtn.href;
+            if (!url || url === "#") {
+              console.log("⚠️ No download URL available yet");
+              return;
+            }
+
+            try {
+              // Show loading state
+              const originalText = downloadBtn.textContent;
+              downloadBtn.textContent = "📥 Preparando descarga...";
+              downloadBtn.disabled = true;
+
+              // Validate and handle download
+              await handleEnhancedDownload(url);
+
+              // Reset button state
+              downloadBtn.textContent = originalText;
+              downloadBtn.disabled = false;
+            } catch (error) {
+              console.error("❌ Download failed:", error);
+
+              // Show error state
+              downloadBtn.textContent = "❌ Error en descarga";
+              downloadBtn.style.background = "#dc3545";
+
+              // Reset after 3 seconds
+              setTimeout(() => {
+                downloadBtn.textContent = downloadBtn.textContent.replace(
+                  "❌ Error en descarga",
+                  "📱 Descargar"
+                );
+                downloadBtn.style.background = "#ff6a00";
+                downloadBtn.disabled = false;
+              }, 3000);
+            }
+          });
+        }
+      }
+
+      // Enhanced download handler with validation and fallback
+      async function handleEnhancedDownload(primaryUrl) {
+        console.log("📥 Starting enhanced download process...");
+
+        try {
+          // Create robust download link with fallbacks
+          const robustLink = await downloadManager.createRobustDownloadLink(
+            primaryUrl
+          );
+
+          console.log("🔗 Robust download link created:", robustLink);
+
+          // Attempt download with fallback support
+          const result = await downloadManager.handleDownload(
+            robustLink.primaryUrl,
+            {
+              fallbackUrls: robustLink.fallbackUrls,
+              filename: extractFilenameFromCurrentRelease(),
+            }
+          );
+
+          console.log("✅ Download completed successfully:", result);
+
+          // Show success feedback
+          showDownloadFeedback("success", "Descarga iniciada correctamente");
+        } catch (error) {
+          console.error("❌ Enhanced download failed:", error);
+
+          // Show error feedback
+          showDownloadFeedback(
+            "error",
+            "Error en la descarga. Intenta de nuevo."
+          );
+
+          throw error;
+        }
+      }
+
+      // Show download feedback to user
+      function showDownloadFeedback(type, message) {
+        // Create or update feedback element
+        let feedback = document.getElementById("download-feedback");
+
+        if (!feedback) {
+          feedback = document.createElement("div");
+          feedback.id = "download-feedback";
+          feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+          `;
+          document.body.appendChild(feedback);
+        }
+
+        // Set style based on type
+        if (type === "success") {
+          feedback.style.background = "#28a745";
+          feedback.innerHTML = `✅ ${message}`;
+        } else if (type === "error") {
+          feedback.style.background = "#dc3545";
+          feedback.innerHTML = `❌ ${message}`;
+        }
+
+        // Show feedback
+        feedback.style.opacity = "1";
+        feedback.style.transform = "translateX(0)";
+
+        // Hide after 4 seconds
+        setTimeout(() => {
+          feedback.style.opacity = "0";
+          feedback.style.transform = "translateX(100%)";
+
+          setTimeout(() => {
+            if (feedback.parentNode) {
+              feedback.parentNode.removeChild(feedback);
+            }
+          }, 300);
+        }, 4000);
+      }
+
+      // Extract filename from current release info
+      function extractFilenameFromCurrentRelease() {
+        if (qrSystem && qrSystem.getCurrentRelease()) {
+          const release = qrSystem.getCurrentRelease();
+          return release.name || `RouWhite-${release.version}.apk`;
+        }
+        return "RouWhite.apk";
+      }
+
+      // Manual refresh functionality
+      function refreshQR() {
+        if (qrSystem) {
+          console.log("🔄 Manual refresh requested");
+          qrSystem.forceUpdate();
+        }
+      }
+
+      // System status check
+      function getSystemStatus() {
+        const status = {
+          qrSystem: qrSystem ? qrSystem.getSystemStatus() : null,
+          downloadManager: downloadManager
+            ? {
+                cacheStats: downloadManager.getCacheStats(),
+              }
+            : null,
+        };
+
+        console.log("📊 System Status:", status);
+        return status;
+      }
+
+      // Validate current download URL
+      async function validateCurrentDownloadUrl() {
+        if (!downloadManager || !qrSystem) {
+          console.log("⚠️ Systems not initialized");
+          return null;
+        }
+
+        const currentRelease = qrSystem.getCurrentRelease();
+        if (!currentRelease || !currentRelease.downloadUrl) {
+          console.log("⚠️ No current download URL available");
+          return null;
+        }
+
+        console.log("🔍 Validating current download URL...");
+        const validation = await downloadManager.validateDownloadUrl(
+          currentRelease.downloadUrl
+        );
+        console.log("📊 Validation result:", validation);
+
+        return validation;
+      }
+
+      // Clear download cache
+      function clearDownloadCache() {
+        if (downloadManager) {
+          downloadManager.clearCache();
+          console.log("🗑️ Download cache cleared");
+        }
+      }
+
+      // Setup mobile-specific enhancements
+      function setupMobileEnhancements() {
+        // Detect mobile device
+        const isMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          );
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        console.log("📱 Device detection:", { isMobile, isAndroid, isIOS });
+
+        if (isMobile) {
+          // Add mobile-specific CSS class
+          document.body.classList.add("mobile-device");
+
+          if (isAndroid) {
+            document.body.classList.add("android-device");
+            setupAndroidEnhancements();
           }
-        })
-        .catch((error) => {
-          console.log("Error verificando APK:", error);
+
+          if (isIOS) {
+            document.body.classList.add("ios-device");
+            setupIOSEnhancements();
+          }
+
+          // Setup mobile-specific UI enhancements
+          setupMobileUI();
+
+          // Setup touch optimizations
+          setupTouchOptimizations();
+        }
+
+        // Setup responsive QR code sizing
+        setupResponsiveQR();
+      }
+
+      // Android-specific enhancements
+      function setupAndroidEnhancements() {
+        console.log("🤖 Setting up Android enhancements...");
+
+        // Add installation instructions for Android
+        const instructionsContainer =
+          document.querySelector(".qr-instructions");
+        if (instructionsContainer) {
+          const androidInstructions = document.createElement("div");
+          androidInstructions.className = "android-instructions";
+          androidInstructions.style.cssText = `
+            margin-top: 15px;
+            padding: 10px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: #2d5a2d;
+          `;
+          androidInstructions.innerHTML = `
+            <strong>📋 Instrucciones para Android:</strong><br>
+            1. Después de descargar, ve a Configuración → Seguridad<br>
+            2. Habilita "Fuentes desconocidas" o "Instalar apps desconocidas"<br>
+            3. Abre el archivo APK descargado para instalar
+          `;
+          instructionsContainer.appendChild(androidInstructions);
+        }
+
+        // Enhance download button for Android
+        const downloadBtn = document.getElementById("download-btn");
+        if (downloadBtn) {
+          downloadBtn.addEventListener("click", () => {
+            // Show Android-specific download feedback
+            setTimeout(() => {
+              showDownloadFeedback(
+                "info",
+                'Revisa la carpeta de Descargas y habilita "Fuentes desconocidas"'
+              );
+            }, 2000);
+          });
+        }
+      }
+
+      // iOS-specific enhancements
+      function setupIOSEnhancements() {
+        console.log("🍎 Setting up iOS enhancements...");
+
+        // Add note about iOS limitations
+        const instructionsContainer =
+          document.querySelector(".qr-instructions");
+        if (instructionsContainer) {
+          const iosNote = document.createElement("div");
+          iosNote.className = "ios-note";
+          iosNote.style.cssText = `
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: #856404;
+          `;
+          iosNote.innerHTML = `
+            <strong>📱 Nota para iOS:</strong><br>
+            iOS no permite instalar APKs directamente. Esta app está diseñada para dispositivos Android.
+          `;
+          instructionsContainer.appendChild(iosNote);
+        }
+
+        // Modify download button behavior for iOS
+        const downloadBtn = document.getElementById("download-btn");
+        if (downloadBtn) {
+          downloadBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            showDownloadFeedback(
+              "warning",
+              "Esta aplicación es solo para dispositivos Android"
+            );
+          });
+        }
+      }
+
+      // Mobile UI enhancements
+      function setupMobileUI() {
+        console.log("📱 Setting up mobile UI enhancements...");
+
+        // Add viewport meta tag if not present
+        if (!document.querySelector('meta[name="viewport"]')) {
+          const viewport = document.createElement("meta");
+          viewport.name = "viewport";
+          viewport.content =
+            "width=device-width, initial-scale=1.0, user-scalable=no";
+          document.head.appendChild(viewport);
+        }
+
+        // Prevent zoom on input focus (if any inputs are added later)
+        document.addEventListener("focusin", (e) => {
+          if (e.target.tagName === "INPUT") {
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+              viewport.content =
+                "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+            }
+          }
         });
+
+        document.addEventListener("focusout", (e) => {
+          if (e.target.tagName === "INPUT") {
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+              viewport.content =
+                "width=device-width, initial-scale=1.0, user-scalable=yes";
+            }
+          }
+        });
+
+        // Add mobile-specific status indicator
+        addMobileStatusIndicator();
+      }
+
+      // Touch optimizations
+      function setupTouchOptimizations() {
+        console.log("👆 Setting up touch optimizations...");
+
+        // Improve button touch feedback
+        const buttons = document.querySelectorAll(
+          ".download-btn, .refresh-btn"
+        );
+        buttons.forEach((button) => {
+          button.addEventListener("touchstart", () => {
+            button.style.transform = "scale(0.95)";
+          });
+
+          button.addEventListener("touchend", () => {
+            button.style.transform = "scale(1)";
+          });
+
+          button.addEventListener("touchcancel", () => {
+            button.style.transform = "scale(1)";
+          });
+        });
+
+        // Optimize QR code for touch devices
+        const qrWrapper = document.getElementById("qr-wrapper");
+        if (qrWrapper) {
+          qrWrapper.addEventListener("touchstart", (e) => {
+            // Prevent accidental zoom when touching QR code
+            e.preventDefault();
+          });
+        }
+      }
+
+      // Responsive QR code sizing
+      function setupResponsiveQR() {
+        console.log("📐 Setting up responsive QR sizing...");
+
+        function adjustQRSize() {
+          const qrCanvas = document.getElementById("qr-canvas");
+          const container = document.querySelector(".container");
+
+          if (qrCanvas && container) {
+            const containerWidth = container.offsetWidth;
+            const maxQRSize = Math.min(containerWidth * 0.6, 256);
+
+            // Update QR system configuration if needed
+            if (qrSystem && qrSystem.config) {
+              qrSystem.config.qrOptions.width = maxQRSize;
+
+              // Regenerate QR with new size if we have a current release
+              const currentRelease = qrSystem.getCurrentRelease();
+              if (currentRelease) {
+                qrSystem.generateQR(currentRelease.downloadUrl);
+              }
+            }
+          }
+        }
+
+        // Adjust on resize
+        window.addEventListener("resize", debounce(adjustQRSize, 300));
+
+        // Initial adjustment
+        setTimeout(adjustQRSize, 1000);
+      }
+
+      // Add mobile status indicator
+      function addMobileStatusIndicator() {
+        const statusIndicator = document.createElement("div");
+        statusIndicator.id = "mobile-status";
+        statusIndicator.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          left: 20px;
+          background: rgba(255, 106, 0, 0.9);
+          color: white;
+          padding: 8px 12px;
+          border-radius: 20px;
+          font-size: 0.8em;
+          z-index: 1000;
+          display: none;
+        `;
+        statusIndicator.textContent = "📱 Móvil";
+        document.body.appendChild(statusIndicator);
+
+        // Show status briefly on load
+        setTimeout(() => {
+          statusIndicator.style.display = "block";
+          setTimeout(() => {
+            statusIndicator.style.display = "none";
+          }, 2000);
+        }, 1000);
+      }
+
+      // Enhanced feedback for mobile
+      function showDownloadFeedback(type, message) {
+        // Create or update feedback element
+        let feedback = document.getElementById("download-feedback");
+
+        if (!feedback) {
+          feedback = document.createElement("div");
+          feedback.id = "download-feedback";
+          feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 90%;
+            text-align: center;
+          `;
+          document.body.appendChild(feedback);
+        }
+
+        // Set style based on type
+        const styles = {
+          success: { background: "#28a745", icon: "✅" },
+          error: { background: "#dc3545", icon: "❌" },
+          warning: { background: "#ffc107", icon: "⚠️", color: "#212529" },
+          info: { background: "#17a2b8", icon: "ℹ️" },
+        };
+
+        const style = styles[type] || styles.info;
+        feedback.style.background = style.background;
+        feedback.style.color = style.color || "white";
+        feedback.innerHTML = `${style.icon} ${message}`;
+
+        // Show feedback
+        feedback.style.opacity = "1";
+        feedback.style.transform = "translateX(-50%) translateY(0)";
+
+        // Hide after duration based on message length
+        const duration = Math.max(3000, message.length * 100);
+        setTimeout(() => {
+          feedback.style.opacity = "0";
+          feedback.style.transform = "translateX(-50%) translateY(-20px)";
+
+          setTimeout(() => {
+            if (feedback.parentNode) {
+              feedback.parentNode.removeChild(feedback);
+            }
+          }, 300);
+        }, duration);
+      }
+
+      // Utility function for debouncing
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      // Setup integrity verification display
+      function setupIntegrityVerification() {
+        console.log("🔒 Setting up integrity verification display...");
+
+        // Add integrity status to version info
+        addIntegrityStatusToUI();
+
+        // Setup periodic integrity checks
+        setupPeriodicIntegrityChecks();
+
+        // Add integrity verification to download process
+        enhanceDownloadWithIntegrityCheck();
+      }
+
+      // Add integrity status indicator to the UI
+      function addIntegrityStatusToUI() {
+        const versionDetails = document.getElementById("version-details");
+        if (versionDetails) {
+          const integrityItem = document.createElement("div");
+          integrityItem.className = "version-item";
+          integrityItem.innerHTML = `
+            <span class="version-label">Estado de Integridad:</span>
+            <span class="version-value" id="integrity-status">
+              <span style="color: #ffc107;">🔄 Verificando...</span>
+            </span>
+          `;
+          versionDetails.appendChild(integrityItem);
+        }
+      }
+
+      // Setup periodic integrity checks
+      function setupPeriodicIntegrityChecks() {
+        // Check integrity when release info is updated
+        if (qrSystem) {
+          const originalUpdateUI = qrSystem.updateUI;
+          qrSystem.updateUI = function (release) {
+            originalUpdateUI.call(this, release);
+            // Trigger integrity check after UI update
+            setTimeout(() => checkAndDisplayIntegrity(release), 1000);
+          };
+        }
+      }
+
+      // Check and display integrity status
+      async function checkAndDisplayIntegrity(release) {
+        const integrityStatus = document.getElementById("integrity-status");
+        if (!integrityStatus || !downloadManager || !release) return;
+
+        try {
+          // Show checking status
+          integrityStatus.innerHTML =
+            '<span style="color: #ffc107;">🔄 Verificando integridad...</span>';
+
+          // Validate the download URL
+          const validation = await downloadManager.validateDownloadUrl(
+            release.downloadUrl
+          );
+
+          let statusHTML = "";
+          let statusColor = "";
+
+          if (validation.isValid) {
+            if (validation.isValidAPK && validation.isValidAPK.isValid) {
+              statusHTML = "✅ Verificado";
+              statusColor = "#28a745";
+
+              // Add detailed info on hover/click
+              const details = `
+                Tamaño: ${validation.sizeFormatted || "Desconocido"}
+                Tipo: ${validation.contentType || "Desconocido"}
+                Última modificación: ${validation.lastModified || "Desconocido"}
+              `;
+              integrityStatus.title = details;
+            } else {
+              statusHTML = "⚠️ Parcial";
+              statusColor = "#ffc107";
+              integrityStatus.title =
+                "El archivo existe pero no se pudo verificar completamente como APK válido";
+            }
+          } else {
+            statusHTML = "❌ Error";
+            statusColor = "#dc3545";
+            integrityStatus.title = `Error de verificación: ${
+              validation.error || "URL no accesible"
+            }`;
+          }
+
+          integrityStatus.innerHTML = `<span style="color: ${statusColor};">${statusHTML}</span>`;
+
+          // Store validation result for later use
+          window.lastIntegrityCheck = {
+            timestamp: Date.now(),
+            validation,
+            release,
+          };
+
+          console.log("🔒 Integrity check completed:", validation);
+        } catch (error) {
+          console.error("❌ Integrity check failed:", error);
+          integrityStatus.innerHTML =
+            '<span style="color: #dc3545;">❌ Error</span>';
+          integrityStatus.title = `Error durante la verificación: ${error.message}`;
+        }
+      }
+
+      // Enhance download process with integrity verification
+      function enhanceDownloadWithIntegrityCheck() {
+        // Override the original handleEnhancedDownload to include integrity check
+        const originalHandleEnhancedDownload = window.handleEnhancedDownload;
+
+        window.handleEnhancedDownload = async function (primaryUrl) {
+          console.log(
+            "🔒 Starting enhanced download with integrity verification..."
+          );
+
+          try {
+            // Pre-download integrity check
+            showDownloadFeedback(
+              "info",
+              "Verificando integridad del archivo..."
+            );
+
+            const validation = await downloadManager.validateDownloadUrl(
+              primaryUrl
+            );
+
+            if (!validation.isValid) {
+              throw new Error(
+                `Archivo no válido: ${validation.error || "URL no accesible"}`
+              );
+            }
+
+            if (validation.isValidAPK && !validation.isValidAPK.isValid) {
+              console.warn(
+                "⚠️ APK validation warnings:",
+                validation.isValidAPK.details
+              );
+              showDownloadFeedback(
+                "warning",
+                "Advertencia: El archivo puede no ser un APK válido"
+              );
+
+              // Give user option to continue
+              const continueDownload = await showConfirmDialog(
+                "El archivo no parece ser un APK válido. ¿Deseas continuar con la descarga?"
+              );
+
+              if (!continueDownload) {
+                throw new Error("Descarga cancelada por el usuario");
+              }
+            }
+
+            // Show integrity verification success
+            showDownloadFeedback(
+              "success",
+              `Archivo verificado (${
+                validation.sizeFormatted || "tamaño desconocido"
+              })`
+            );
+
+            // Proceed with original download logic
+            return await originalHandleEnhancedDownload(primaryUrl);
+          } catch (error) {
+            console.error(
+              "❌ Enhanced download with integrity check failed:",
+              error
+            );
+            showDownloadFeedback("error", error.message);
+            throw error;
+          }
+        };
+      }
+
+      // Show confirmation dialog (simple implementation)
+      function showConfirmDialog(message) {
+        return new Promise((resolve) => {
+          // Create modal dialog
+          const modal = document.createElement("div");
+          modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+          `;
+
+          const dialog = document.createElement("div");
+          dialog.style.cssText = `
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            margin: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+          `;
+
+          dialog.innerHTML = `
+            <div style="margin-bottom: 20px; color: #333; line-height: 1.5;">
+              ${message}
+            </div>
+            <div>
+              <button id="confirm-yes" style="
+                background: #ff6a00;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 25px;
+                margin: 0 10px;
+                cursor: pointer;
+                font-weight: bold;
+              ">Sí, continuar</button>
+              <button id="confirm-no" style="
+                background: #6c757d;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 25px;
+                margin: 0 10px;
+                cursor: pointer;
+                font-weight: bold;
+              ">Cancelar</button>
+            </div>
+          `;
+
+          modal.appendChild(dialog);
+          document.body.appendChild(modal);
+
+          // Handle button clicks
+          document.getElementById("confirm-yes").onclick = () => {
+            document.body.removeChild(modal);
+            resolve(true);
+          };
+
+          document.getElementById("confirm-no").onclick = () => {
+            document.body.removeChild(modal);
+            resolve(false);
+          };
+
+          // Handle click outside dialog
+          modal.onclick = (e) => {
+            if (e.target === modal) {
+              document.body.removeChild(modal);
+              resolve(false);
+            }
+          };
+        });
+      }
+
+      // Manual integrity check function
+      async function checkIntegrityManually() {
+        if (!qrSystem || !downloadManager) {
+          console.log("⚠️ Systems not initialized");
+          return null;
+        }
+
+        const currentRelease = qrSystem.getCurrentRelease();
+        if (!currentRelease) {
+          console.log("⚠️ No current release available");
+          return null;
+        }
+
+        console.log("🔒 Manual integrity check requested...");
+        showDownloadFeedback("info", "Verificando integridad del archivo...");
+
+        try {
+          await checkAndDisplayIntegrity(currentRelease);
+          showDownloadFeedback(
+            "success",
+            "Verificación de integridad completada"
+          );
+          return window.lastIntegrityCheck;
+        } catch (error) {
+          console.error("❌ Manual integrity check failed:", error);
+          showDownloadFeedback(
+            "error",
+            "Error en la verificación de integridad"
+          );
+          throw error;
+        }
+      }
+
+      // Get integrity report
+      function getIntegrityReport() {
+        if (window.lastIntegrityCheck) {
+          const report = {
+            timestamp: new Date(
+              window.lastIntegrityCheck.timestamp
+            ).toLocaleString(),
+            isValid: window.lastIntegrityCheck.validation.isValid,
+            details: window.lastIntegrityCheck.validation,
+            release: window.lastIntegrityCheck.release,
+          };
+
+          console.log("📊 Integrity Report:", report);
+          return report;
+        }
+
+        console.log("ℹ️ No integrity check data available");
+        return null;
+      }
+
+      // Expose functions globally for debugging
+      window.refreshQR = refreshQR;
+      window.getSystemStatus = getSystemStatus;
+      window.validateCurrentDownloadUrl = validateCurrentDownloadUrl;
+      window.clearDownloadCache = clearDownloadCache;
+      window.handleEnhancedDownload = handleEnhancedDownload;
+      window.setupMobileEnhancements = setupMobileEnhancements;
+      window.checkIntegrityManually = checkIntegrityManually;
+      window.getIntegrityReport = getIntegrityReport;
     </script>
   </body>
 </html>
