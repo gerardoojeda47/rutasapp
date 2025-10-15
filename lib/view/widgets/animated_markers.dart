@@ -215,9 +215,8 @@ class _AnimatedBusStopMarkerState extends State<AnimatedBusStopMarker>
                   height: widget.size * 1.8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: widget.color.withValues(
-                      alpha: 0.3 * _glowAnimation.value,
-                    ),
+                    color: widget.color
+                        .withValues(alpha: 0.3 * _glowAnimation.value),
                   ),
                 ),
               // Marcador principal
@@ -591,9 +590,8 @@ class _AnimatedInstructionMarkerState extends State<AnimatedInstructionMarker>
                 height: widget.size * 1.5,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.color.withValues(
-                    alpha: 0.2 * _glowAnimation.value,
-                  ),
+                  color: widget.color
+                      .withValues(alpha: 0.2 * _glowAnimation.value),
                 ),
               ),
               // Marcador principal
@@ -630,4 +628,3 @@ class _AnimatedInstructionMarkerState extends State<AnimatedInstructionMarker>
     );
   }
 }
-
