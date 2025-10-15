@@ -1,0 +1,78 @@
+name: Simple Build and Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.1"
+          channel: "stable"
+          cache: true
+
+      - name: Get dependencies
+        run: |
+          flutter clean
+          flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Prepare release
+        run: |
+          mkdir -p release
+          cp build/app/outputs/flutter-apk/app-release.apk release/RouWhite-v${{ github.run_number }}.apk
+          cp build/app/outputs/flutter-apk/app-release.apk release/app-release.apk
+
+          # Create build info
+          cat > release/latest-build.txt << EOF
+          VERSION=v${{ github.run_number }}
+          BUILD_TYPE=Release
+          BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          COMMIT_HASH=${{ github.sha }}
+          DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${{ github.run_number }}/RouWhite-v${{ github.run_number }}.apk
+          EOF
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: RouWhite v${{ github.run_number }}
+          body: |
+            🚀 **Nueva versión de RouWhite disponible!**
+
+            📱 **Descarga:** https://gerardoojeda47.github.io/rutasapp/
+            🔢 **Versión:** v${{ github.run_number }}
+            🔧 **Commit:** ${{ github.sha }}
+
+            ## 📲 Instalación:
+            1. Visita https://gerardoojeda47.github.io/rutasapp/ y escanea el QR
+            2. Habilita "Fuentes desconocidas" en Android
+            3. Instala la aplicación
+          files: |
+            release/RouWhite-v${{ github.run_number }}.apk
+            release/app-release.apk
+            release/latest-build.txt
+          draft: false
+          prerelease: false
