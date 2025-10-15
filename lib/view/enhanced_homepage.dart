@@ -49,8 +49,7 @@ class _EnhancedHomepageState extends State<EnhancedHomepage> {
       }
 
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings:
-            const LocationSettings(accuracy: LocationAccuracy.high),
+        desiredAccuracy: LocationAccuracy.high,
       );
 
       setState(() {
@@ -866,4 +865,3 @@ class _EnhancedHomepageState extends State<EnhancedHomepage> {
     );
   }
 }
-

@@ -9,7 +9,7 @@ void main() {
     const testDestination = LatLng(2.4448, -76.6147); // Centro de Popayán
 
     test('should recognize all bus companies', () {
-      const allRoutes = PopayanBusRoutes.routes;
+      final allRoutes = PopayanBusRoutes.routes;
       final companies = allRoutes.map((route) => route.company).toSet();
 
       // Verificar que todas las empresas esperadas están presentes
@@ -160,7 +160,7 @@ void main() {
 
   group('Company Route Coverage Tests', () {
     test('should have routes for each company', () {
-      const allRoutes = PopayanBusRoutes.routes;
+      final allRoutes = PopayanBusRoutes.routes;
 
       final sotracaucaRoutes =
           allRoutes.where((r) => r.company == 'SOTRACAUCA').length;
@@ -184,7 +184,7 @@ void main() {
     });
 
     test('should have proper route naming for each company', () {
-      const allRoutes = PopayanBusRoutes.routes;
+      final allRoutes = PopayanBusRoutes.routes;
 
       for (final route in allRoutes) {
         // Verificar que el nombre incluye la empresa o es descriptivo

@@ -562,7 +562,7 @@ class _HomeContentState extends State<HomeContent> {
                 fm.Marker(
                   width: 50,
                   height: 50,
-                  point: LatLng(2.444814, -76.614739),
+                  point: const LatLng(2.444814, -76.614739),
                   child: AnimatedBusStopMarker(
                     size: 35,
                     color: Colors.blue,
@@ -574,7 +574,7 @@ class _HomeContentState extends State<HomeContent> {
                 fm.Marker(
                   width: 50,
                   height: 50,
-                  point: LatLng(2.445000, -76.617000),
+                  point: const LatLng(2.445000, -76.617000),
                   child: AnimatedBusStopMarker(
                     size: 35,
                     color: Colors.green,
@@ -586,7 +586,7 @@ class _HomeContentState extends State<HomeContent> {
                 fm.Marker(
                   width: 50,
                   height: 50,
-                  point: LatLng(2.4480, -76.6000),
+                  point: const LatLng(2.4480, -76.6000),
                   child: AnimatedBusStopMarker(
                     size: 35,
                     color: Colors.orange,
@@ -597,7 +597,7 @@ class _HomeContentState extends State<HomeContent> {
                 fm.Marker(
                   width: 50,
                   height: 50,
-                  point: LatLng(2.4400, -76.6100),
+                  point: const LatLng(2.4400, -76.6100),
                   child: AnimatedBusStopMarker(
                     size: 35,
                     color: Colors.purple,

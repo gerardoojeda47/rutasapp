@@ -101,7 +101,8 @@ class _PqrPaginaState extends State<PqrPagina> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xFFFF6A00), width: 2),
+                    borderSide:
+                        const BorderSide(color: Color(0xFFFF6A00), width: 2),
                   ),
                   contentPadding: const EdgeInsets.all(12),
                 ),
@@ -114,10 +115,12 @@ class _PqrPaginaState extends State<PqrPagina> {
                 ElevatedButton.icon(
                   onPressed: _seleccionarArchivos,
                   icon: const Icon(Icons.attach_file, color: Colors.white),
-                  label: const Text('Adjuntar archivos', style: TextStyle(color: Colors.white)),
+                  label: const Text('Adjuntar archivos',
+                      style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF6A00),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -151,7 +154,8 @@ class _PqrPaginaState extends State<PqrPagina> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.insert_drive_file, color: Colors.grey),
+                          const Icon(Icons.insert_drive_file,
+                              color: Colors.grey),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
@@ -162,12 +166,16 @@ class _PqrPaginaState extends State<PqrPagina> {
                                   f.name,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  f.size != null ? '${(f.size! / 1024).toStringAsFixed(1)} KB' : '',
-                                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                  f.size != null
+                                      ? '${(f.size / 1024).toStringAsFixed(1)} KB'
+                                      : '',
+                                  style: TextStyle(
+                                      color: Colors.grey[600], fontSize: 12),
                                 ),
                               ],
                             ),
@@ -199,13 +207,17 @@ class _PqrPaginaState extends State<PqrPagina> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF6A00),
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                     child: _enviando
                         ? const SizedBox(
                             height: 18,
                             width: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)),
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation(Colors.white)),
                           )
                         : const Text('Enviar'),
                   ),
@@ -218,4 +230,3 @@ class _PqrPaginaState extends State<PqrPagina> {
     );
   }
 }
-

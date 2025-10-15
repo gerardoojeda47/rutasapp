@@ -355,10 +355,7 @@ class _SimpleNavigationPageState extends State<SimpleNavigationPage>
       // Obtener ubicación inicial
       try {
         final initialPosition = await Geolocator.getCurrentPosition(
-          desired
-            
-            
-          ),
+          desiredAccuracy: LocationAccuracy.high,
         );
 
         setState(() {
@@ -375,7 +372,6 @@ class _SimpleNavigationPageState extends State<SimpleNavigationPage>
 
       // Iniciar seguimiento continuo
       const locationSettings = LocationSettings(
-        
         distanceFilter: 1, // Actualizar cada metro
       );
 
@@ -1017,4 +1013,3 @@ class BusStop {
     required this.routes,
   });
 }
-

@@ -77,8 +77,12 @@ class UpdateService {
         .reduce((a, b) => a > b ? a : b);
 
     // Rellenar con ceros si es necesario
-    while (currentParts.length < maxLength) currentParts.add(0);
-    while (latestParts.length < maxLength) latestParts.add(0);
+    while (currentParts.length < maxLength) {
+      currentParts.add(0);
+    }
+    while (latestParts.length < maxLength) {
+      latestParts.add(0);
+    }
 
     for (int i = 0; i < maxLength; i++) {
       if (latestParts[i] > currentParts[i]) return true;
@@ -133,4 +137,3 @@ class UpdateInfo {
     return 'UpdateInfo(current: $currentVersion, latest: $latestVersion, url: $downloadUrl)';
   }
 }
-

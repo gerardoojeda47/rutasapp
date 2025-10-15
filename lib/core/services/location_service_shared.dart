@@ -111,8 +111,8 @@ class LocationServiceShared {
       _isLoading = false;
 
       debugPrint(
-          '✅ Ubicación obtenida: ${position?.latitude}, ${position?.longitude}');
-      debugPrint('📏 Precisión: ${position?.accuracy} metros');
+          '✅ Ubicación obtenida: ${position.latitude}, ${position.longitude}');
+      debugPrint('📏 Precisión: ${position.accuracy} metros');
 
       _notifyListeners();
       return position;

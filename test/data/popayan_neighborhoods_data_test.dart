@@ -142,13 +142,13 @@ void main() {
 
   group('PopayanNeighborhood Model Tests', () {
     test('should create neighborhood with all properties', () {
-      const neighborhood = PopayanNeighborhood(
+      final neighborhood = PopayanNeighborhood(
         id: 'test_id',
         name: 'Test Neighborhood',
         comuna: 'Comuna 1',
-        coordinates: LatLng(2.4448, -76.6147),
+        coordinates: const LatLng(2.4448, -76.6147),
         type: 'Barrio',
-        keywords: ['test', 'neighborhood'],
+        keywords: const ['test', 'neighborhood'],
         description: 'Test description',
       );
 
@@ -161,13 +161,13 @@ void main() {
     });
 
     test('should create neighborhood without optional description', () {
-      const neighborhood = PopayanNeighborhood(
+      final neighborhood = PopayanNeighborhood(
         id: 'test_id',
         name: 'Test Neighborhood',
         comuna: 'Comuna 1',
-        coordinates: LatLng(2.4448, -76.6147),
+        coordinates: const LatLng(2.4448, -76.6147),
         type: 'Barrio',
-        keywords: ['test', 'neighborhood'],
+        keywords: const ['test', 'neighborhood'],
       );
 
       expect(neighborhood.description, null);
